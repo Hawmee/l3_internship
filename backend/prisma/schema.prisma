@@ -1,0 +1,143 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Users{
+  id Int @id @default(autoincrement())
+  matricule String @unique
+  nom String
+  prenom String
+  email String
+  status Boolean @default(false)
+  password String
+  isChefService Boolean @default(false)
+  isChefUnit Boolean @default(false)
+  isPersCellule Boolean @default(false)
+  isPersSecretariat Boolean @default(false)
+  unite_id Int?
+  unite Unites? @relation("UserToUnit" , fields: [unite_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
+
+}
+
+model Unites {
+  id    Int    @id @default(autoincrement())
+  nom  String
+  isDivision Boolean @default(false)
+  isBureau Boolean @default(false)
+  isDependant Boolean @default(false)
+  division_id Int?
+  sur_division Unites? @relation("UnitToDivision" , fields: [division_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
+  
+  
+  users Users[] @relation("UserToUnit")
+  offers Offres[] @relation("OffersToUnit")
+  bureaux Unites[] @relation("UnitToDivision")
+  stages Stages[] @relation("StageToUnite")
+}
+
+
+
+model Offres {
+  id Int @id @default(autoincrement())
+  nom String
+  theme String
+  competence_requis String
+  date_debut DateTime
+  date_fin DateTime
+  place Int
+  unite_id Int?
+  unite Unites? @relation("OffersToUnit" , fields: [unite_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
+
+  entretiens Entretients[] @relation("EntretientOffre")
+}
+
+model Stagiaires {
+  id Int @id @default(autoincrement())
+  nom String
+  prenom String
+  email String
+  phone String
+  niveau String
+  filiere String
+  etablissement String
+  observation String
+  status Boolean @default(false)
+
+  stages Stages[] @relation("StageStagiaire")
+  entretiens Entretients[] @relation("EntretientStagiaire")
+}
+
+
+model Stages {
+  id Int @id @default(autoincrement())
+  unite_id Int
+  stagiaire_id Int
+  theme String
+  lien_livre String
+  status Boolean @default(false)
+  observation String
+  date_debut DateTime
+  date_fin DateTime
+  unite Unites? @relation("StageToUnite" , fields: [unite_id] , references: [id])
+  stagiaire Stagiaires @relation("StageStagiaire",fields: [stagiaire_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
+
+  attestation Attestation?
+  performance Performances?
+  taches Taches[] @relation("TacheStage")
+}
+
+
+model Attestation {
+  id Int @id @default(autoincrement())
+  status Boolean @default(false)
+  stage_id Int @unique
+  stage Stages @relation(fields: [stage_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
+}
+
+
+model Performances {
+  id Int @id @default(autoincrement())
+  communication  String
+  proposition_solution  String
+  integrite  String
+  ponctualite  String
+  respect  String
+  autonomie  String
+  assiduite  String
+  stage_id Int @unique
+  stage Stages @relation(fields: [stage_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
+}
+
+
+model Taches {
+  id Int @id @default(autoincrement())
+  nom String
+  description String?
+  status Boolean @default(false)
+  date_debut DateTime
+  date_fin DateTime
+  stage_id Int
+  stage Stages @relation("TacheStage" , fields: [stage_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
+}
+
+
+model Entretients {
+  id Int @id @default(autoincrement())
+  status Boolean @default(false)
+  date_interview DateTime
+  stagiaire_id Int
+  offre_id Int
+  stagiaire Stagiaires @relation("EntretientStagiaire" , fields: [stagiaire_id] , references: [id])
+  offre Offres @relation("EntretientOffre" , fields: [offre_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
+}
