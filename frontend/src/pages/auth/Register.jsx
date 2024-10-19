@@ -1,191 +1,198 @@
-import React from "react";
+import React, { useState } from "react";
+import Form from "../../components/forms/Form";
+import Input from "../../components/forms/Input";
+import Select from "../../components/forms/Select";
 import { NavLink } from "react-router-dom";
-import FormWrapper from "../../components/forms/FormWrapper";
-import Inputs from "../../components/forms/Inputs";
-import * as yup from "yup";
 
 function Register() {
-    const initialValue = {
-        nom: "",
-        prenom: "",
-        email: "",
-        status: false,
-        matricule: "",
-        pass_word: "",
-        isChefService: false,
-        isChefUnit: false,
-        isPersCellule: false,
-        isPersSecretariat: false,
-        unite_id: null,
+    const onSubmit = (data) => {
+        const data_end = {
+            ...data,
+            isChefService: data.role === "isChefService",
+            isChefUnit: data.role === "isChefUnit",
+            isPersCellule: data.role === "isPersCellule",
+            isPersSecretariat: data.role === "isPersSecretariat",
+        };
+
+        delete data_end.role;
+
+        console.log("form data : ", data_end);
     };
 
-    const validationSchema = yup.object({
-        nom: yup
-            .string()
-            .matches(/^[a-zA-Z]+$/, "Caracteres speciaux non autorisé !")
-            .required("Ce champ est requis")
-            .max(25, "25 Caracteres au maximum"),
-        prenom: yup
-            .string()
-            .matches(/^[a-zA-Z]*$/, "Caracteres speciaux non autorisé !")
-            .test(
-                "Pas-espace-sulement",
-                "Espace non acceptée comme valeure",
-                (value) => value && value.trim().length > 0
-            )
-            .required("Ce champ est requis"),
-        email: yup.string().email("Format non accepté"),
-        status: yup.boolean(),
-        matricule: yup
-            .string()
-            .matches(/^[0-9]{8}$/, "Ce champ ne doit contenir que de chiffres")
-            .required("Ce champ est requis"),
-        pass_word: yup
-            .string()
-            .matches(
-                /^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).*$/,
-                "Doit contenir au moins une majuscule et un caractère spécial"
-            )
-            .min(8, "Doit contenir au moins 8 caractères")
-            .required("Ce champ est requis"),
-        isChefService: yup.boolean().required("Ce champ est requis"),
-        isChefUnit: yup.boolean().required("Ce champ est requis"),
-        isPersCellule: yup.boolean().required("Ce champ est requis"),
-        isPersSecretariat: yup.boolean().required("Ce champ est requis"),
-        unite_id: yup
-            .number()
-            .nullable()
-    });
+    const [units, setUnits] = useState([
+        { id: 1, mail: "mail@mail.te", name: "idk" },
+    ]);
 
-    const onSubmit = (values) => {
-        console.log("form data : ", values);
-        console.log(1);
-        
-    };
+    const unitOptions = [
+        { value: "", label: "Unites de travails" },
+        ...units.map((unit) => ({ value: unit.id, label: unit.name })),
+    ];
 
     return (
         <>
             <div className="h-full w-full bg-gray-200 flex flex-col justify-center items-center">
-                <div className="bg-white rounded p-4">
-                    {/* <form>
-                        <div>
-                            <h1> Register </h1>
-                        </div>
-                        <div className="flex flex-col">
-                            <label htmlFor="matricule">Matricule</label>
-                            <input
+                <div className="bg-white rounded p-4 min-w-[30vw]">
+                    <Form onSubmit={onSubmit}>
+                        <div className="mt-6">
+                            <Input
+                                label={"Matricule"}
+                                name={"matricule"}
                                 type="text"
-                                className="border border-gray-500"
+                                validation={{
+                                    required: "Valeur requise .",
+                                    maxLength: {
+                                        value: 50,
+                                        message:
+                                            "Trop long , veuillez redefinir",
+                                    },
+                                    pattern: {
+                                        value: /^\d+$/,
+                                        message: "valeur inappropriée ",
+                                    },
+                                    validate: {
+                                        pasSeulementEspace: (value) => {
+                                            value.trim() !== "" ||
+                                                "Valeur requise.";
+                                        },
+                                    },
+                                }}
                             />
                         </div>
-                        <div className="flex flex-col mt-2">
-                            <label htmlFor="Name">Name</label>
-                            <input
-                                type="text"
-                                className="border border-gray-500"
-                            />
-                        </div>
-                        <div className="flex flex-col mt-2">
-                            <label htmlFor="lastName">Last Name</label>
-                            <input
-                                type="text"
-                                className="border border-gray-500"
-                            />
-                        </div>
-                        <div className="flex flex-col mt-2">
-                            <label htmlFor="mail">mail</label>
-                            <input
-                                type="mail"
-                                className="border border-gray-500"
-                            />
-                        </div>
-                        <div className="mt-2 flex flex-row justify-between">
-                            <div className="flex flex-col px-4">
-                                <label htmlFor="user">UserType</label>
-                                <select
-                                    name="user"
-                                    className="border border-gray-700"
-                                >
-                                    <option value="isChefService">
-                                        Chef de Service
-                                    </option>
-                                    <option value="isChefUnits">
-                                        Chef Units
-                                    </option>
-                                    <option value="isPersCellule">
-                                        Cellule Personal
-                                    </option>
-                                    <option value="isPersSec">
-                                        Secretariat{" "}
-                                    </option>
-                                </select>
-                            </div>
-                            <div className="flex flex-col px-4">
-                                <label htmlFor="user">UserType</label>
-                                <select
-                                    name="user"
-                                    className="border border-gray-700"
-                                >
-                                    <option value="isChefService">
-                                        Chef de Service
-                                    </option>
-                                    <option value="isChefUnits">
-                                        Chef Units
-                                    </option>
-                                    <option value="isPersCellule">
-                                        Cellule Personal
-                                    </option>
-                                    <option value="isPersSec">
-                                        Secretariat{" "}
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                        <div className="flex flex-col mt-2">
-                            <label htmlFor="password">Password</label>
-                            <input
-                                type="password"
-                                className="border border-gray-500"
-                            />
-                        </div>
-                        <div className="flex flex-col mt-2">
-                            <label htmlFor="password">Password</label>
-                            <input
-                                type="password"
-                                className="border border-gray-500"
-                            />
-                        </div>
-                        <div>
-                            <p>
-                                Already got an account ?{" "}
-                                <NavLink
-                                    to="/login"
-                                    className="text-blue-400 hover:text-blue-500"
-                                >
-                                    Login
-                                </NavLink>
-                            </p>
-                        </div>
-                        <div>
-                            <button
-                                className="bg-blue-500 text-gray-50 px-2 rounded-[8px] hover:bg-blue-600"
-                                type="button"
-                            >
-                                Log In
-                            </button>
-                        </div>
-                    </form> */}
-                    <FormWrapper
-                        initialValues={initialValue}
-                        validationSchema={validationSchema}
-                        onSubmit={onSubmit}
-                    >
-                        <Inputs label="Nom" name="nom" type="text" />
 
-                        <div>
-                            <button type="submit" className="bg-blue-400">Register</button>
+                        <div className="mt-2">
+                            <Input
+                                label={"Nom"}
+                                name={"nom"}
+                                type="text"
+                                validation={{
+                                    required: "Valeur requise .",
+                                    maxLength: {
+                                        value: 50,
+                                        message:
+                                            "Trop long , veuillez redefinir",
+                                    },
+                                    pattern: {
+                                        value: /^[A-Za-z]+(?:\s+[A-Za-z]+)*$/,
+                                        message: "valeur innappropriée ",
+                                    },
+                                    validate: {
+                                        pasSeulementEspace: (value) => {
+                                            value.trim() !== "" ||
+                                                "Valeur requise.";
+                                        },
+                                    },
+                                }}
+                            />
                         </div>
-                    </FormWrapper>
+
+                        <div className="mt-2">
+                            <Input
+                                label={"Prenom"}
+                                name={"prenom"}
+                                type="text"
+                                validation={{
+                                    required: "Valeur requise .",
+                                    maxLength: {
+                                        value: 50,
+                                        message:
+                                            "Trop long , veuillez redefinir",
+                                    },
+                                    pattern: {
+                                        value: /^[A-Za-z]+(?:\s+[A-Za-z]+)*$/,
+                                        message:
+                                            "valeur alphabetique seulement ",
+                                    },
+                                    validate: {
+                                        pasSeulementEspace: (value) => {
+                                            value.trim() !== "" ||
+                                                "Valeur requise.";
+                                        },
+                                    },
+                                }}
+                            />
+                        </div>
+                        <div className="mt-2">
+                            <Input
+                                name="email"
+                                label="Email"
+                                type="email"
+                                placeholder="entrez votre mail"
+                                validation={{
+                                    required: "Valeur requise.",
+                                    pattern: {
+                                        value: /^\S+@\S+$/i,
+                                        message: "format du mail invalide",
+                                    },
+                                }}
+                            />
+                        </div>
+
+                        <div className="mt-2 flex flex-row justify-between">
+                            <div>
+                                <Select
+                                    label={"Type de Compte"}
+                                    name={"role"}
+                                    className="border-gray-300 border-[2px] rounded-[6px] p-2 w-[11vw] focus:bg-gray-100"
+                                    options={[
+                                        { value: "", label: "Type de compte" },
+                                        {
+                                            value: "isChefService",
+                                            label: "Chef de Service",
+                                        },
+                                        {
+                                            value: "isChefUnit",
+                                            label: "Chef d'Unité (division/Bureau)",
+                                        },
+                                        {
+                                            value: "isPersCellule",
+                                            label: "Personnel du Cellule",
+                                        },
+                                        {
+                                            value: "isPersSecretariat",
+                                            label: "Personnel du secretariat",
+                                        },
+                                    ]}
+                                />
+                            </div>
+                            <div className="ml-3">
+                                <Select
+                                    label={"Unité de travail"}
+                                    name={"unit_id"}
+                                    className="border-gray-300 border-[2px] rounded-[6px] p-2 w-[11vw] focus:bg-gray-100"
+                                    options={unitOptions}
+                                />
+                            </div>
+                        </div>
+                        <div className="mt-2">
+                            <Input
+                                name="pass_word"
+                                label="Mot de passe"
+                                type="password"
+                                placeholder="entrez votre mot de passse"
+                                validation={{
+                                    required: "Valeur requise.",
+                                }}
+                            />
+                        </div>
+                        <div className="mt-2">
+                            <Input
+                                name="confirmation"
+                                label="confirmation"
+                                type="password"
+                                placeholder="confirmer votre mot de passe"
+                                validation={{
+                                    required: "Valeur requise.",
+                                }}
+                            />
+                        </div>
+                        <div className="mt-6 flex justify-end ">
+                            <div className="flex flex-row items-center justify-between">
+                                <div className="mr-4 underline text-gray-500"><NavLink to="/login" > S'authentifier ? </NavLink></div>
+                                <button type="submit" className="bg-gray-700 text-white py-1 px-4 rounded-[8px] hover:bg-gray-600">S'inscrire</button>
+                            </div>
+                            
+                        </div>
+                    </Form>
                 </div>
             </div>
         </>
