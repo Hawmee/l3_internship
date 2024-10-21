@@ -14,17 +14,27 @@ export default function Sidebar({children}) {
 
   const dispatch = useDispatch()
 
-  const logout =() => {
+  const logout =async() => {
     
-    axios.post(`${url}/logout` , {withCredentials: true})
-    .then((res)=>{
-      console.log(res);
-      // dispatch(setCurrentUser(null))
-      Cookies.remove("user_cookie")
-    }).catch(error=>{
-      console.log(error);
+    // axios.post(`${url}/logout` , "logged_out" ,{ withCredentials: true })
+    // .then((res)=>{
+    //   console.log(res);
+    //   dispatch(setCurrentUser(null))
+    //   Cookies.remove("user_cookie")
+    // }).catch(error=>{
+    //   console.log(error);
       
-    })
+    // })
+
+    try {
+      const logged_out = await axios.post(`${url}/logout` , "logged_out" , {withCredentials :true})
+      const message = logged_out.data.message
+      dispatch(setCurrentUser(null))
+      toast.success(message,toastConfig)
+    } catch (error) {
+      const message = error.response.data.message
+      toast.error(message , toastConfig)
+    }
   };
   return (
     <>

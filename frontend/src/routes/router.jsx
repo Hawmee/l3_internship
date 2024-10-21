@@ -7,10 +7,11 @@ import ChefServiceLayout from "../layouts/users/ChefServiceLayout";
 import ChefUnitLayout from "../layouts/users/chefUnitLayout";
 import PersCelluleLayout from "../layouts/users/PersCelluleLayout";
 import PersSecLayout from "../layouts/users/PersSecLayout";
-import Units from "../pages/chefService/units/Units";
-import Dashboard from "../pages/chefService/dashboard/Dashboard";
+import Units from "../pages/units/Units";
+import Dashboard from "../pages/dashboard/Dashboard";
 import WaitingPage from "../pages/redirections/WaitingPage";
 import ProtectedRoute from "./ProtectedRoute";
+import Offers from "../pages/Offers/Offers";
 
 const router = createBrowserRouter([
   {
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
             element: <Dashboard />,
           },
           {
+            path:"offers",
+            element:<Offers />
+          },
+          {
             path: "units",
             element: <Units />,
           },
@@ -39,6 +44,12 @@ const router = createBrowserRouter([
       {
         path: "chefUnits",
         element: <ChefUnitLayout />,
+        children:[
+          {
+            path:"",
+            element:<Offers />
+          }
+        ]
       },
       {
         path: "persCellule",

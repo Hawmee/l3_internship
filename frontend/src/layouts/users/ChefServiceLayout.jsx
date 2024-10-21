@@ -35,7 +35,7 @@ function ChefServiceLayout() {
                     <SideBarLinks
                         icon={<NotebookText size={22} />}
                         text="Offers"
-                        href={"chefSRB.offers"}
+                        href={"/chefService/offers"}
                     />
                     <SideBarLinks
                         icon={<BookUser size={22} />}

@@ -14,9 +14,9 @@ function Authenticated() {
       navigate('/guest/login')
     }else{
       if(user.isChefService){
-        navigate('/chefService')
+        navigate('/chefService/')
       }else if(user.isChefUnit){
-        navigate('/chefUnits')
+        navigate('/chefUnits/')
       }else if(user.isPersCellule){
         navigate('/persCellule')
       }else if(user.isPersSecretariat){

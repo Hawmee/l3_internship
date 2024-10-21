@@ -36,7 +36,7 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(session({
-    key:"user_cookie",
+    key:"userCookie",
     secret: "secret_secret",
     resave: false ,
     saveUninitialized: false,

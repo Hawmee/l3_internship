@@ -101,25 +101,19 @@ export const register = async (req, res) => {
     }
 };
 
-export const logout = (req, res) => {
+export const logout = async (req, res) => {
     req.session.destroy((err) => {
         if (err) {
             res.status(400).send({ message: "Erreur durant la requete" });
         }
-        res.clearCookie("user_cookie" , {
-            path: "/",
-        });
-        res.clearCookie("connect.sid", { path: "/" });
-        console.log(req.session);    
+        res.clearCookie("userCookie");
         res.status(200).send({ message: "Deconnecté avec succes !" });
     });
 };
 
 
 export const cookie_handling = (req, res) => {
-    if (req.session.user) {
-        console.log( "cooks:" ,req.session.user);
-        
+    if (req.session.user) {        
         res.send(req.session.user);
     } else {
         res.send(null);
