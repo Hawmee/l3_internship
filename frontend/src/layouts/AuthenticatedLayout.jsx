@@ -10,15 +10,19 @@ function Authenticated() {
   const user = useSelector((state)=>state.currentUser.value)
 
   useEffect(() => {
-
-    if(!user){
-      console.log(user);
-      
-      navigate('/login')
+    if(!user){    
+      navigate('/guest/login')
     }else{
-      navigate('/register')
+      if(user.isChefService){
+        navigate('/chefService')
+      }else if(user.isChefUnit){
+        navigate('/chefUnits')
+      }else if(user.isPersCellule){
+        navigate('/persCellule')
+      }else if(user.isPersSecretariat){
+        navigate('/persSecretariat')
+      }
     }
-
   }, [user]);
 
 

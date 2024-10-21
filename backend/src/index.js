@@ -2,6 +2,7 @@
 import express  from "express";
 import routes from './routes/index.js'
 import jsonwebtoken from "jsonwebtoken";
+import dotenv from 'dotenv'
 import http from 'http'
 import cors from 'cors'
 import cookieParser from "cookie-parser";
@@ -9,9 +10,10 @@ import bodyParser from "body-parser";
 import session from 'express-session'
 import { Server } from "socket.io";
 
+dotenv.config()
 
 const parameter = {
-    origin : "*" ,
+    origin : process.env.FRONT_END_URl ,
     methods : ['GET' , 'POST' , 'PUT' , 'DELETE'],
     credentials : true
 }
@@ -39,7 +41,7 @@ app.use(session({
     resave: false ,
     saveUninitialized: false,
     cookie:{
-        expires : 60*60*24,
+        maxAge: 24 * 60 * 60 * 1000,
     }
 }))
 

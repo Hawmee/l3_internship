@@ -10,6 +10,16 @@
 }
 
 
+.blue-toast{
+    background-color: rgb(13, 166, 255);
+    color: white;
+}
+
+.blue-progress-background{
+    background-color: rgba(13, 166, 255, 0.785);;
+}
+
+
 
 
 

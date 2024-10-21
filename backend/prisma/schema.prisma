@@ -71,7 +71,9 @@ model Stagiaires {
   niveau String
   filiere String
   etablissement String
-  observation String
+  observation String?
+  cv_link String?
+  lm_link String?
   status Boolean @default(false)
 
   stages Stages[] @relation("StageStagiaire")
@@ -84,7 +86,7 @@ model Stages {
   unite_id Int
   stagiaire_id Int
   theme String
-  lien_livre String
+  lien_livre String?
   status Boolean @default(false)
   observation String
   date_debut DateTime

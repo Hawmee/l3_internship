@@ -1,38 +1,88 @@
-import React from 'react'
-import { useSelector } from 'react-redux'
-import { NavLink } from 'react-router-dom'
+import React from "react";
+import Form from "../../components/forms/Form";
+import Input from "../../components/forms/Input";
+import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { setCurrentUser } from "../../features/currentUser";
+import { toast } from "react-toastify";
+import { NavLink } from "react-router-dom";
 
 function Login() {
 
-  const token = useSelector((state)=>state.token.value)
-  const currentUser = useSelector((state)=>state.currentUser.value)
-  return (
-    <>
-        <div className='h-full w-full bg-gray-200 flex flex-col justify-center items-center'>
-          <div className='bg-white rounded p-4'>
-              <form >
-                <div>
-                  <h1> {currentUser} </h1>
+    const dispatch = useDispatch()
+    const url = useSelector((state)=>state.backendUrl.value)
+    const toastConfig = useSelector((state)=>state.toastConfig.value)
+
+    const login = async(data)=>{
+      try {
+        const logged_in = await axios.post(`${url}/login` , data , { withCredentials: true })
+        const message = logged_in.data.message
+        const current_user = logged_in.data.data
+        dispatch(setCurrentUser(current_user))
+        toast.success(message , {toastConfig})
+      } catch (error) {
+        const message = error.response.data.message
+        toast.error(message , toastConfig)
+      }
+    }
+
+    const onSubmit = (data) => {
+        login(data);
+    };
+
+    return (
+        <>
+            <div className="h-full w-full bg-gray-200 flex flex-col justify-center items-center">
+                <div className="bg-white rounded p-4 min-w-[25vw]">
+                    <Form onSubmit={onSubmit}>
+                        <div className="mt-6">
+                            <Input
+                                label={"Matricule"}
+                                name={"matricule"}
+                                validation={{
+                                    required: "Valeur requise .",
+                                    maxLength: {
+                                        value: 50,
+                                        message:
+                                            "Trop long , veuillez redefinir",
+                                    },
+                                    pattern: {
+                                        value: /^\d+$/,
+                                        message: "valeur inappropriée (seulement valeur numerique) ",
+                                    },
+                                }}
+                            />
+                        </div>
+
+                        <div className="mt-2">
+                            <Input
+                                name="password"
+                                label="Mot de passe"
+                                type="password"
+                                placeholder="entrez votre mot de passse"
+                                validation={{
+                                    required: "Valeur requise.",
+                                }}
+                                autoComplete="off"
+                            />
+                        </div>
+
+                        <div className="mt-6 flex justify-end items-center">
+                          <div className="flex flex-row justify-between items-center ">
+                            <div className="underline mr-3 text-gray-500"><NavLink to="/guest/register">S'inscrire</NavLink></div>
+                            <button
+                                className="bg-gray-700 text-gray-50 px-4 py-1 rounded-[8px]"
+                                type="submit"
+                            >
+                                S'authentifier
+                            </button>
+                          </div>
+                        </div>
+                    </Form>
                 </div>
-                <div>
-                  <label htmlFor="matricule">Matricule</label>
-                  <input type="text" className='border border-gray-500' />
-                </div>
-                <div>
-                  <label htmlFor="password">Password</label>
-                  <input type="password" className='border border-gray-500' />
-                </div>
-                <div>
-                    <p>Don't have an account ? <NavLink to='/register' className='text-blue-400 hover:text-blue-500'>Register</NavLink></p>
-                </div>
-                <div>
-                  <button className='bg-blue-500 text-gray-50 px-2 rounded-[8px] hover:bg-blue-600' type='button'>Log In</button>
-                </div>
-              </form>
-          </div>
-        </div>
-    </>
-  )
+            </div>
+        </>
+    );
 }
 
-export default Login
+export default Login;

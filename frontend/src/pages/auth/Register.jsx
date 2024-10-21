@@ -1,22 +1,44 @@
+import axios from "axios";
 import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
 import Form from "../../components/forms/Form";
 import Input from "../../components/forms/Input";
 import Select from "../../components/forms/Select";
-import { NavLink } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { setCurrentUser } from "../../features/currentUser";
+import { toast } from "react-toastify";
 
 function Register() {
+    const url = useSelector((state)=>state.backendUrl.value)
+    const toastConfig =useSelector((state)=>state.toastConfig.value)
+    const dispatch = useDispatch();
+
+    const register = async (data) => {
+        try {
+            const currentUser = await axios.post(
+                `${url}/register`,
+                data
+            );
+            dispatch(setCurrentUser(currentUser.data));
+        } catch (error) {
+            const message = error.response.data.message;
+            toast.error(message, toastConfig);
+        }
+    };
+
     const onSubmit = (data) => {
-        const data_end = {
+        const register_data = {
             ...data,
+            status: data.role === "isChefService" ? true : false,
             isChefService: data.role === "isChefService",
             isChefUnit: data.role === "isChefUnit",
             isPersCellule: data.role === "isPersCellule",
             isPersSecretariat: data.role === "isPersSecretariat",
         };
 
-        delete data_end.role;
+        delete register_data.role;
 
-        console.log("form data : ", data_end);
+        register(register_data);
     };
 
     const [units, setUnits] = useState([
@@ -124,6 +146,7 @@ function Register() {
                                         message: "format du mail invalide",
                                     },
                                 }}
+                                autoComplete="new-mail"
                             />
                         </div>
 
@@ -152,6 +175,9 @@ function Register() {
                                             label: "Personnel du secretariat",
                                         },
                                     ]}
+                                    validation={{
+                                        required: "valeur requise !",
+                                    }}
                                 />
                             </div>
                             <div className="ml-3">
@@ -172,6 +198,7 @@ function Register() {
                                 validation={{
                                     required: "Valeur requise.",
                                 }}
+                                autoComplete="off"
                             />
                         </div>
                         <div className="mt-2">
@@ -183,14 +210,24 @@ function Register() {
                                 validation={{
                                     required: "Valeur requise.",
                                 }}
+                                autoComplete="off"
                             />
                         </div>
                         <div className="mt-6 flex justify-end ">
                             <div className="flex flex-row items-center justify-between">
-                                <div className="mr-4 underline text-gray-500"><NavLink to="/login" > S'authentifier ? </NavLink></div>
-                                <button type="submit" className="bg-gray-700 text-white py-1 px-4 rounded-[8px] hover:bg-gray-600">S'inscrire</button>
+                                <div className="mr-4 underline text-gray-500">
+                                    <NavLink to="/guest/login">
+                                        {" "}
+                                        S'authentifier ?{" "}
+                                    </NavLink>
+                                </div>
+                                <button
+                                    type="submit"
+                                    className="bg-gray-700 text-white py-1 px-4 rounded-[8px] hover:bg-gray-600"
+                                >
+                                    S'inscrire
+                                </button>
                             </div>
-                            
                         </div>
                     </Form>
                 </div>

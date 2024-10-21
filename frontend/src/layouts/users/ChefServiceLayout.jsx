@@ -1,16 +1,26 @@
-import React from 'react'
-import MereLayout from '../MereLayout'
-import SidebarContents from '../../components/SidebarContent'
-import { SideBarLinks } from '../../components/Sidebar'
-import { BookUser, GraduationCap, Handshake, LayoutDashboard, NotebookText, Outdent, Users, Workflow } from 'lucide-react'
-import { Outlet } from 'react-router-dom'
+import React from "react";
+import MereLayout from "../MereLayout";
+import SidebarContents from "../../components/SidebarContent";
+import { SideBarLinks } from "../../components/Sidebar";
+import {
+    BookUser,
+    GraduationCap,
+    Handshake,
+    LayoutDashboard,
+    NotebookText,
+    Users,
+    Workflow,
+} from "lucide-react";
+import { Outlet } from "react-router-dom";
+
 
 function ChefServiceLayout() {
-  return (
-    <>
-        <MereLayout>
-            <SidebarContents>
-            <SideBarLinks
+
+    return (
+        <>
+            <MereLayout>
+                <SidebarContents>
+                    <SideBarLinks
                         icon={<LayoutDashboard size={22} />}
                         text={"Dashboard"}
                         href={"/chefService/"}
@@ -47,13 +57,13 @@ function ChefServiceLayout() {
                         text="Work Units"
                         href="/chefService/units"
                     />
-            </SidebarContents>
-            <div>
-                <Outlet />
-            </div>
-        </MereLayout>
-    </>
-  )
+                </SidebarContents>
+                <div>
+                    <Outlet />
+                </div>
+            </MereLayout>
+        </>
+    );
 }
 
-export default ChefServiceLayout
+export default ChefServiceLayout;

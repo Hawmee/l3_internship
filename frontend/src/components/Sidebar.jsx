@@ -1,11 +1,30 @@
 import { LogOut, User } from "lucide-react";
 import React from "react";
 import { NavLink } from "react-router-dom";
+import axios from "axios";
+import { Slide, toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { setCurrentUser } from "../features/currentUser";
+import Cookies from "js-cookie";
 
 export default function Sidebar({children}) {
-  const user = {
-    name: "user",
-    matricule: "1234567890",
+  const user = useSelector((state)=>state.currentUser.value)
+  const toastConfig = useSelector((state)=>state.toastConfig.value)
+  const url = useSelector((state)=>state.backendUrl.value)
+
+  const dispatch = useDispatch()
+
+  const logout =() => {
+    
+    axios.post(`${url}/logout` , {withCredentials: true})
+    .then((res)=>{
+      console.log(res);
+      // dispatch(setCurrentUser(null))
+      Cookies.remove("user_cookie")
+    }).catch(error=>{
+      console.log(error);
+      
+    })
   };
   return (
     <>
@@ -13,22 +32,22 @@ export default function Sidebar({children}) {
         <nav className="h-full flex flex-col bg-white border-r-[2px] shadow-sm">
           <div className="flex-1 px-3 mt-5">{children}</div>
 
-          <div className="UserProfile border-t border-gray-300 flex p-3">
-            <div className="bg-gray-600 rounded-[18px] px-1.5 pt-1">
+          <div className="UserProfile border-t border-gray-300 flex p-3 flex-row items-center ">
+            <div className="bg-gray-600 rounded-[18px] px-1.5 pt-1 h-[5vh]">
               <User color="white" size={25} />
             </div>
             <div className="flex items-center justify-between w-52 ml-3">
               <div className="leading-4 cursor-pointer">
                 <div>
                   <h4 className="font-semibold text-gray-500 hover:text-gray-600">
-                    {user.name} {user.last_name}
+                    {user&&user.nom} {user&&user.prenom}
                   </h4>
                   <span className="text-gray-500 text-[15px] ">
-                    ID: {user.matricule}
+                    ID: {user&&user.matricule}
                   </span>
                 </div>
               </div>
-              <button className="text-red-400 hover:text-red-500">
+              <button className="text-red-400 hover:text-red-500" onClick={logout}>
                 <button>
                   <LogOut size={28} />
                 </button>
