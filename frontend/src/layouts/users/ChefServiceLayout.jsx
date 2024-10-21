@@ -29,32 +29,32 @@ function ChefServiceLayout() {
                     />
                     <SideBarLinks
                         icon={<Handshake size={22} />}
-                        text="Interviews"
-                        href={"chefSRB.interview"}
+                        text="Entretient"
+                        href={"/chefService/interviews"}
                     />
                     <SideBarLinks
                         icon={<NotebookText size={22} />}
-                        text="Offers"
+                        text="Offres"
                         href={"/chefService/offers"}
                     />
                     <SideBarLinks
                         icon={<BookUser size={22} />}
-                        text="Interns"
-                        href={"chefSRB.interns"}
+                        text="Stagiaires"
+                        href={"/chefService/Interns"}
                     />
                     <SideBarLinks
                         icon={<GraduationCap size={22} />}
-                        text="InternShips"
-                        href={"chefSRB.internships"}
+                        text="Stages"
+                        href={"/chefService/Internships"}
                     />
                     <SideBarLinks
                         icon={<Users size={22} />}
-                        text="Accounts"
-                        href={"chefSRB.accounts"}
+                        text="Comptes utilisateurs"
+                        href={"/chefService/accounts"}
                     />
                     <SideBarLinks
                         icon={<Workflow size={22} />}
-                        text="Work Units"
+                        text="Unités de travail"
                         href="/chefService/units"
                     />
                 </SidebarContents>

@@ -7,8 +7,6 @@ function Offers() {
 
     const current_user = useSelector((state)=>state.currentUser.value)
 
-    console.log(current_user)
-
   return (
     <>
         {(current_user&&current_user.isChefService) && <ChefServiceOffers />}

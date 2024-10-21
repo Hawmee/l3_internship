@@ -12,6 +12,11 @@ import Dashboard from "../pages/dashboard/Dashboard";
 import WaitingPage from "../pages/redirections/WaitingPage";
 import ProtectedRoute from "./ProtectedRoute";
 import Offers from "../pages/Offers/Offers";
+import InterViews from "../pages/interviews/InterViews";
+import Interns from "../pages/interns/Interns";
+import InternShips from "../pages/internShips/InternShips";
+import Accounts from "../pages/accounts/Accounts";
+import Tasks from "../pages/tasks/Tasks";
 
 const router = createBrowserRouter([
   {
@@ -32,8 +37,24 @@ const router = createBrowserRouter([
             element: <Dashboard />,
           },
           {
+            path: "interviews",
+            element: <InterViews />,
+          },
+          {
             path:"offers",
             element:<Offers />
+          },
+          {
+            path: "interns",
+            element: <Interns />,
+          },
+          {
+            path: "internships",
+            element: <InternShips />,
+          },
+          {
+            path: "accounts",
+            element: <Accounts />,
           },
           {
             path: "units",
@@ -47,8 +68,20 @@ const router = createBrowserRouter([
         children:[
           {
             path:"",
+            element:<Dashboard />
+          },
+          {
+            path:"offers",
             element:<Offers />
-          }
+          },
+          {
+            path:"interns",
+            element:<Interns />
+          },
+          {
+            path:"tasks",
+            element:<Tasks />
+          },
         ]
       },
       {

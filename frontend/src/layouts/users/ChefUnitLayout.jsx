@@ -3,7 +3,7 @@ import MereLayout from "../MereLayout";
 import SidebarContents from "../../components/SidebarContent";
 import { SideBarLinks } from "../../components/Sidebar";
 import { Outlet } from "react-router-dom";
-import { LayoutDashboard } from "lucide-react";
+import { BookUser, ClipboardList, LayoutDashboard, ListCheck, ListTodo, NotebookText } from "lucide-react";
 
 function ChefUnitLayout() {
     return (
@@ -13,22 +13,27 @@ function ChefUnitLayout() {
                     <SideBarLinks
                         icon={<LayoutDashboard size={22} />}
                         text={"Dashboard"}
+                        href={"/chefUnits/"}
                         alert
                         notifs={"+2"}
                     />
 
                     <SideBarLinks
-                        icon={<LayoutDashboard size={22} />}
-                        text={"Dash"}
-                        alert
-                        notifs={"+2"}
+                        icon={<NotebookText size={22} />}
+                        text={"Offres"}
+                        href={"/chefUnits/offers"}
                     />
 
                     <SideBarLinks
-                        icon={<LayoutDashboard size={22} />}
-                        text={"board"}
-                        alert
-                        notifs={"+2"}
+                        icon={<BookUser size={22} />}
+                        text={"Stagiaires"}
+                        href={"/chefUnits/interns"}
+                    />
+
+                    <SideBarLinks
+                        icon={<ClipboardList size={22} />}
+                        text={"Taches"}
+                        href={"/chefUnits/tasks"}
                     />
                 </SidebarContents>
                 <div>
