@@ -1,17 +1,22 @@
 import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Slide, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { setBackendUrl } from './features/urlBackend'
 import { setToastConfig } from './features/toastConfig'
 import axios from 'axios'
 import { setCurrentUser } from './features/currentUser'
+import { newUnit, setUnit } from './features/unit'
+import { io } from 'socket.io-client'
 
 
 function App({children}) {
 
   const backUrl = import.meta.env.VITE_BACKEND_URL
+  const socketUrl = import.meta.env.VITE_SOCKET_URL
+  const socket = io(socketUrl)
   const dispatch = useDispatch()
+  const units = useSelector((state)=>state.unit.value)
 
   const cookieHandling = async()=>{
     const cookie= await axios.get(`${backUrl}/cookie`  , {withCredentials:true})
@@ -19,6 +24,18 @@ function App({children}) {
     dispatch(setCurrentUser(current_user))
     console.log(current_user);
     
+  }
+
+  const getAllUnits= async()=>{
+    try {
+      const units_data = await axios.get(`${backUrl}/unit`)
+      if(units_data){
+        const unit = units_data.data.data
+        dispatch(setUnit(unit))
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   useEffect(()=>{
@@ -33,10 +50,27 @@ function App({children}) {
       theme: "light",
     }
     
+    getAllUnits()
     cookieHandling()
     dispatch(setBackendUrl(backUrl))
     dispatch(setToastConfig(toastConfig))
-  } , [])
+
+
+  } , [dispatch , backUrl])
+
+
+  useEffect(()=>{
+
+    socket.on("new_unit" , (new_unit)=>{      
+      dispatch(newUnit(new_unit))
+      console.log("updated");
+      
+    })
+
+    return () => {
+      socket.off("new_unit");
+    };
+  } , [socket, dispatch])
 
   return (
     <>

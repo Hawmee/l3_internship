@@ -36,7 +36,7 @@ function ChefUnitLayout() {
                         href={"/chefUnits/tasks"}
                     />
                 </SidebarContents>
-                <div>
+                <div className="h-full">
                     <Outlet />
                 </div>
             </MereLayout>

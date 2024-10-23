@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { Navigate, useNavigate } from "react-router-dom";
 
 function ProtectedRoute({ element, requiredUserType }) {
 
 
-
-    const navigate = useNavigate()
+  const current_user = useSelector((state)=>state.currentUser.value)
+  const navigate = useNavigate()
   const usertype = "chefService";
   const [status , setStatus] = useState(true)
 
@@ -15,7 +16,7 @@ function ProtectedRoute({ element, requiredUserType }) {
       navigate('/')
     }
 
-    if (!status) {
+    if (current_user && !current_user.status) {
         navigate('/waiting')
     }
 

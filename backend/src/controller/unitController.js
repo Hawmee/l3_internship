@@ -17,11 +17,15 @@ export const getAllUnit = async(req,res)=>{
 
 
 export const newUnit = async(req,res)=>{
-    const {nom , isDivision , isBureau , isDependant , division_id} = req.body
+    const unite_data = req.body
     try {
         const unite = await prisma.unites.create({
-            data:{nom , isDivision , isBureau,isDependant ,division_id},
+            data: unite_data,
+            include:{
+                sur_division:true
+            }
         })
+        req.io.emit("new_unit" , unite)
         res.status(200).send(unite)
     } catch (error) {
         res.status(400).send({message: error.message})

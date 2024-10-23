@@ -6,28 +6,47 @@ import { Provider } from "react-redux";
 import { RouterProvider } from "react-router-dom";
 import App from "./App.jsx";
 import "./assets/fonts/fonts.css";
-import currentUserReducer from './features/currentUser.js';
-import tokenReducer from './features/token.js';
-import backendUrlReducer from './features/urlBackend.js';
-import toastConfigReducer from './features/toastConfig.js'
+import currentUserReducer from "./features/currentUser.js";
+import tokenReducer from "./features/token.js";
+import backendUrlReducer from "./features/urlBackend.js";
+import toastConfigReducer from "./features/toastConfig.js";
+import accounReducer from "./features/accounts.js";
+import attestationReducer from "./features/attestation.js";
+import entretientReducer from "./features/entretient.js";
+import offreReducer from "./features/offres.js";
+import perfReducer from "./features/perf.js";
+import stageReducer from "./features/stage.js";
+import stagiaireReducer from "./features/stagiaire.js";
+import tacheReducer from "./features/tache.js";
+import unitReducer from "./features/unit.js";
 import "./global.css";
 import router from "./routes/router.jsx";
+import './components/styles/Table.css'
 
 const store = configureStore({
-  reducer:{
-    token : tokenReducer ,
-    currentUser : currentUserReducer ,
-    backendUrl : backendUrlReducer ,
-    toastConfig : toastConfigReducer
-  }
-})
+    reducer: {
+        token: tokenReducer,
+        currentUser: currentUserReducer,
+        backendUrl: backendUrlReducer,
+        toastConfig: toastConfigReducer,
+        account: accounReducer,
+        attestation: attestationReducer,
+        entretient: entretientReducer,
+        offre: offreReducer,
+        perf: perfReducer,
+        stage: stageReducer,
+        stagiaire: stagiaireReducer,
+        tache: tacheReducer,
+        unit: unitReducer,
+    },
+});
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <Provider store={store}>
-      <App>
-        <RouterProvider router={router} />
-      </App>
-    </Provider>
-  </StrictMode>
+    <StrictMode>
+        <Provider store={store}>
+            <App>
+                <RouterProvider router={router} />
+            </App>
+        </Provider>
+    </StrictMode>
 );

@@ -4,7 +4,7 @@ import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import Authenticated from "../layouts/AuthenticatedLayout";
 import ChefServiceLayout from "../layouts/users/ChefServiceLayout";
-import ChefUnitLayout from "../layouts/users/chefUnitLayout";
+import ChefUnitLayout from "../layouts/users/ChefUnitLayout";
 import PersCelluleLayout from "../layouts/users/PersCelluleLayout";
 import PersSecLayout from "../layouts/users/PersSecLayout";
 import Units from "../pages/units/Units";
@@ -64,7 +64,10 @@ const router = createBrowserRouter([
       },
       {
         path: "chefUnits",
-        element: <ChefUnitLayout />,
+        element: <ProtectedRoute 
+          requiredUserType={"chefUnit"}
+          element={<ChefUnitLayout />}
+        />,
         children:[
           {
             path:"",
@@ -80,7 +83,7 @@ const router = createBrowserRouter([
           },
           {
             path:"tasks",
-            element:<Tasks />
+            element:<Tasks/>
           },
         ]
       },

@@ -5,7 +5,6 @@ import axios from "axios";
 import { Slide, toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentUser } from "../features/currentUser";
-import Cookies from "js-cookie";
 
 export default function Sidebar({children}) {
   const user = useSelector((state)=>state.currentUser.value)

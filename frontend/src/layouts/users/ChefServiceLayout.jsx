@@ -58,7 +58,7 @@ function ChefServiceLayout() {
                         href="/chefService/units"
                     />
                 </SidebarContents>
-                <div>
+                <div className="h-full">
                     <Outlet />
                 </div>
             </MereLayout>
