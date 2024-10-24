@@ -13,9 +13,9 @@ function Table({ data  , onValidate}) {
     return (
         <>
             <div className="px-2 pb-2 relative">
-                <div className=" rounded-[12px] border shadow-md">
+                <div className=" p-2 rounded-[12px] border shadow-md">
                     <div className="table_main h-[75vh]   overflow-auto">
-                        <table className="table  text-left  w-full p-[1rem] border-collapse border-separate border-spacing-y-1">
+                        <table className="table  text-left  w-full p-[1rem] b border-collapse">
                             <thead className="rounded-[20px]">
                                 <tr className="sticky text-gray-700 bg-gray-100 z-12 top-0 left-0">
                                     <th className="rounded-tl-[12px] rounded-bl-[12px]">

@@ -15,6 +15,9 @@ export const login = async (req, res) => {
             where: {
                 matricule: matricule,
             },
+            include:{
+                unite:true,
+            },
         });
 
         if (user) {

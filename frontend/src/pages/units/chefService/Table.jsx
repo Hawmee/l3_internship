@@ -21,7 +21,7 @@ function Table({ data, popup, addPopUp, del, setDel, onEdit }) {
 
     return (
         <>
-            <div className="px-2 pb-2 relative text-[16px]">
+            <div className="px-3 mt-4 pb-2 relative text-[16px] bg-gray-50 ">
                 <div className="p-2 rounded-[12px] border shadow-md ">
                     <div
                         ref={tableContainerRef}

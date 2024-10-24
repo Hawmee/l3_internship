@@ -56,7 +56,6 @@ model Offres {
   competence_requis String
   date_debut DateTime
   date_fin DateTime
-  place Int
   unite_id Int?
   unite Unites? @relation("OffersToUnit" , fields: [unite_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
 

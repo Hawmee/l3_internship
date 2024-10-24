@@ -18,7 +18,6 @@ function App({children}) {
   const socketUrl = import.meta.env.VITE_SOCKET_URL
   const socket = io(socketUrl)
   const dispatch = useDispatch()
-  const units = useSelector((state)=>state.unit.value)
 
   const cookieHandling = async()=>{
     const cookie= await axios.get(`${backUrl}/cookie`  , {withCredentials:true})
@@ -56,6 +55,7 @@ function App({children}) {
     dispatch(setBackendUrl(backUrl))
     dispatch(setSocketUrl(socketUrl))
     dispatch(setToastConfig(toastConfig))
+    
 
   } , [dispatch , backUrl , socketUrl])
 

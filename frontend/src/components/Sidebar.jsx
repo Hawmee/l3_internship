@@ -5,6 +5,7 @@ import axios from "axios";
 import { Slide, toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentUser } from "../features/currentUser";
+import { current } from "@reduxjs/toolkit";
 
 export default function Sidebar({children}) {
   const user = useSelector((state)=>state.currentUser.value)
@@ -25,6 +26,11 @@ export default function Sidebar({children}) {
       toast.error(message , toastConfig)
     }
   };
+
+
+
+  console.log(user);
+  
   return (
     <>
       <aside className="h-full">
