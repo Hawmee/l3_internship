@@ -6,7 +6,11 @@ export const getAllUnit = async(req,res)=>{
 
     try {
         const unites = await prisma.unites.findMany({
-            include: {sur_division:true}
+            include: {
+                sur_division:true,
+                stages: true,
+                offers:true
+            }
         })
         
         res.status(200).send({data:unites})

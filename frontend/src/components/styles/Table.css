@@ -4,7 +4,7 @@
 }
 
 .table_main::-webkit-scrollbar-thumb {
-    background: #9f9f9f;
+    background: #6162627f;
     border-radius: 10px;
     visibility: hidden;
 }

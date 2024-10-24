@@ -7,11 +7,7 @@ const accountSlice = createSlice({
 
     reducers:{
         setAccounts: (state , action) =>{
-                if(state.value.length > 0){
-                    state.value.push(payload.action)
-                }else{
-                    state.value = action.payload
-                }
+            state.value = action.payload
         } ,
 
         newAccount : (state , action) =>{

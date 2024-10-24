@@ -16,7 +16,7 @@ function PopUpContainer({popup ,closePopUp , children}) {
                             <X size={14} />
                         </button>
                     </div>
-                    <div className="min-w-[32vh] min-h-[42vh] flex flex-col py-4 px-10">
+                    <div className="min-w-[12vh] min-h-[12vh] flex flex-col py-4 px-8">
                         {children}
                     </div>
                 </div>

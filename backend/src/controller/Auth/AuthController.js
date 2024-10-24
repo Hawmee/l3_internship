@@ -52,7 +52,7 @@ export const register = async (req, res) => {
         isChefUnit,
         isPersCellule,
         isPersSecretariat,
-        unite_id,
+        unit_id,
     } = req.body;
 
     try {
@@ -82,8 +82,11 @@ export const register = async (req, res) => {
                     isChefUnit: isChefUnit,
                     isPersCellule: isPersCellule,
                     isPersSecretariat: isPersSecretariat,
-                    unite_id: unite_id,
+                    unite_id: unit_id,
                 },
+                include:{
+                    unite:true
+                }
             });
 
             const { password, ...client_user } = user;

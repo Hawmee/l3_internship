@@ -25,6 +25,7 @@ model Users{
   isChefUnit Boolean @default(false)
   isPersCellule Boolean @default(false)
   isPersSecretariat Boolean @default(false)
+  isNew Boolean @default(true)
   unite_id Int?
   unite Unites? @relation("UserToUnit" , fields: [unite_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
 
@@ -91,6 +92,8 @@ model Stages {
   observation String
   date_debut DateTime
   date_fin DateTime
+  isNew Boolean @default(false)
+  book_link String?
   unite Unites? @relation("StageToUnite" , fields: [unite_id] , references: [id])
   stagiaire Stagiaires @relation("StageStagiaire",fields: [stagiaire_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
 
@@ -104,6 +107,7 @@ model Attestation {
   id Int @id @default(autoincrement())
   status Boolean @default(false)
   stage_id Int @unique
+  isNew Boolean @default(false)
   stage Stages @relation(fields: [stage_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
 }
 
@@ -140,6 +144,7 @@ model Entretients {
   date_interview DateTime
   stagiaire_id Int
   offre_id Int
+  isNew Boolean @default(false)
   stagiaire Stagiaires @relation("EntretientStagiaire" , fields: [stagiaire_id] , references: [id])
   offre Offres @relation("EntretientOffre" , fields: [offre_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
 }

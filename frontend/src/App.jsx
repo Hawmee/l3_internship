@@ -8,6 +8,8 @@ import axios from 'axios'
 import { setCurrentUser } from './features/currentUser'
 import { newUnit, setUnit } from './features/unit'
 import { io } from 'socket.io-client'
+import { newAccount } from './features/accounts'
+import { setSocketUrl } from './features/socketUrl'
 
 
 function App({children}) {
@@ -22,16 +24,15 @@ function App({children}) {
     const cookie= await axios.get(`${backUrl}/cookie`  , {withCredentials:true})
     const current_user = cookie.data
     dispatch(setCurrentUser(current_user))
-    console.log(current_user);
     
   }
 
   const getAllUnits= async()=>{
     try {
       const units_data = await axios.get(`${backUrl}/unit`)
-      if(units_data){
-        const unit = units_data.data.data
-        dispatch(setUnit(unit))
+      const unit = units_data.data.data
+      if(Array.isArray(unit)){
+        dispatch(setUnit(unit))              
       }
     } catch (error) {
       console.log(error)
@@ -49,26 +50,32 @@ function App({children}) {
       progress: undefined,
       theme: "light",
     }
-    
+
     getAllUnits()
     cookieHandling()
     dispatch(setBackendUrl(backUrl))
+    dispatch(setSocketUrl(socketUrl))
     dispatch(setToastConfig(toastConfig))
 
-
-  } , [dispatch , backUrl])
+  } , [dispatch , backUrl , socketUrl])
 
 
   useEffect(()=>{
 
     socket.on("new_unit" , (new_unit)=>{      
-      dispatch(newUnit(new_unit))
-      console.log("updated");
+      dispatch(newUnit(new_unit))      
+    })
+
+    socket.on("new_user" , (new_user)=>{
+      dispatch(newAccount(new_user))
+      // console.log(new_user);
       
     })
 
+
     return () => {
       socket.off("new_unit");
+      socket.off("new_user");
     };
   } , [socket, dispatch])
 

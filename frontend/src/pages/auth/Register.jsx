@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 function Register() {
     const url = useSelector((state)=>state.backendUrl.value)
     const toastConfig =useSelector((state)=>state.toastConfig.value)
+    const units =useSelector((state)=>state.unit.value)
     const dispatch = useDispatch();
 
     const register = async (data) => {
@@ -29,6 +30,7 @@ function Register() {
     const onSubmit = (data) => {
         const register_data = {
             ...data,
+            unit_id: data.unit_id ? Number(data.unit_id): null ,
             status: data.role === "isChefService" ? true : false,
             isChefService: data.role === "isChefService",
             isChefUnit: data.role === "isChefUnit",
@@ -39,16 +41,21 @@ function Register() {
         delete register_data.role;
 
         register(register_data);
+        // console.log(register_data);
+        
     };
 
-    const [units, setUnits] = useState([
-        { id: 1, mail: "mail@mail.te", name: "idk" },
-    ]);
-
-    const unitOptions = [
-        { value: "", label: "Unites de travails" },
-        ...units.map((unit) => ({ value: unit.id, label: unit.name })),
-    ];
+    const units_options =
+        Array.isArray(units) && units.length > 0
+            ? [
+                  { value: "", label: "Unité de travail" },
+                  ...units.map((unit) => ({
+                      value: Number(unit.id),
+                      label: unit.nom,
+                      name,
+                  })),
+              ]
+            : [{ value: "", label: "Sur-Unité" }];
 
     return (
         <>
@@ -185,7 +192,7 @@ function Register() {
                                     label={"Unité de travail"}
                                     name={"unit_id"}
                                     className="border-gray-300 border-[2px] rounded-[6px] p-2 w-[11vw] focus:bg-gray-100"
-                                    options={unitOptions}
+                                    options={units_options}
                                 />
                             </div>
                         </div>

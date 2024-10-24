@@ -9,9 +9,11 @@ function MainContainer({children}) {
   return (
     <>
         <div className='flex flex-col h-full '>
-            {title}
-            {searchContainer}
-            {content}
+            <div>
+              {title}
+            </div>
+            <div>{searchContainer}</div>
+            <div className='h-full'>{content}</div>
         </div>
     </>
   )

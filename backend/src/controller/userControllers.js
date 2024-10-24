@@ -26,6 +26,37 @@ export const newUser = async (req, res) => {
     }
 };
 
+export const validateUser = async(req,res)=>{
+    const {id} = req.params
+    const user = req.body
+    try {
+        const validated = await prisma.users.update({
+            where:{id: Number(id)},
+            data:{
+                status: true ,
+                isNew:false
+            },
+            include:{
+                unite:true ,
+            }
+        })
+
+        req.io.emit(`user_validated/${user.matricule}` , {
+            message:"Votre compte a été validé ; Veuillez vous reconnecter !!!",
+            isPopup:true
+        })
+
+        req.io.emit("user_validated" , validated)
+
+        res.status(200).send()
+    } catch (error) {
+        res.status(500).send({message : error.message})
+    }
+}
+
+
+
+
 export const partialUpdateUser = async (req, res) => {
     const {id} = req.params
     const updated_user_data = req.body

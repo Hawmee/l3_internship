@@ -14,17 +14,7 @@ export default function Sidebar({children}) {
   const dispatch = useDispatch()
 
   const logout =async() => {
-    
-    // axios.post(`${url}/logout` , "logged_out" ,{ withCredentials: true })
-    // .then((res)=>{
-    //   console.log(res);
-    //   dispatch(setCurrentUser(null))
-    //   Cookies.remove("user_cookie")
-    // }).catch(error=>{
-    //   console.log(error);
-      
-    // })
-
+  
     try {
       const logged_out = await axios.post(`${url}/logout` , "logged_out" , {withCredentials :true})
       const message = logged_out.data.message
@@ -57,9 +47,9 @@ export default function Sidebar({children}) {
                 </div>
               </div>
               <button className="text-red-400 hover:text-red-500" onClick={logout}>
-                <button>
+                <div>
                   <LogOut size={28} />
-                </button>
+                </div>
               </button>
             </div>
           </div>
@@ -89,9 +79,7 @@ export function SideBarLinks({ icon, text, href, alert, notifs }) {
         {icon}
         <span className=" ml-3">{text}</span>
         {alert && (
-          <div className="absolute right-2 px-2 rounded-[10px] bg-blue-400 text-[12px] text-gray-50">
-            <p>{notifs}</p>
-          </div>
+          <div className="absolute right-2 p-[5px] rounded-[10px] bg-blue-400 w-2 text-gray-50" />
         )}
       </NavLink>
     </li>
