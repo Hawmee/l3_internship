@@ -1,21 +1,26 @@
 import { LogOut, User } from "lucide-react";
-import React from "react";
+import React, {useState} from "react";
 import { NavLink } from "react-router-dom";
 import axios from "axios";
 import { Slide, toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentUser } from "../features/currentUser";
-import { current } from "@reduxjs/toolkit";
+import PopUpContainer from "./containers/PopUpContainer.jsx";
 
+// eslint-disable-next-line react/prop-types
 export default function Sidebar({children}) {
   const user = useSelector((state)=>state.currentUser.value)
   const toastConfig = useSelector((state)=>state.toastConfig.value)
   const url = useSelector((state)=>state.backendUrl.value)
 
   const dispatch = useDispatch()
+  const [confirmation , setConfirmation] = useState(false)
+
+const handleLogout = ()=>{
+    setConfirmation(!confirmation)
+}
 
   const logout =async() => {
-  
     try {
       const logged_out = await axios.post(`${url}/logout` , "logged_out" , {withCredentials :true})
       const message = logged_out.data.message
@@ -28,9 +33,6 @@ export default function Sidebar({children}) {
   };
 
 
-
-  console.log(user);
-  
   return (
     <>
       <aside className="h-full">
@@ -52,7 +54,7 @@ export default function Sidebar({children}) {
                   </span>
                 </div>
               </div>
-              <button className="text-red-400 hover:text-red-500" onClick={logout}>
+              <button className="text-red-400 hover:text-red-500" onClick={handleLogout}>
                 <div>
                   <LogOut size={28} />
                 </div>
@@ -61,13 +63,26 @@ export default function Sidebar({children}) {
           </div>
         </nav>
       </aside>
+      {confirmation &&
+          <PopUpContainer popup={confirmation} closePopUp={setConfirmation}>
+              <div className={"text-[20px] mb-2"}>
+                Deconnexion
+              </div>
+              <div className={"text-[18px] w-[18vw] mb-3 "}>
+                Voulez vous vous deconnecter ?
+              </div>
+              <div className={"flex flex-row justify-end"}>
+                <button className={"bg-gray-500 rounded-[8px] text-white hover:bg-gray-600 py-1 px-2 mr-2"} onClick={handleLogout}>Annuler</button>
+                <button className={"bg-blue-500 rounded-[8px] text-white hover:bg-blue-600 py-1 px-2"} onClick={logout}>Se deconnecter</button>
+              </div>
+          </PopUpContainer>
+      }
     </>
   );
 }
 
-export function SideBarLinks({ icon, text, href, alert, notifs }) {
-  const routeHref = href ? href : '/';
-
+// eslint-disable-next-line react/prop-types
+export function SideBarLinks({ icon, text, href, alert}) {
   return (
     <li>
       <NavLink 

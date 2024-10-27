@@ -11,7 +11,7 @@ import {
     Users,
     Workflow,
 } from "lucide-react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { editAccount, newAccount, setAccounts } from "../../features/accounts";
@@ -71,6 +71,8 @@ function ChefServiceLayout() {
     const accounts = useSelector((state)=>state.account.value)
     const interviews = useSelector((state)=>state.entretient.value)
     const attestations =useSelector((state)=>state.attestation.value)
+    const user = useSelector((state)=> state.currentUser.value)
+    const navigate = useNavigate()
 
 
     const isNewAccounts = Array.isArray(accounts) && accounts.some(account => account.isNew === true)
@@ -97,6 +99,12 @@ function ChefServiceLayout() {
             socket.off("user_validated")
         }
     } , [socket])
+
+    useEffect(()=>{
+        if( !user.isChefService ){
+            navigate('/guest/login')
+        }
+    },[user])
 
     return (
         <>

@@ -1,7 +1,7 @@
 import React from "react";
 import { useFormContext } from "react-hook-form";
 
-function Input({ name, label, validation, ...props }) {
+function DatePicker({ name, label, validation, ...props }) {
     const {
         register,
         formState: { errors },
@@ -14,7 +14,7 @@ function Input({ name, label, validation, ...props }) {
                 <input
                     {...register(name, validation)}
                     {...props}
-                    className="border border-gray-300 border-[2px] rounded-[6px] p-2"
+                    className=" border-gray-300 border-[2px] rounded-[6px] p-2"
                 />
                 {errors[name] && (
                     <p className="text-red-400 max-w-full">
@@ -26,4 +26,4 @@ function Input({ name, label, validation, ...props }) {
     );
 }
 
-export default Input;
+export default DatePicker;

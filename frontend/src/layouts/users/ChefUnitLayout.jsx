@@ -1,11 +1,23 @@
-import React from "react";
-import MereLayout from "../MereLayout";
-import SidebarContents from "../../components/SidebarContent";
+import { BookUser, ClipboardList, LayoutDashboard, NotebookText } from "lucide-react";
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { Outlet, useNavigate } from "react-router-dom";
 import { SideBarLinks } from "../../components/Sidebar";
-import { Outlet } from "react-router-dom";
-import { BookUser, ClipboardList, LayoutDashboard, ListCheck, ListTodo, NotebookText } from "lucide-react";
+import SidebarContents from "../../components/SidebarContent";
+import MereLayout from "../MereLayout";
 
 function ChefUnitLayout() {
+    const user = useSelector((state)=> state.currentUser.value)
+    const navigate = useNavigate()
+
+
+    useEffect(()=>{
+        if( !user.isChefUnit ){
+            navigate('/guest/login')
+        }
+    },[user])
+
+
     return (
         <>
             <MereLayout>

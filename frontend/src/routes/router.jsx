@@ -17,105 +17,135 @@ import Interns from "../pages/interns/Interns";
 import InternShips from "../pages/internShips/InternShips";
 import Accounts from "../pages/accounts/Accounts";
 import Tasks from "../pages/tasks/Tasks";
+import Attestation from "../pages/Attestations/Attestation.jsx";
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Authenticated />,
-    children: [
-      {
-        path: "chefService",
-        element: (
-          <ProtectedRoute
-            element={<ChefServiceLayout />}
-            requiredUserType="chefService"
-          />
-        ),
+    {
+        path: "/",
+        element: <Authenticated />,
         children: [
-          {
-            path: "",
-            element: <Dashboard />,
-          },
-          {
-            path: "interviews",
-            element: <InterViews />,
-          },
-          {
-            path:"offers",
-            element:<Offers />
-          },
-          {
-            path: "interns",
-            element: <Interns />,
-          },
-          {
-            path: "internships",
-            element: <InternShips />,
-          },
-          {
-            path: "accounts",
-            element: <Accounts />,
-          },
-          {
-            path: "units",
-            element: <Units />,
-          },
+            {
+                path: "chefService",
+                element: <ProtectedRoute element={<ChefServiceLayout />} />,
+                children: [
+                    {
+                        path: "",
+                        element: <Dashboard />,
+                    },
+                    {
+                        path: "interviews",
+                        element: <InterViews />,
+                    },
+                    {
+                        path: "offers",
+                        element: <Offers />,
+                    },
+                    {
+                        path: "interns",
+                        element: <Interns />,
+                    },
+                    {
+                        path: "internships",
+                        element: <InternShips />,
+                    },
+                    {
+                        path: "accounts",
+                        element: <Accounts />,
+                    },
+                    {
+                        path: "units",
+                        element: <Units />,
+                    },
+                ],
+            },
+            {
+                path: "chefUnits",
+                element: <ProtectedRoute element={<ChefUnitLayout />} />,
+                children: [
+                    {
+                        path: "",
+                        element: <Dashboard />,
+                    },
+                    {
+                        path: "offers",
+                        element: <Offers />,
+                    },
+                    {
+                        path: "interns",
+                        element: <Interns />,
+                    },
+                    {
+                        path: "tasks",
+                        element: <Tasks />,
+                    },
+                ],
+            },
+            {
+                path: "persCellule",
+                element: <ProtectedRoute element={<PersCelluleLayout />} />,
+                children: [
+                    {
+                        path: "",
+                        element: <Offers />,
+                    },
+                    {
+                        path: "interns",
+                        element: <Interns />,
+                    },
+                    {
+                        path: "internships",
+                        element: <InternShips />,
+                    },
+                    {
+                        path: "interview" +
+                            "s",
+                        element: <InterViews />,
+                    },
+                    {
+                        path: "attestation",
+                        element: <Attestation />,
+                    },
+                ],
+            },
+            {
+                path: "persSecretariat",
+                element: <ProtectedRoute element={<PersSecLayout />} />,
+                children: [
+                    {
+                        path: "",
+                        element: <Offers />,
+                    },
+                    {
+                        path: "interns",
+                        element: <Interns />,
+                    },
+                    {
+                        path: "interviews",
+                        element: <InterViews />,
+                    },
+                ],
+            },
+            {
+                path: "/waiting",
+                element: <WaitingPage />,
+            },
         ],
-      },
-      {
-        path: "chefUnits",
-        element: <ProtectedRoute 
-          requiredUserType={"chefUnit"}
-          element={<ChefUnitLayout />}
-        />,
-        children:[
-          {
-            path:"",
-            element:<Dashboard />
-          },
-          {
-            path:"offers",
-            element:<Offers />
-          },
-          {
-            path:"interns",
-            element:<Interns />
-          },
-          {
-            path:"tasks",
-            element:<Tasks/>
-          },
-        ]
-      },
-      {
-        path: "persCellule",
-        element: <PersCelluleLayout />,
-      },
-      {
-        path: "persSecretariat",
-        element: <PersSecLayout />,
-      },
-      {
-        path: "/waiting",
-        element: <WaitingPage />,
-      },
-    ],
-  },
+    },
 
-  {
-    path: "/guest",
-    element: <Guest />,
-    children: [
-      {
-        path: "login",
-        element: <Login />,
-      },
-      {
-        path: "register",
-        element: <Register />,
-      },
-    ],
-  },
+    {
+        path: "/guest",
+        element: <Guest />,
+        children: [
+            {
+                path: "login",
+                element: <Login />,
+            },
+            {
+                path: "register",
+                element: <Register />,
+            },
+        ],
+    },
 ]);
 
 export default router;

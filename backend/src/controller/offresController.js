@@ -2,15 +2,11 @@ import prismaClient from "./prismaClient.js";
 
 const prisma = prismaClient;
 
-export const getAllOffres = async (req, res , internalcall=false) => {
+export const getAllOffres = async (req, res) => {
     try {
         const offres = await prisma.offres.findMany({
             include:{unite:true}
         })
-
-        if(internalcall){
-            return offres
-        }
 
         res.status(200).send(offres)
     } catch (error) {
@@ -24,6 +20,8 @@ export const newOffre = async (req, res) => {
         const offre = await prisma.offres.create({
             data: offre_data
         })
+
+        req.io.emit("new_offre" , offre)
         res.status(200).send({data: offre})
     } catch (error) {
         res.status(400).send({ message: error.message });
