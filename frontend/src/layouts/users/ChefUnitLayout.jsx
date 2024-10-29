@@ -12,7 +12,7 @@ function ChefUnitLayout() {
 
 
     useEffect(()=>{
-        if( !user.isChefUnit ){
+        if( user && !user.isChefUnit ){
             navigate('/guest/login')
         }
     },[user])

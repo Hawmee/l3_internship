@@ -33,7 +33,6 @@ function CSUnits() {
                   ...units.map((unit) => ({
                       value: unit.id,
                       label: unit.nom,
-                      name,
                   })),
               ]
             : [{ value: "", label: "Sur-Unité" }];

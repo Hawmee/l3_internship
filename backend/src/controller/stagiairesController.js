@@ -56,3 +56,4 @@ export const deleteStagiaire = async(req,res) => {
         res.status(400).send({ message: error.message });
     }
 }
+

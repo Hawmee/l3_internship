@@ -40,17 +40,17 @@ const handleLogout = ()=>{
           <div className="flex-1 px-3 mt-5">{children}</div>
 
           <div className="UserProfile border-t border-gray-300 flex p-3 flex-row items-center ">
-            <div className="bg-gray-600 rounded-[18px] px-1.5 pt-1 h-[5vh]">
+            <div className="bg-gray-600 rounded-[18px] px-1.5 pt-1 h-[35px]">
               <User color="white" size={25} />
             </div>
             <div className="flex items-center justify-between w-52 ml-3">
               <div className="leading-4 cursor-pointer">
                 <div>
-                  <h4 className="font-semibold text-gray-500 hover:text-gray-600">
+                  <h4 className="font-semibold text-gray-600 hover:text-gray-600 mb-1 text-[1.1rem]">
                     {user&&user.nom} {user&&user.prenom}
                   </h4>
-                  <span className="text-gray-500 text-[15px] ">
-                    ID: {user&&user.matricule}
+                  <span className="text-white bg-gray-600 rounded-[12px] px-2 text-sm ">
+                    {user&& (user.isChefService ? "Chef de Service": user.isChefUnit? "Chef d'Unité " : user.isPersCellule||user.isPersSecretariat? "Personnel" : "Utilisateur")}
                   </span>
                 </div>
               </div>

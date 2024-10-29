@@ -2,7 +2,7 @@ import express from "express";
 import userRouter from './userRouter.js'
 import authRouter from './Auth/authRouter.js'
 import attestationRouter from './attestationRouter.js'
-import entretientRouter from './entretientController.js'
+import entretientRouter from './entretientRouter.js'
 import offresRouter from './offresRouter.js'
 import perfRouter from './performanceRouter.js'
 import stagesRouter from './stagesRouter.js'

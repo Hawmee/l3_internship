@@ -25,7 +25,7 @@ function Card({data , handleCreateInterview}) {
                         <div className="flex flex-col justify-end mt-12 mr-2">
                             <div className="flex flex-row items-center justify-center">
                                 <div className="relative group">
-                                    <button className="mr-4 text-blue-500" onClick={handleCreateInterview}>
+                                    <button className="mr-4 text-blue-500" onClick={()=>{handleCreateInterview(offre)}}>
                                         <CalendarPlus size={22} strokeWidth={2.2}/>
                                     </button>
                                 </div>

@@ -19,7 +19,6 @@ import stageReducer from "./features/stage.js";
 import stagiaireReducer from "./features/stagiaire.js";
 import tacheReducer from "./features/tache.js";
 import unitReducer from "./features/unit.js";
-import socketUrlReducer from './features/socketUrl.js'
 import "./global.css";
 import router from "./routes/router.jsx";
 import './components/styles/Table.css'
@@ -29,7 +28,6 @@ const store = configureStore({
         token: tokenReducer,
         currentUser: currentUserReducer,
         backendUrl: backendUrlReducer,
-        socketUrl: socketUrlReducer,
         toastConfig: toastConfigReducer,
         account: accounReducer,
         attestation: attestationReducer,

@@ -20,6 +20,11 @@ function ChefUnitsOffers() {
     setAdd(!add)
   }
 
+  const offre_units= Array.isArray(offres)?(offres.filter(offre => offre.unite_id == current_user.unite_id)):[]
+
+  console.log(offre_units);
+  
+
 
 
   return (
@@ -28,7 +33,7 @@ function ChefUnitsOffers() {
         <TitleContainer>Offres de stages</TitleContainer>
         <div className='border-b-[2px] border-gray-200 mx-3'><SearchContainer>Search goes there</SearchContainer></div>
         <div>
-          <Card handleAdd={handleAdd} data={offres} />
+          <Card handleAdd={handleAdd} data={offre_units} />
         </div>
       </MainContainer>
 

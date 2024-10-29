@@ -56,6 +56,7 @@ model Offres {
   competence_requis String
   date_debut DateTime
   date_fin DateTime
+  status Boolean @default(true)
   unite_id Int?
   unite Unites? @relation("OffersToUnit" , fields: [unite_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
 
@@ -140,10 +141,11 @@ model Taches {
 model Entretients {
   id Int @id @default(autoincrement())
   status Boolean @default(false)
-  date_interview DateTime
+  date_interview DateTime?
   stagiaire_id Int
   offre_id Int
   isNew Boolean @default(false)
+
   stagiaire Stagiaires @relation("EntretientStagiaire" , fields: [stagiaire_id] , references: [id])
   offre Offres @relation("EntretientOffre" , fields: [offre_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
 }

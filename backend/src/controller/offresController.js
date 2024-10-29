@@ -18,7 +18,10 @@ export const newOffre = async (req, res) => {
     const offre_data = req.body
     try {
         const offre = await prisma.offres.create({
-            data: offre_data
+            data: offre_data,
+            include:{
+                unite:true
+            }
         })
 
         req.io.emit("new_offre" , offre)

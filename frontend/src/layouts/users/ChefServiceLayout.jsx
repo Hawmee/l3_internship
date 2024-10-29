@@ -19,14 +19,14 @@ import { setEntretient } from "../../features/entretient";
 import { setStage } from "../../features/stage";
 import { setAttestation } from "../../features/attestation";
 import { io } from "socket.io-client";
+import Socket from "../../features/Socket";
 
 
 function ChefServiceLayout() {
 
     const url= useSelector((state)=>state.backendUrl.value)
-    const socketUrl = useSelector((state)=> state.socketUrl.value)
     const dispatch = useDispatch()
-    const socket = io(socketUrl)
+    const socket = Socket
 
     const getAllAccounts= async ()=>{
         try {
@@ -94,14 +94,14 @@ function ChefServiceLayout() {
         socket.on("user_validated", (user)=>{
             dispatch(editAccount(user))
         })
-
+    
         return()=>{
             socket.off("user_validated")
         }
-    } , [socket])
+    } , [dispatch , socket])
 
     useEffect(()=>{
-        if( !user.isChefService ){
+        if( user && !user.isChefService ){
             navigate('/guest/login')
         }
     },[user])

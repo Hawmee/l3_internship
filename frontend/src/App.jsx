@@ -9,15 +9,16 @@ import { setCurrentUser } from './features/currentUser'
 import { newUnit, setUnit } from './features/unit'
 import { io } from 'socket.io-client'
 import { newAccount } from './features/accounts'
-import { setSocketUrl } from './features/socketUrl'
+import Socket from './features/Socket'
 
 
 function App({children}) {
 
   const backUrl = import.meta.env.VITE_BACKEND_URL
-  const socketUrl = import.meta.env.VITE_SOCKET_URL
-  const socket = io(socketUrl)
+  const socket = Socket
   const dispatch = useDispatch()
+
+  window.global = window;
 
   const cookieHandling = async()=>{
     const cookie= await axios.get(`${backUrl}/cookie`  , {withCredentials:true})
@@ -53,31 +54,30 @@ function App({children}) {
     getAllUnits()
     cookieHandling()
     dispatch(setBackendUrl(backUrl))
-    dispatch(setSocketUrl(socketUrl))
     dispatch(setToastConfig(toastConfig))
     
 
-  } , [dispatch , backUrl , socketUrl])
+  } , [dispatch , backUrl])
 
 
   useEffect(()=>{
-
-    socket.on("new_unit" , (new_unit)=>{      
-      dispatch(newUnit(new_unit))      
+  
+    socket.on("new_unit" , (new_unit)=>{
+      dispatch(newUnit(new_unit))
     })
-
+  
     socket.on("new_user" , (new_user)=>{
       dispatch(newAccount(new_user))
       // console.log(new_user);
-      
+  
     })
-
-
+  
+  
     return () => {
       socket.off("new_unit");
       socket.off("new_user");
     };
-  } , [socket, dispatch])
+  } , [dispatch , socket])
 
   return (
     <>
