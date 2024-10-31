@@ -14,12 +14,10 @@ import {
 import { Outlet, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { editAccount, newAccount, setAccounts } from "../../features/accounts";
-import { setEntretient } from "../../features/entretient";
-import { setStage } from "../../features/stage";
+import { editAccount, setAccounts } from "../../features/accounts";
 import { setAttestation } from "../../features/attestation";
-import { io } from "socket.io-client";
 import Socket from "../../features/Socket";
+import { isArray } from "../../functions/Functions";
 
 
 function ChefServiceLayout() {
@@ -32,7 +30,8 @@ function ChefServiceLayout() {
         try {
             const accounts_response = await axios.get(`${url}/users`)
             const accounts = accounts_response.data
-            if(Array.isArray(accounts)){
+            
+            if(isArray(accounts)){
                 dispatch(setAccounts(accounts))
             }
         } catch (error) {
@@ -41,25 +40,11 @@ function ChefServiceLayout() {
         }
     }
 
-
-    const getAllInterviews = async ()=>{
-        try {
-            const interviews_response = await axios.get(`${url}/entretient`)
-            const interviews = interviews_response.data
-            if(Array.isArray(interviews)){
-                dispatch(setEntretient(interviews))
-            }
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-
     const getAllAttestations = async ()=>{
         try{
             const attestation_response = await axios.get(`${url}/attestation`)
             const attestation = attestation_response.data
-            if(Array.isArray(attestation)){
+            if(isArray(attestation)){
                 dispatch(setAttestation(attestation))
             }
         }catch(error){
@@ -75,9 +60,9 @@ function ChefServiceLayout() {
     const navigate = useNavigate()
 
 
-    const isNewAccounts = Array.isArray(accounts) && accounts.some(account => account.isNew === true)
-    const isNewInterviews = (Array.isArray(interviews)? interviews.some(interv => interv.isNew) : false)
-    const isNewInternShip = (Array.isArray(attestations)? attestations.some(attestation => attestation.isNew) : false)
+    const isNewAccounts = isArray(accounts) && accounts.some(account => account.isNew === true)
+    const isNewInterviews = (isArray(interviews)? interviews.some(interv => interv.isNew && !interv.date_interview) : false)
+    const isNewInternShip = (isArray(attestations)? attestations.some(attestation => attestation.isNew) : false)
 
 
 
@@ -86,7 +71,6 @@ function ChefServiceLayout() {
 
     useEffect(()=>{
         getAllAccounts();
-        getAllInterviews();
         getAllAttestations();
     } , [ dispatch])
 
@@ -122,14 +106,14 @@ function ChefServiceLayout() {
                         alert={isNewInterviews}
                     />
                     <SideBarLinks
+                        icon={<BookUser size={22} />}
+                        text="Attestations"
+                        href={"/chefService/attestations"}
+                    />
+                    <SideBarLinks
                         icon={<NotebookText size={22} />}
                         text="Offres"
                         href={"/chefService/offers"}
-                    />
-                    <SideBarLinks
-                        icon={<BookUser size={22} />}
-                        text="Stagiaires"
-                        href={"/chefService/Interns"}
                     />
                     <SideBarLinks
                         icon={<GraduationCap size={22} />}
@@ -148,7 +132,7 @@ function ChefServiceLayout() {
                         href="/chefService/units"
                     />
                 </SidebarContents>
-                <div className="h-full">
+                <div className="h-[80vh]">
                     <Outlet />
                 </div>
             </MereLayout>

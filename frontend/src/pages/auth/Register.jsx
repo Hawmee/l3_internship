@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setCurrentUser } from "../../features/currentUser";
 import { toast } from "react-toastify";
 import { FormProvider, useForm } from "react-hook-form";
+import { isArrayNotNull } from "../../functions/Functions";
 
 function Register() {
     const url = useSelector((state) => state.backendUrl.value);
@@ -47,7 +48,7 @@ function Register() {
     };
 
     const units_options =
-        Array.isArray(units) && units.length > 0
+        isArrayNotNull(units)
             ? [
                   { value: "", label: "Unité de travail" },
                   ...units.map((unit) => ({

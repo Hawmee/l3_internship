@@ -1,23 +1,24 @@
 import { createBrowserRouter } from "react-router-dom";
-import Guest from "../layouts/GuestLayout";
-import Login from "../pages/auth/Login";
-import Register from "../pages/auth/Register";
+import ProtectedRoute from "./ProtectedRoute";
 import Authenticated from "../layouts/AuthenticatedLayout";
+import Guest from '../layouts/GuestLayout'
 import ChefServiceLayout from "../layouts/users/ChefServiceLayout";
+import Dashboard from "../pages/dashboard/Dashboard";
+import InterViews from "../pages/interviews/InterViews";
+import Offers from "../pages/Offers/Offers";
+import Interns from "../pages/interns/Interns"
+import InternShips from "../pages/internShips/InternShips"
+import Accounts from "../pages/accounts/Accounts"
+import Units from "../pages/units/Units"
+import Tasks from "../pages/tasks/Tasks"
+import PersSecLayout from "../layouts/users/PersSecLayout";
+import WaitingPage from "../pages/redirections/WaitingPage"
+import Attestation from "../pages/Attestations/Attestation"
+import Login from '../pages/auth/Login'
+import Register from '../pages/auth/Register'
 import ChefUnitLayout from "../layouts/users/ChefUnitLayout";
 import PersCelluleLayout from "../layouts/users/PersCelluleLayout";
-import PersSecLayout from "../layouts/users/PersSecLayout";
-import Units from "../pages/units/Units";
-import Dashboard from "../pages/dashboard/Dashboard";
-import WaitingPage from "../pages/redirections/WaitingPage";
-import ProtectedRoute from "./ProtectedRoute";
-import Offers from "../pages/Offers/Offers";
-import InterViews from "../pages/interviews/InterViews";
-import Interns from "../pages/interns/Interns";
-import InternShips from "../pages/internShips/InternShips";
-import Accounts from "../pages/accounts/Accounts";
-import Tasks from "../pages/tasks/Tasks";
-import Attestation from "../pages/Attestations/Attestation.jsx";
+
 
 const router = createBrowserRouter([
     {
@@ -41,12 +42,12 @@ const router = createBrowserRouter([
                         element: <Offers />,
                     },
                     {
-                        path: "interns",
-                        element: <Interns />,
-                    },
-                    {
                         path: "internships",
                         element: <InternShips />,
+                    },
+                    {
+                        path: "attestations",
+                        element: <Attestation />,
                     },
                     {
                         path: "accounts",
@@ -72,7 +73,7 @@ const router = createBrowserRouter([
                     },
                     {
                         path: "interns",
-                        element: <Interns />,
+                        element: <InternShips />,
                     },
                     {
                         path: "tasks",

@@ -1,13 +1,14 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { io } from "socket.io-client";
-import { newOffre } from "../features/offres";
+import { Outlet, useNavigate } from "react-router-dom";
 import PopUpContainer from "../components/containers/PopUpContainer";
 import { setCurrentUser } from "../features/currentUser";
-import axios from "axios";
-import { setStagiaire } from "../features/stagiaire";
+import { editEntretient, newEntretient, setEntretient } from "../features/entretient";
+import { editOffre, newOffre, setOffre } from "../features/offres";
 import Socket from "../features/Socket";
+import { deleteStagiaire, editStagiaire, newStagiaire, setStagiaire } from "../features/stagiaire";
+import { isArrayNotNull } from "../functions/Functions";
 
 function Authenticated() {
     const navigate = useNavigate();
@@ -15,9 +16,7 @@ function Authenticated() {
     const url = useSelector((state) => state.backendUrl.value);
     const socket = Socket
     const dispatch = useDispatch();
-    const [message, setMessage] = useState(false);
-
-    
+    const [message, setMessage] = useState(false);    
     
     const logout = async () => {
         try {
@@ -33,10 +32,14 @@ function Authenticated() {
     };
 
 
+
     const getAllInterviews = async()=>{
         try {
             const interviews_data = await axios.get(`${url}/entretient`)
             const interviews = interviews_data.data
+            if(isArrayNotNull(interviews)){
+                dispatch(setEntretient(interviews))
+            }
         } catch (error) {
             console.log(error)
         }
@@ -44,8 +47,25 @@ function Authenticated() {
 
     const getAllInterns = async()=>{
         try {
-            
+            const interns_data = await axios.get(`${url}/stagiaire`)
+            const interns = interns_data.data
+            if(isArrayNotNull(interns)){
+                dispatch(setStagiaire(interns))
+            }
         } catch (error) {
+            console.log(erreur);
+        }
+    }
+
+    const getAllOffres = async()=>{
+        try {
+            const offres_data = await axios.get(`${url}/offre`)
+            const offres = offres_data.data
+            if(isArrayNotNull(offres)){
+                dispatch(setOffre(offres))
+            }
+        } catch (error) {
+            console.log(error);
             
         }
     }
@@ -69,10 +89,7 @@ function Authenticated() {
         console.log(user);
     }, [user]);
 
-    useEffect(() => {
-
-        console.log(user);
-        
+    useEffect(() => {        
 
         socket.on("new_offre", (offre) => {
             dispatch(newOffre(offre));
@@ -87,13 +104,56 @@ function Authenticated() {
             });    
         }
 
+        socket.on('new_entretient' , interview=>{
+            dispatch(newEntretient(interview))
+        })
+
+        socket.on('new_stagiaire' , intern=>{
+            dispatch(newStagiaire(intern))
+        })
+
+
+        
+        socket.on('updated_offre' , offre=>{
+            dispatch(editOffre(offre))
+        })
+
+        socket.on('updated_entretient' , entretient=>{
+            dispatch(editEntretient(entretient))            
+        })
+
+        socket.on('update_stagiaire', stagiaire=>{
+            dispatch(editStagiaire(stagiaire))
+        })
+
+
+        socket.on('deleted_stagiaire', (id) =>{
+            dispatch(deleteStagiaire(Number(id)))
+            // console.log(id)
+        })
+
         return () => {
             socket.off("new_offre");
             if(user){
                 socket.off(`user_validated/${user.matricule}`);
             }
+
+            socket.off('new_entretient')
+            socket.off('new_stagiaire')
+            socket.off('updated_offre')
+            socket.off('updated_entretient')
+            socket.off('update_stagiaire')
+            socket.off('deleted_stagiaire')
+    
         };
     }, [dispatch, socket]);
+
+
+    useEffect(()=>{
+        getAllInterns()
+        getAllInterviews()
+        getAllOffres()
+    }, [dispatch])
 
     return (
         <>

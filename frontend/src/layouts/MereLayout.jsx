@@ -1,11 +1,17 @@
 import { AlignJustify } from "lucide-react";
 import React, { Children } from "react";
 import Sidebar from "../components/Sidebar";
+import { format, startOfToday } from "date-fns";
+import { fr } from "date-fns/locale";
 
 function MereLayout({ children }) {
+
+  const today = startOfToday()
+  const today_date = format(today , "EEEE,dd MMMM yyyy" , {locale: fr})
+
   return (
     <>
-      <div className="flex flex-col h-screen">
+      <div className="grid grid-rows-[auto_1fr] h-screen">
         <div className="flex flex-row justify-between py-4 border-b-[2px] shadow-sm">
           <div className="logo px-4 flex flex-row items-center">
             <div>
@@ -18,11 +24,11 @@ function MereLayout({ children }) {
             </div>
           </div>
           <div className="dark/light px-10 flex flex-row items-center justify-between">
-            <div className="mr-5">EN/FR</div>
-            <div>DARK/LIGHT</div>
+            <div className="mr-5">{today_date}</div>
           </div>
         </div>
-        <div className=" h-full flex flex-row ">
+
+        <div className=" grid grid-cols-[auto_1fr] h-full flex-row ">
           <Sidebar>{children[0]}</Sidebar>
           <div className="main bg-white w-full h-full">{children[1]}</div>
         </div>

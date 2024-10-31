@@ -1,8 +1,11 @@
 import React from 'react'
+import CUTask from './cu/CUTask'
 
 function Tasks() {
   return (
-    <div>Tasks</div>
+    <>
+      <CUTask />
+    </>
   )
 }
 

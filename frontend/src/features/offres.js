@@ -17,7 +17,7 @@ const offreSlice = createSlice({
             const { id, ...updatedData } = action.payload;
             const index = state.value.findIndex((data) => data.id == id);
 
-            if (index == -1) {
+            if (index !== -1) {
                 state.value[index] = { ...state.value[index], ...updatedData };
             }
         },

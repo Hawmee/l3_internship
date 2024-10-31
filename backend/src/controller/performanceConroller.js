@@ -7,7 +7,12 @@ export const getAllPerf = async (req, res) => {
             include:{
                 stage:{
                     include:{
-                        stagiaire:true
+                        stagiaire:{
+                            include:{
+                                entretiens:true ,
+                                stages:true,
+                            }
+                        }
                     }
                 }
             }

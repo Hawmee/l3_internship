@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { filterObjdiff } from "../functions/Functions";
 
 
 const accountSlice = createSlice({
@@ -24,7 +25,9 @@ const accountSlice = createSlice({
 
         deleteAccount: (state , action)=>{
             const id= action.payload;
-            state.value = state.value.filter(account => account.id !== id)
+            // state.value = state.value.filter(account => account.id !== id),
+            state.value = filterObjdiff(state.value , 'id' , id )
+
         }
     }
 })

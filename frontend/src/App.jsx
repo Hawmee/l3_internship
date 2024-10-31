@@ -10,6 +10,7 @@ import { newUnit, setUnit } from './features/unit'
 import { io } from 'socket.io-client'
 import { newAccount } from './features/accounts'
 import Socket from './features/Socket'
+import { isArray } from './functions/Functions'
 
 
 function App({children}) {
@@ -31,7 +32,7 @@ function App({children}) {
     try {
       const units_data = await axios.get(`${backUrl}/unit`)
       const unit = units_data.data.data
-      if(Array.isArray(unit)){
+      if(isArray(unit)){
         dispatch(setUnit(unit))              
       }
     } catch (error) {

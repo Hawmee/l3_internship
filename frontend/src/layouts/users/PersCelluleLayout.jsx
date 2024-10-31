@@ -4,29 +4,19 @@ import {BookUser, FileText, GraduationCap, Handshake, NotebookText} from "lucide
 import MereLayout from "../MereLayout";
 import { SideBarLinks } from "../../components/Sidebar";
 import { Outlet, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
-import { setStagiaire } from "../../features/stagiaire";
+import { useSelector } from "react-redux";
+import { isArray } from "../../functions/Functions";
 
 function PersCelluleLayout() {
     const user = useSelector((state) => state.currentUser.value);
-    const url = useSelector((state) => state.backendUrl.value);
-    const dispatch = useDispatch()
-
+    const interns = useSelector(state=>state.stagiaire.value)
+    const interviews = useSelector(state=>state.entretient.value)
     const navigate = useNavigate();
 
 
-    const getAllStagiaires = async () => {
-        try {
-            const stagiaires_data = await axios.get(`${url}/stagiaire`);
-            const stagiaires = stagiaires_data.data;
-            if (Array.isArray(stagiaires) && stagiaires.length > 0) {
-                dispatch(setStagiaire(stagiaires));
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
+    const isNewInterviews = isArray(interviews) && interviews.some(interview=>(interview.isNew == true && interview.date_interview))
+    console.log(isNewInterviews)
+
 
     useEffect(() => {
         if (user && !user.isPersCellule) {
@@ -34,10 +24,6 @@ function PersCelluleLayout() {
         }
     }, [user]);
 
-
-    useEffect(()=>{
-        getAllStagiaires()
-    } , [dispatch])
 
     return (
         <>
@@ -63,6 +49,7 @@ function PersCelluleLayout() {
                         icon={<Handshake size={22} />}
                         text={"Entretients"}
                         href={"/persCellule/interviews"}
+                        alert={isNewInterviews}
                     />
                     <SideBarLinks
                         icon={<FileText size={22} />}

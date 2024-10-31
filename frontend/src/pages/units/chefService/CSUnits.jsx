@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Table from "./Table";
 import MainContainer from "../../../components/containers/MainContainer";
-import TitleContainer from "../../../components/containers/TitleContainer";
 import SearchContainer from "../../../components/containers/SearchContainer";
 import PopUpContainer from "../../../components/containers/PopUpContainer";
 import Form from "../../../components/forms/Form";
@@ -10,6 +9,7 @@ import Select from "../../../components/forms/Select";
 import { FormProvider, useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { isArrayNotNull } from "../../../functions/Functions";
 
 function CSUnits() {
     const methodAdd = useForm();
@@ -27,7 +27,7 @@ function CSUnits() {
     const unit_type_value = watchAdd("unit_type");
     const unit_type_value_edit = watchEdit("unit_type")
     const units_options =
-        Array.isArray(units) && units.length > 0
+        isArrayNotNull(units)
             ? [
                   { value: "", label: "Sur-Unité" },
                   ...units.map((unit) => ({
@@ -117,8 +117,7 @@ function CSUnits() {
     return (
         <>
             <MainContainer>
-                <TitleContainer>Unités de travail :</TitleContainer>
-                <SearchContainer>Search goes here</SearchContainer>
+               <SearchContainer>Search goes here</SearchContainer>
                 <div>
                     <Table
                         popup={add}
