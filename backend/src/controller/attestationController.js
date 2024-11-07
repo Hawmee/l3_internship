@@ -5,60 +5,174 @@ const prisma = prismaClient;
 export const getAllAttestation = async (req, res) => {
     try {
         const attestation = await prisma.attestation.findMany({
-            include:{
-                stage:{
-                    include:{
-                        stagiaire:{
-                            include:{
-                                entretiens:true ,
-                                stages:true,
-                            }
-                        }
-                    }
-                }
-            }
-        })
-
-        res.status(200).send(attestation)
-    } catch (error) {
-        res.status(400).send({ message: error.message });
-    }
+            include: {
+                stage: {
+                    include: {
+                        stagiaire: true,
+                        unite: {
+                            include: {
+                                users: true,
+                            },
+                        },
+                        attestation: true,
+                        performance: true,
+                        taches: true,
+                        offre: true,
+                    },
+                },
+            },
+        });
+            res.status(200).send(attestation);
+        } catch (error) {
+            res.status(400).send({ message: error.message });
+        }
 };
 
 export const newAttestation = async (req, res) => {
-    const attestation_data = req.body
+    const attestation_data = req.body;
     try {
         const attestation = await prisma.attestation.create({
-            data: attestation_data
-        })
-        res.status(200).send({data: attestation})
+            data: {
+                isNew: true,
+                status: false,
+                isInforme:false,
+                ...attestation_data,
+            },
+            include: {
+                stage: {
+                    include: {
+                        stagiaire: true,
+                        unite: {
+                            include: {
+                                users: true,
+                            },
+                        },
+                        attestation: true,
+                        performance: true,
+                        taches: true,
+                        offre: true,
+                    },
+                },
+            },
+        });
+
+        if (attestation) {
+            // const stage = await prisma.stages.update({
+            //     where: { id: Number(attestation.stage_id) },
+            //     include: {
+            //         stagiaire: true,
+            //         unite: {
+            //             include: {
+            //                 users: true,
+            //             },
+            //         },
+            //         attestation: true,
+            //         performance: true,
+            //         taches: true,
+            //         offre: true,
+            //     },
+            // });
+
+            if(attestation.stage){
+                req.io.emit("updated_stage" , attestation.stage)
+            }
+            req.io.emit("new_attestation" , attestation)
+        }
+        res.status(200).send({ data: attestation });
     } catch (error) {
         res.status(400).send({ message: error.message });
     }
 };
 
 export const partialUpdateAttestation = async (req, res) => {
-    const {id} = req.params
-    const updated_attestation_data = req.body
+    const { id } = req.params;
+    // const updated_attestation_data = req.body;
     try {
         const attestation = await prisma.attestation.update({
-            where:{id: Number(id)},
-            data: updated_attestation_data
-        })
+            where: { id: Number(id) },
+            data: {
+                status:false,
+                isNew:true,
+                isInforme:false,
+            },
+            include: {
+                stage: {
+                    include: {
+                        stagiaire: true,
+                        unite: {
+                            include: {
+                                users: true,
+                            },
+                        },
+                        attestation: true,
+                        performance: true,
+                        taches: true,
+                        offre: true,
+                    },
+                },
+            },
+        });
 
-        res.status(200).send({data: attestation})
+        if(attestation){
+
+            if(attestation.stage){
+                req.io.emit("updated_stage" , attestation.stage)
+            }
+            req.io.emit("updated_attestation" , attestation)
+            res.status(200).send({ data: attestation });
+        }
     } catch (error) {
         res.status(400).send({ message: error.message });
     }
 };
 
+export const validate = async (req,res)=>{
+    const {id} = req.params
+    try {
+        const attestation = await prisma.attestation.update({
+            where:{id:Number(id)},
+            data:{
+                status:true,
+                isNew:true,
+                isInforme:false,
+            },
+            include: {
+                stage: {
+                    include: {
+                        stagiaire: true,
+                        unite: {
+                            include: {
+                                users: true,
+                            },
+                        },
+                        attestation: true,
+                        performance: true,
+                        taches: true,
+                        offre: true,
+                    },
+                },
+            },
+        })
+
+        if(attestation){
+            if(attestation.stage){
+                req.io.emit("updated_stage" , attestation.stage)
+            }
+            req.io.emit("updated_attestation" , attestation)
+            res.status(200).send({ data: attestation });
+        }
+    } catch (error) {
+        res.status(500).send({message:error})
+    }
+}
+
 export const deleteAttestation = async (req, res) => {
-    const {id}= req.params
+    const { id } = req.params;
     try {
         await prisma.attestation.delete({
-            where:{id: Number(id)}
-        })
-        res.status(200).send({message: "Element supprimé avec succes"})
+            where: { id: Number(id) },
+        });
+        res.status(200).send({ message: "Element supprimé avec succes" });
     } catch (error) {
         res.status(400).send({ message: error.message });
     }

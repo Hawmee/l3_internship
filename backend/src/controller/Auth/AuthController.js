@@ -88,7 +88,11 @@ export const register = async (req, res) => {
                     unite_id: unit_id,
                 },
                 include:{
-                    unite:true
+                    unite:{
+                        include:{
+                            users:true
+                        }
+                    }
                 }
             });
 

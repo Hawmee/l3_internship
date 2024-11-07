@@ -29,12 +29,12 @@ const router = createBrowserRouter([
                 path: "chefService",
                 element: <ProtectedRoute element={<ChefServiceLayout />} />,
                 children: [
+                    // {
+                    //     path: "",
+                    //     element: <Dashboard />,
+                    // },
                     {
                         path: "",
-                        element: <Dashboard />,
-                    },
-                    {
-                        path: "interviews",
                         element: <InterViews />,
                     },
                     {
@@ -63,13 +63,17 @@ const router = createBrowserRouter([
                 path: "chefUnits",
                 element: <ProtectedRoute element={<ChefUnitLayout />} />,
                 children: [
+                    // {
+                    //     path: "",
+                    //     element: <Dashboard />,
+                    // },
                     {
                         path: "",
-                        element: <Dashboard />,
+                        element: <Offers />,
                     },
                     {
-                        path: "offers",
-                        element: <Offers />,
+                        path: "interviews",
+                        element: <InterViews />,
                     },
                     {
                         path: "interns",

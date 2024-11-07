@@ -30,10 +30,7 @@ function Table({ data, onAffirm, onDeny }) {
                                     <th> Unité d'acceuil </th>
                                     <th> Stagiaire </th>
                                     <th>Dossiers du stagiaire</th>
-                                    <th>Date d'entretient</th>
-                                    <th className="rounded-tr-[12px] rounded-br-[12px]">
-                                        {" "}
-                                    </th>
+                                    <th className="rounded-tr-[12px] rounded-br-[12px]" >Date d'entretient</th>
                                 </tr>
                             </thead>
 
@@ -89,18 +86,6 @@ function Table({ data, onAffirm, onDeny }) {
                                                         onAffirm(item)
                                                     }}>Choisir une date</button>
                                                 )}
-                                            </td>
-                                            <td>
-                                                <div className="flex flex-row items-center justify-center text-white">
-                                                    <button
-                                                        className="text-red-500 mr-2 px-3 py-1 hover:text-red-400"
-                                                        onClick={() => {
-                                                            onDeny();
-                                                        }}
-                                                    >
-                                                        <MessageSquareWarning size={25} />
-                                                    </button>
-                                                </div>
                                             </td>
                                         </tr>
                                     ))}

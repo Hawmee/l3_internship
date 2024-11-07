@@ -1,13 +1,21 @@
-import { format } from "date-fns";
+import {addHours, format ,isBefore, parseISO, startOfMinute } from "date-fns";
 import {
     CalendarCheck,
     CalendarCog,
     CalendarX,
 } from "lucide-react";
 import React, { useEffect, useRef } from "react";
+import { date_time } from "../../../functions/Functions";
 
 function TableEntretient({ data, onConfirm, onEdit , onCancel }) {
     const tableContainerRef = useRef(null);
+
+    const formated_date= (date)=>{
+        const datestring=parseISO(date)
+        const timezone=-3
+        const localDate = addHours(datestring,timezone)
+        return localDate
+    }
 
     useEffect(() => {
         if (tableContainerRef.current) {
@@ -34,6 +42,7 @@ function TableEntretient({ data, onConfirm, onEdit , onCancel }) {
                                     <th> Stagiaire </th>
                                     <th>Dossiers du stagiaire</th>
                                     <th>Date d'entretient</th>
+                                    <th>Etat</th>
                                     <th className="rounded-tr-[12px] rounded-br-[12px]">
                                         {" "}
                                     </th>
@@ -42,7 +51,9 @@ function TableEntretient({ data, onConfirm, onEdit , onCancel }) {
 
                             <tbody>
                                 {data &&
-                                    data.map((item) => (
+                                    data.map((item) =>{ 
+                                        const date_interv = item.date_interview
+                                        return(
                                         <tr key={item.id} className="h-1">
                                             <td
                                                 className={
@@ -85,10 +96,16 @@ function TableEntretient({ data, onConfirm, onEdit , onCancel }) {
                                                 </div>
                                             </td>
                                             <td>
-                                                {item.date_interview ? (
-                                                    format(item.date_interview , "dd/MM/yyyy")
+                                                {date_interv ? (
+                                                    date_time(date_interv)
                                                 ) : (
                                                     <p>(Choisir une date)</p>
+                                                )}
+                                            </td>                                            <td>
+                                                {item.isInforme ? (
+                                                    <p className="text-blue-500 cursor-default">Stagiaire informé </p>
+                                                ) : (
+                                                    <p className=" text-red-400 cursor-default ">Stagaire non informé</p>
                                                 )}
                                             </td>
                                             <td>
@@ -96,24 +113,26 @@ function TableEntretient({ data, onConfirm, onEdit , onCancel }) {
                                                     <button
                                                         className="text-gray-700 mr-2 px-3 py-1 hover:text-gray-500"
                                                         onClick={() => {
-                                                            onEdit();
+                                                            onEdit(item);
                                                         }}
                                                     >
                                                         <CalendarCog size={25} />
                                                     </button>
                                                     <button
-                                                        className="text-red-500 mr-2 px-3 py-1 hover:text-red-400"
+                                                        className={!((isBefore( startOfMinute(new Date()) , formated_date(item.date_interview)))&& !item.isInforme)?"text-red-500 mr-2 px-3 py-1 hover:text-red-400":"text-red-500 mr-2 px-3 py-1 opacity-30"}
                                                         onClick={() => {
-                                                            onCancel();
+                                                            onCancel(item);
                                                         }}
+                                                        disabled={((isBefore( startOfMinute(new Date()) , formated_date(item.date_interview)))&& !item.isInforme)}
                                                     >
                                                         <CalendarX size={25} />
                                                     </button>
                                                     <button 
-                                                        className="text-blue-500 mr-2 px-3 py-1 hover:text-blue-700"
+                                                        className={!((isBefore( startOfMinute(new Date()) , formated_date(item.date_interview))) && !item.isInforme)?"text-blue-500 mr-2 px-3 py-1 hover:text-blue-700" :"text-blue-500 opacity-40 mr-2 px-3 py-1 "}
                                                         onClick={()=>{
-                                                            onConfirm()
+                                                            onConfirm(item)
                                                         }}
+                                                        disabled={((isBefore( startOfMinute(new Date()) , formated_date(item.date_interview)))&& !item.isInforme)}
                                                     >
                                                         <CalendarCheck
                                                             size={25}
@@ -122,7 +141,7 @@ function TableEntretient({ data, onConfirm, onEdit , onCancel }) {
                                                 </div>
                                             </td>
                                         </tr>
-                                    ))}
+                                    )})}
                                 <tr>
                                     <td></td>
                                 </tr>

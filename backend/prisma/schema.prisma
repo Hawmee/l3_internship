@@ -54,13 +54,13 @@ model Offres {
   nom String
   theme String
   competence_requis String
-  date_debut DateTime
-  date_fin DateTime
+  duree Int @default(1)
   isDispo Boolean @default(true)
   unite_id Int?
   unite Unites? @relation("OffersToUnit" , fields: [unite_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
 
   entretiens Entretients[] @relation("EntretientOffre")
+  stages Stages[] @relation("Offre-Stage")
 }
 
 model Stagiaires {
@@ -84,45 +84,45 @@ model Stagiaires {
 
 model Stages {
   id Int @id @default(autoincrement())
-  unite_id Int
-  stagiaire_id Int
-  theme String
-  lien_livre String?
+  offre_id Int?
+  unite_id Int?
+  stagiaire_id Int?
   status Boolean @default(false)
   observation String
   date_debut DateTime
   date_fin DateTime
   isNew Boolean @default(false)
+  motif_revalidation String?
   book_link String?
-  unite Unites? @relation("StageToUnite" , fields: [unite_id] , references: [id])
-  stagiaire Stagiaires @relation("StageStagiaire",fields: [stagiaire_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
+  unite Unites? @relation("StageToUnite" , fields: [unite_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
+  stagiaire Stagiaires? @relation("StageStagiaire",fields: [stagiaire_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
+  offre Offres? @relation("Offre-Stage" , fields: [offre_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade) 
 
   attestation Attestation?
   performance Performances?
   taches Taches[] @relation("TacheStage")
+
 }
 
 
-model Attestation {
+model Attestation  {
   id Int @id @default(autoincrement())
   status Boolean @default(false)
-  stage_id Int @unique
+  stage_id Int? @unique
+  isInforme Boolean @default(false)
   isNew Boolean @default(false)
-  stage Stages @relation(fields: [stage_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
+  stage Stages? @relation(fields: [stage_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
 }
 
 
 model Performances {
   id Int @id @default(autoincrement())
-  communication  String
-  proposition_solution  String
-  integrite  String
-  ponctualite  String
-  respect  String
-  autonomie  String
-  assiduite  String
-  stage_id Int @unique
-  stage Stages @relation(fields: [stage_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
+  pertinance_pro  String
+  pertinance_tech  String
+  pertinance_pedago  String
+  observation String
+  stage_id Int? @unique
+  stage Stages? @relation(fields: [stage_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
 }
 
 
@@ -133,8 +133,8 @@ model Taches {
   status Boolean @default(false)
   date_debut DateTime
   date_fin DateTime
-  stage_id Int
-  stage Stages @relation("TacheStage" , fields: [stage_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
+  stage_id Int?
+  stage Stages? @relation("TacheStage" , fields: [stage_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
 }
 
 
@@ -142,10 +142,11 @@ model Entretients {
   id Int @id @default(autoincrement())
   status Boolean @default(false)
   date_interview DateTime?
-  stagiaire_id Int
-  offre_id Int
+  stagiaire_id Int?
+  offre_id Int?
+  isInforme Boolean @default(false)
   isNew Boolean @default(true)
 
-  stagiaire Stagiaires @relation("EntretientStagiaire" , fields: [stagiaire_id] , references: [id])
-  offre Offres @relation("EntretientOffre" , fields: [offre_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
+  stagiaire Stagiaires? @relation("EntretientStagiaire" , fields: [stagiaire_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
+  offre Offres? @relation("EntretientOffre" , fields: [offre_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
 }

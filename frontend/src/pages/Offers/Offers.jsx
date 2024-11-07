@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import ChefServiceOffers from './cs/ChefServiceOffers.jsx'
 import ChefUnitsOffers from './cu/ChefUnitsOffers.jsx'
 import PersOffers from "./pers/PersOffers.jsx";
 
@@ -11,7 +10,6 @@ function Offers() {
 
   return (
     <>
-        {(current_user&&current_user.isChefService) && <ChefServiceOffers offers={offers} />}
         {(current_user&&current_user.isChefUnit) && <ChefUnitsOffers offers={offers} />}
         {(current_user&&(current_user.isPersCellule || current_user.isPersSecretariat)) && <PersOffers offers={offers} />}
     </>

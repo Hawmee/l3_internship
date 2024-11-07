@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import {
     filterObjdiff,
     filterObjSame,
+    include,
     isArrayNotNull,
 } from "../../../functions/Functions.js";
 
@@ -20,7 +21,10 @@ function AddInterview({ method, offre, handleCreateInterview }) {
     const toastConfig = useSelector((state) => state.toastConfig.value);
 
     const [newIntern, setNewIntern] = useState(false);
-    const available_stagiaires = filterObjdiff(stagiaires, "entretiens");
+    const available_stagiaires = stagiaires.filter(stagiaire =>(
+        ((stagiaire.observation == "tulant") && (stagiaire.cv_link||stagiaire.lm_link))
+    ))
+    const possible_stagaires = filterObjSame(available_stagiaires , "cv_link")
     const offre_options = isArrayNotNull(offre)
         ? [
               { value: "", label: "Offres de stage" },
@@ -33,7 +37,7 @@ function AddInterview({ method, offre, handleCreateInterview }) {
           ]
         : [{ value: "", label: "Offres de stage" }];
 
-    const stagiaire_option = isArrayNotNull(available_stagiaires)
+    const stagiaire_option = isArrayNotNull(possible_stagaires)
         ? [
               ...available_stagiaires.map((stagiaire) => ({
                   value: stagiaire.id,
@@ -132,6 +136,9 @@ function AddInterview({ method, offre, handleCreateInterview }) {
                                     className={
                                         "border-[2px] border-gray-400 rounded-[8px] p-2"
                                     }
+                                    validation={{ 
+                                        required: "valeure requise"
+                                     }}
                                 />
                             </div>
 

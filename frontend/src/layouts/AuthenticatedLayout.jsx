@@ -4,11 +4,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
 import PopUpContainer from "../components/containers/PopUpContainer";
 import { setCurrentUser } from "../features/currentUser";
-import { editEntretient, newEntretient, setEntretient } from "../features/entretient";
-import { editOffre, newOffre, setOffre } from "../features/offres";
+import { deleteEntretient, editEntretient, newEntretient, setEntretient } from "../features/entretient";
+import { deleteOffre, editOffre, newOffre, setOffre } from "../features/offres";
 import Socket from "../features/Socket";
+import { editStage, newStage, setStage } from "../features/stage";
 import { deleteStagiaire, editStagiaire, newStagiaire, setStagiaire } from "../features/stagiaire";
 import { isArrayNotNull } from "../functions/Functions";
+import { newPerf } from "../features/perf";
+import { editAttestation, newAttestation } from "../features/attestation";
 
 function Authenticated() {
     const navigate = useNavigate();
@@ -32,6 +35,17 @@ function Authenticated() {
     };
 
 
+    const getAllInternShips = async()=>{
+        try {
+            const stages_data = await axios.get(`${url}/stage`)
+            const stages = stages_data.data
+            if(isArrayNotNull(stages)){
+                dispatch(setStage(stages))
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     const getAllInterviews = async()=>{
         try {
@@ -112,6 +126,19 @@ function Authenticated() {
             dispatch(newStagiaire(intern))
         })
 
+        socket.on('new_stage' , stage=>{
+            dispatch(newStage(stage))
+        })
+
+
+        socket.on('new_perf' , perf=>{
+            dispatch(newPerf(perf))
+        })
+
+        socket.on('new_attestation' , attestation=>{
+            dispatch(newAttestation(attestation))
+        })
+
 
         
         socket.on('updated_offre' , offre=>{
@@ -126,10 +153,26 @@ function Authenticated() {
             dispatch(editStagiaire(stagiaire))
         })
 
+        socket.on('updated_stage', stage=>{
+            dispatch(editStage(stage))
+        })
+
+        socket.on('updated_attestation' , attestation=>{
+            dispatch(editAttestation(attestation))
+        })
+
+
+
 
         socket.on('deleted_stagiaire', (id) =>{
             dispatch(deleteStagiaire(Number(id)))
             // console.log(id)
+        })
+        socket.on('deleted_offre' ,id =>{
+            dispatch(deleteOffre(Number(id)))
+        })
+        socket.on('deleted_entretient' ,id =>{
+            dispatch(deleteEntretient(Number(id)))
         })
 
         return () => {
@@ -140,10 +183,19 @@ function Authenticated() {
 
             socket.off('new_entretient')
             socket.off('new_stagiaire')
+            socket.off('new_stage')
+            socket.off('new_perf')
+            socket.off('new_attestation')
             socket.off('updated_offre')
             socket.off('updated_entretient')
             socket.off('update_stagiaire')
+            socket.off('updated_stage')
+            socket.off('updated_attestation')
             socket.off('deleted_stagiaire')
+            socket.off('deleted_offre')
+            socket.off('deleted_entretient')
+
+
     
         };
     }, [dispatch, socket]);
@@ -151,6 +203,7 @@ function Authenticated() {
 
     useEffect(()=>{
         getAllInterns()
+        getAllInternShips()
         getAllInterviews()
         getAllOffres()
     }, [dispatch])

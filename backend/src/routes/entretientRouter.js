@@ -1,5 +1,5 @@
 import express from 'express'
-import { AffirmEntretient, deleteEntretient, getAllEntretient, newEntretient, newEntretientStagiaire, partialUpdateEntretient } from '../controller/entretientController.js'
+import { AffirmEntretient, cancelEntretient, deleteEntretient, getAllEntretient, informedEntretien, markViewed, newEntretient, newEntretientStagiaire, partialUpdateEntretient } from '../controller/entretientController.js'
 import upload from '../config/multerConfig.js'
 
 
@@ -11,6 +11,9 @@ router.post('/entretient' ,newEntretient)
 router.post('/entretientStagiaire' , upload.fields([{name:'cv_link'},{name:'lm_link'}]),newEntretientStagiaire)
 router.patch('/entretient/affirm/:id' , AffirmEntretient)
 router.patch('/entretient/:id' , partialUpdateEntretient)
+router.patch('/informed/:id' , informedEntretien)
+router.patch('/markviewed/entretient' , markViewed)
 router.delete('/entretient/:id' , deleteEntretient)
+router.delete('/enretient/cancel/:id' , cancelEntretient)
 
 export default router 

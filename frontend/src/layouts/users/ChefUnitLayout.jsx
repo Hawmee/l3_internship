@@ -1,4 +1,10 @@
-import { BookUser, ClipboardList, LayoutDashboard, NotebookText } from "lucide-react";
+import {
+    BookUser,
+    ClipboardList,
+    Handshake,
+    LayoutDashboard,
+    NotebookText,
+} from "lucide-react";
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
@@ -7,33 +13,29 @@ import SidebarContents from "../../components/SidebarContent";
 import MereLayout from "../MereLayout";
 
 function ChefUnitLayout() {
-    const user = useSelector((state)=> state.currentUser.value)
-    const navigate = useNavigate()
+    const user = useSelector((state) => state.currentUser.value);
+    const navigate = useNavigate();
 
-
-    useEffect(()=>{
-        if( user && !user.isChefUnit ){
-            navigate('/guest/login')
+    useEffect(() => {
+        if (user && !user.isChefUnit) {
+            navigate("/guest/login");
         }
-    },[user])
-
+    }, [user]);
 
     return (
         <>
             <MereLayout>
                 <SidebarContents>
                     <SideBarLinks
-                        icon={<LayoutDashboard size={22} />}
-                        text={"Dashboard"}
+                        icon={<NotebookText size={22} />}
+                        text={"Offres"}
                         href={"/chefUnits/"}
-                        alert
-                        notifs={"+2"}
                     />
 
                     <SideBarLinks
-                        icon={<NotebookText size={22} />}
-                        text={"Offres"}
-                        href={"/chefUnits/offers"}
+                        icon={<Handshake size={22} />}
+                        text={"Entretiens"}
+                        href={"/chefUnits/interviews"}
                     />
 
                     <SideBarLinks

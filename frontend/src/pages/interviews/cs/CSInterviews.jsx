@@ -10,9 +10,9 @@ import PopUpContainer from "../../../components/containers/PopUpContainer";
 import Affirm from "./forms/Affirm";
 import Confirm from "./forms/Confirm";
 import Cancel from "./forms/Cancel";
-import Deny from "./forms/Deny";
 import { useForm } from "react-hook-form";
 import { format } from "date-fns";
+import Edit from "./forms/Edit";
 
 function CSInterviews() {
     const interviews = useSelector((state) => state.entretient.value);
@@ -28,15 +28,15 @@ function CSInterviews() {
 
 
     const methodAffirm = useForm()
-    const methodDeny = useForm()
     const methodConfirm = useForm()
     const methodEdit=useForm()
-    const methodCancel=useForm()
 
 
-    const demands_interv = filterObjdiff(
+    const demand_CS = filterObjdiff(interview_data , 'date_interview')
+
+    const demands_interv = filterObjSame(
         interview_data,
-        "date_interview"
+        "status"
     );
     const affirmed_interv = filterObjSame(
         interview_data,
@@ -48,26 +48,30 @@ function CSInterviews() {
         setSelected_interview(interview)
     };
 
-    const handleConfirm = () => {
+    const handleConfirm = (item) => {
         setConfirm(!confirm);
+        if(item){
+            setSelected_interview(item)
+        }
     };
 
-    const handleEdit = () => {
+    const handleEdit = (item) => {
         setEdit(!edit);
+        if(item){
+            setSelected_interview(item)
+        }
     };
 
     const handleDeny = () => {
         setDeny(!deny);
     };
 
-    const handleCancel = () => {
+    const handleCancel = (item ) => {
         setCancel(!cancel);
+        if(item){
+            setSelected_interview(item)
+        }
     };
-
-
-    useEffect(()=>{
-        console.log("modifié");
-    } , [interviews])
 
     useEffect(() => {
         const searched_data =
@@ -98,6 +102,12 @@ function CSInterviews() {
         setInterview_data(searched_data);
     }, [searchTerm, interviews]);
 
+    useEffect(()=>{
+        if(demands_interv.length == 0 && !searchTerm){
+            setNavigation("Entretient")
+        }
+    } , [demands_interv , searchTerm])
+
     return (
         <>
             <MainContainer>
@@ -108,6 +118,7 @@ function CSInterviews() {
                                 name=""
                                 id=""
                                 className="px-2 py-1 border-[2px] border-gray-400  rounded-[12px] cursor-pointer outline-none"
+                                value={navigation}
                                 onChange={(e) => setNavigation(e.target.value)}
                             >
                                 <option value="Demande">
@@ -160,22 +171,17 @@ function CSInterviews() {
             )}
             {confirm && (
                 <PopUpContainer popup={confirm} closePopUp={setConfirm}>
-                    <Confirm method={methodConfirm}/>
+                    <Confirm method={methodConfirm} data ={selected_interview} handleConfirm={handleConfirm}/>
                 </PopUpContainer>
             )}
             {edit && (
                 <PopUpContainer popup={edit} closePopUp={setEdit}>
-                    <Edit method={methodEdit} />
+                    <Edit method={methodEdit} interview={selected_interview} handleEdit={handleEdit} />
                 </PopUpContainer>
             )}
             {cancel && (
                 <PopUpContainer popup={cancel} closePopUp={setCancel}>
-                    <Cancel method={methodCancel} />
-                </PopUpContainer>
-            )}
-            {deny && (
-                <PopUpContainer popup={deny} closePopUp={setDeny}>
-                    <Deny method={methodDeny} />
+                    <Cancel interview={selected_interview}  handleCancel={handleCancel} />
                 </PopUpContainer>
             )}
         </>

@@ -9,6 +9,7 @@ import stagesRouter from './stagesRouter.js'
 import stagiaireRouter from './stagiaires.Router.js'
 import tacheRouter from './tachesRouter.js'
 import unitRouter from './unitRouter.js'
+import mailRouter from './mailRouter.js'
 
 
 const router = express.Router()
@@ -23,6 +24,7 @@ router.use('/api' , stagesRouter)
 router.use('/api' , stagiaireRouter)
 router.use('/api' , tacheRouter)
 router.use('/api' , unitRouter)
+router.use('/api' , mailRouter )
 
 
 export default router

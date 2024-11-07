@@ -6,11 +6,13 @@ import PersAttestations from './pers/PersAttestations'
 function Attestation() {
 
     const current_user = useSelector(state=>state.currentUser.value)
+    const attestation = useSelector(state=>state.attestation.value)
+    const internships = useSelector(state=>state.stage.value)
 
   return (
     <>
-        {(current_user && current_user.isChefService)&&<CSAttestation />}
-        {(current_user && current_user.isPersCellule)&&<PersAttestations />}
+        {(current_user && current_user.isChefService)&&<CSAttestation data={attestation} />}
+        {(current_user && current_user.isPersCellule)&&<PersAttestations data={internships}/>}
     </>
   )
 }

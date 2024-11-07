@@ -2,6 +2,7 @@ import { error } from "console";
 import { drive, FOLDER_ID } from "../config/GDrive.js";
 import prismaClient from "./prismaClient.js";
 import fs from "fs";
+import { stagiaire_status } from "../utils/Observations.js";
 
 const prisma = prismaClient;
 
@@ -54,10 +55,10 @@ export const newStagiaire = async (req, res) => {
                     fileLinks[expectedFile] = `https://drive.google.com/file/d/${fileId}/view`;
 
                     fs.unlink(file.path, (err) => {
-                        if (err) console.log(`Error deleting file: ${err}`);
+                        if (err) res.status(500).send({message:err});
                     });
                 } catch (fileError) {
-                    console.log(`Erreur lors de l'importation de ${expectedFile} ! Verifiez votre connextion ou votre document`);
+                    return res.status(500).send({message: fileError})
                 }
             }
         }
@@ -67,7 +68,7 @@ export const newStagiaire = async (req, res) => {
                 ...stagiaire_data,
                 cv_link: fileLinks.cv_link,
                 lm_link: fileLinks.lm_link,
-                observation: "Postulant",
+                observation: stagiaire_status.postulant,
             },
             include: { 
                 entretiens: true },
@@ -131,10 +132,26 @@ export const partialUpdateStagiaire = async (req, res) => {
         const updatedStagiaire = await prisma.stagiaires.update({
             where: { id: Number(id) },
             data: { ...updateData, ...fileUpdates },
+            include:{entretiens:true , stages:true}
         });
 
         req.io.emit("update_stagiaire", updatedStagiaire);
 
+        updatedStagiaire.entretiens.forEach(entretien => {
+            const updatedEntretien = {
+                ...entretien,
+                stagiaire: updatedStagiaire
+            };
+            req.io.emit("updated_entretient", updatedEntretien);
+        });
+
+        updatedStagiaire.stages.forEach(stage => {
+            const updated_stage = {
+                ...stage,
+                stagiaire: updatedStagiaire
+            };
+            req.io.emit("updated_stage", updated_stage);
+        });
  
         if (!filesAdded) {
             return res.status(200).send({ message: "Aucun nouveau fichier importé.", type: "info" });
@@ -208,6 +225,23 @@ export const addFilesToStagiaire = async (req, res) => {
         const updatedStagiaire = await prisma.stagiaires.update({
             where: { id: Number(id) },
             data: fileUpdates,
+            include:{stages:true , entretiens:true}
+        });
+
+        updatedStagiaire.entretiens.forEach(entretien => {
+            const updatedEntretien = {
+                ...entretien,
+                stagiaire: updatedStagiaire
+            };
+            req.io.emit("updated_entretient", updatedEntretien);
+        });
+
+        updatedStagiaire.stages.forEach(stage => {
+            const updated_stage = {
+                ...stage,
+                stagiaire: updatedStagiaire
+            };
+            req.io.emit("updated_stage", updated_stage);
         });
 
         req.io.emit("update_stagiaire", updatedStagiaire);
@@ -241,17 +275,14 @@ export const deleteStagiaire = async (req, res) => {
                 }
             } catch (fileError) {
                 console.warn("Failed to delete files from Google Drive:", fileError.message);
-                // Optionally, log this error or notify the user
             }
         }
 
-        // Proceed to delete the stagiaire from the database
         await prisma.stagiaires.delete({
             where: { id: Number(id) },
         });
 
         req.io.emit("deleted_stagiaire", Number(id));
-        console.log(`Emitted delete event for ID: ${id}`);
         res.status(200).send({ message: "Stagiaire Supprimé avec succès" });
     } catch (error) {
         console.error("Error deleting stagiaire:", error);

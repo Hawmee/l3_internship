@@ -26,8 +26,6 @@ const stagiaireSlice = createSlice({
         deleteStagiaire: (state, action) => {
             const id = action.payload;
             state.value = state.value.filter((data) => data.id !== id);
-            // state.value= filterObjdiff(state.value ,"id", id )
-            console.log(state.value , `id : ${id}`) 
         },
     },
 });

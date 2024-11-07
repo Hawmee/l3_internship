@@ -1,30 +1,50 @@
+import { differenceInMonths, format } from "date-fns";
 import {
     BadgeAlert,
-    BadgeCheck,
+    CalendarPlus,
     CopyPlus,
+    PenSquare,
+    SquarePen,
+    SquareX,
+    Trash,
+    Trash2,
     UserCheck,
     UserPen,
     UserX,
-    UserX2,
 } from "lucide-react";
-import React from "react";
+import React, { useEffect, useRef } from "react";
+import { isArray, isArrayNotNull } from "../../../functions/Functions";
 
-function Table({ data  , onValidate}) {
+function Table({ data, onAdd, onEdit, onDelete }) {
+    const tableContainerRef = useRef(null);
+
+    useEffect(() => {
+        if (tableContainerRef.current) {
+            tableContainerRef.current.scrollTop =
+                tableContainerRef.current.scrollHeight;
+        }
+    }, [data]);
+
+    console.log(data);
+
     return (
         <>
-            <div className="px-2 pb-2 relative">
-                <div className=" p-2 rounded-[12px] border shadow-md">
-                    <div className="table_main h-[78vh]   overflow-auto">
-                        <table className="table  text-left  w-full p-[1rem] b border-collapse">
-                            <thead className="rounded-[20px]">
-                                <tr className="sticky text-gray-700 bg-gray-100 z-12 top-0 left-0">
+            <div className="px-3 mt-4 pb-2 relative text-[16px] bg-gray-50 ">
+                <div className="p-2 rounded-[12px] border shadow-md ">
+                    <div
+                        ref={tableContainerRef}
+                        className="table_main h-[78vh] bg-gray-50 overflow-auto"
+                    >
+                        <table className="table table-fixed text-left  w-full  p-[1rem] border-collapse">
+                            <thead className="rounded-[20px] s">
+                                <tr className="sticky text-gray-700 bg-gray-200 z-12 top-0 left-0">
                                     <th className="rounded-tl-[12px] rounded-bl-[12px]">
-                                        Matricule
+                                        Offre
                                     </th>
-                                    <th> Nom & Prenom </th>
-                                    <th> Type </th>
-                                    <th> Unité de travail </th>
-                                    <th> Validité du compte </th>
+                                    <th> Theme </th>
+                                    <th> Durée </th>
+                                    <th>Disponibilité</th>
+                                    <th>Observation</th>
                                     <th className="rounded-tr-[12px] rounded-br-[12px]">
                                         {" "}
                                     </th>
@@ -33,73 +53,130 @@ function Table({ data  , onValidate}) {
 
                             <tbody>
                                 {data &&
-                                    data.map((item) => (
-                                        <tr key={item.id} >
-                                            <td className={item.isNew?"border-l-[5px] border-blue-400":""}>{item.matricule}</td>
-                                            <td>
-                                                {item.nom} {item.prenom}
-                                            </td>
-                                            <td>
-                                                {item.isChefUnit
-                                                    ? "Chef"
-                                                    : item.isPersCellule ||
-                                                      item.isPersSecretariat
-                                                    ? "Personnel"
-                                                    : ""}
-                                            </td>
-                                            <td>
-                                                {item.unite
-                                                    ? item.unite.nom
-                                                    : "-  -  -"}
-                                            </td>
-                                            <td>
-                                                {item.status ? (
-                                                    <div className="text-blue-500 flex flex-row items-center">
-                                                        <BadgeCheck />{" "}
-                                                        <p className="ml-2">
-                                                            validé
+                                    data.map((item) => {
+                                        const isDispo = item.isDispo;
+                                        return (
+                                            <tr key={item.id} className="h-1">
+                                                <td>{item.nom}</td>
+                                                <td>{item.theme}</td>
+                                                <td>{item.duree} Mois</td>
+
+                                                <td>
+                                                    <div className="flex flex-row">
+                                                        <p
+                                                            className={`
+                                                            px-2 text-white rounded-[20px]
+                                                            ${isDispo && "bg-blue-500" }
+                                                            ${!isDispo && "bg-red-500" }
+                                                        `}
+                                                        >
+                                                        {isDispo? "Disponible" : "Indisponible"}
                                                         </p>
                                                     </div>
-                                                ) : (
-                                                    <div className="text-red-400 flex flex-row items-center">
-                                                        <BadgeAlert />
-                                                        <p className="ml-2">
-                                                            non validé
+                                                </td>
+                                                <td>
+                                                    {item.entretiens?.some(
+                                                        (entretien) =>
+                                                            !entretien.status
+                                                    ) ? (
+                                                        <p className="text-blue-400 cursor-pointer">
+                                                            (
+                                                            {
+                                                                item.entretiens.filter(
+                                                                    (
+                                                                        entretien
+                                                                    ) =>
+                                                                        !entretien.statu
+                                                                ).length
+                                                            }
+                                                            ) entretien
                                                         </p>
-                                                    </div>
-                                                )}
-                                            </td>
-                                            <td>
-                                                <div className="flex flex-row items-center justify-start text-white">
-                                                    <button className="text-blue-500 mr-2 px-3 py-1">
-                                                        <UserPen />
-                                                    </button>
-                                                    <button className="text-gray-500 mr-2 px-3 py-1">
-                                                        <UserX />
-                                                    </button>
-                                                    {!item.status && (
-                                                        <button className=" text-green-500" onClick={()=>{onValidate(item)}}>
-                                                            <UserCheck />
-                                                        </button>
+                                                    ) : item.entretiens
+                                                          .length <= 0 &&
+                                                      item.stage?.some(
+                                                          (stage) =>
+                                                              !stage.status
+                                                      ) ? (
+                                                        <p className="text-blue-400 cursor-pointer">
+                                                            (1) stage en cours
+                                                        </p>
+                                                    ) : (
+                                                        <p className="text-gray-700">
+                                                            - - -
+                                                        </p>
                                                     )}
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                <tr><td></td></tr>
+                                                </td>
+                                                <td>
+                                                    <div className="flex flex-row items-center justify-start text-white">
+                                                        <button
+                                                            className={
+                                                                item.entretiens?.some(
+                                                                    (
+                                                                        entretien
+                                                                    ) =>
+                                                                        !entretien.status
+                                                                ) ||
+                                                                (item.entretiens
+                                                                    .length <=
+                                                                    0 &&
+                                                                    !item.isDispo)
+                                                                    ? "text-red-200 mr-2 px-3 py-1 "
+                                                                    : "text-red-500 mr-2 px-3 py-1 hover:text-red-400"
+                                                            }
+                                                            onClick={() => {
+                                                                onDelete(item);
+                                                            }}
+                                                            disabled={
+                                                                item.entretiens?.some(
+                                                                    (
+                                                                        entretien
+                                                                    ) =>
+                                                                        !entretien.status
+                                                                ) ||
+                                                                (item.entretiens
+                                                                    .length <=
+                                                                    0 &&
+                                                                    !item.isDispo)
+                                                            }
+                                                        >
+                                                            <Trash2 size={22} />
+                                                        </button>
+                                                        <button
+                                                            className="text-blue-500 mr-2 px-3 py-1 hover:text-blue-600"
+                                                            onClick={() => {
+                                                                onEdit(item);
+                                                            }}
+                                                            // disabled={
+                                                            //     item.entretiens
+                                                            //         .length <= 0 &&
+                                                            //     !item.isDispo
+                                                            // }
+                                                        >
+                                                            <PenSquare
+                                                                size={22}
+                                                            />
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                <tr>
+                                    <td></td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
                 <div className="btn_place absolute bottom-0 right-0 pb-2 pr-[8px]">
                     <button
-                        className="btn_style flex flex-row items-center justify-center bg-blue-500 px-4 py-1 w-full rounded-tl-[7px] rounded-br-[7px] text-gray-100 hover:bg-blue-600 "
+                        className="btn_style flex flex-row items-center justify-center bg-blue-500 px-4 py-2 w-full rounded-tl-[7px] rounded-br-[7px] text-gray-100 hover:bg-blue-600 "
                         onClick={() => {
-                            addPopUp(!popup);
+                            onAdd();
                         }}
                     >
                         <CopyPlus size={17} />
-                        <p className="ml-1">Ajouter</p>
+                        <p className="ml-1">Nouvel offre</p>
                     </button>
                 </div>
             </div>

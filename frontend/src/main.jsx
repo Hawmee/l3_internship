@@ -19,12 +19,14 @@ import stageReducer from "./features/stage.js";
 import stagiaireReducer from "./features/stagiaire.js";
 import tacheReducer from "./features/tache.js";
 import unitReducer from "./features/unit.js";
+import selectedReducer from "./features/selected.js"
 import "./global.css";
 import router from "./routes/router.jsx";
 import './components/styles/Table.css'
 
 const store = configureStore({
     reducer: {
+        selected:selectedReducer,
         token: tokenReducer,
         currentUser: currentUserReducer,
         backendUrl: backendUrlReducer,

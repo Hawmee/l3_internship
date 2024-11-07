@@ -91,17 +91,6 @@ function Table({ data  , onValidate}) {
                         </table>
                     </div>
                 </div>
-                <div className="btn_place absolute bottom-0 right-0 pb-2 pr-[8px]">
-                    <button
-                        className="btn_style flex flex-row items-center justify-center bg-blue-500 px-4 py-1 w-full rounded-tl-[7px] rounded-br-[7px] text-gray-100 hover:bg-blue-600 "
-                        onClick={() => {
-                            addPopUp(!popup);
-                        }}
-                    >
-                        <CopyPlus size={17} />
-                        <p className="ml-1">Ajouter</p>
-                    </button>
-                </div>
             </div>
         </>
     );

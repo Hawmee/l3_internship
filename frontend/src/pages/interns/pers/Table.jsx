@@ -89,7 +89,7 @@ function Table({ data, onAdd, onEdit, onDelete , onDocs }) {
                                                     <button
                                                         className={
                                                             item.observation !==
-                                                            ("En Cours de Stage" &&
+                                                            ("En cours de stage" ||
                                                                 "A entretenir")
                                                                 ? "text-red-500 mr-2 px-3 py-1 hover:text-red-400"
                                                                 : "text-red-200 mr-2 px-3 py-1"
@@ -97,7 +97,7 @@ function Table({ data, onAdd, onEdit, onDelete , onDocs }) {
                                                         onClick={() => {
                                                             if (
                                                                 item.observation !==
-                                                                ("En Cours de Stage" &&
+                                                                ("En cours de stage" ||
                                                                     "A entretenir")
                                                             ) {
                                                                 onDelete(item);

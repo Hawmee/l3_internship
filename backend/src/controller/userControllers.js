@@ -37,7 +37,11 @@ export const validateUser = async(req,res)=>{
                 isNew:false
             },
             include:{
-                unite:true ,
+                unite:{
+                    include:{
+                        users:true
+                    }
+                },
             }
         })
 

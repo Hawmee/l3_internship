@@ -31,9 +31,19 @@ function SelectSearch({label , name , option ,  validation , ...props }) {
             padding: '10px',
             cursor: 'pointer',
             '&:active': {
-                backgroundColor: '#d1fae5', // Tailwind bg-green-100
+                backgroundColor: '#3B82F6',
+                color: '#FFFFFF',
             },
         }),
+    };
+
+    const customFilterOption = (option, inputValue) => {
+        const labelMatches = option.label.toLowerCase().includes(inputValue.toLowerCase());
+        const divisionMatches = option.data.division 
+        ? option.data.division.toLowerCase().includes(inputValue.toLowerCase()) 
+        : false;
+
+        return labelMatches || divisionMatches;
     };
     return (
         <>
@@ -42,7 +52,8 @@ function SelectSearch({label , name , option ,  validation , ...props }) {
                 <Select
                     {...register(name,validation)}
                     options={option}
-                    onChange={option => setValue(name, option.value)}
+                    filterOption={customFilterOption}
+                    onChange={option => setValue(name, option ? option.value : null)}
                     styles={customStyles}
                     isClearable
                     {...props}

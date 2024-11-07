@@ -14,13 +14,19 @@ const attestationSlice = createSlice({
         },
 
         editAttestation: (state, action) => {
-            const { id, ...updatedData } = action.payload;
-            const index = state.value.findIndex(
-                (attestation) => attestation.id == id
-            );
-
-            if (index == -1) {
-                state.value[index] = { ...state.value[index], ...updatedData };
+            if (Array.isArray(action.payload)) {
+                action.payload.forEach(entretient => {
+                    const index = state.value.findIndex((data) => data.id === entretient.id);
+                    if (index !== -1) {
+                        state.value[index] = { ...state.value[index], ...entretient };
+                    }
+                });
+            } else {
+                const { id, ...updatedData } = action.payload;
+                const index = state.value.findIndex((data) => data.id === id);
+                if (index !== -1) {
+                    state.value[index] = { ...state.value[index], ...updatedData };
+                }
             }
         },
 

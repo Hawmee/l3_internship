@@ -7,7 +7,7 @@ function WaitingPage() {
       <MereLayout>
         <div> </div>
         <div className="flex flex-col justify-center items-center h-full text-[22px] bg-gray-200">
-            Ur account is still under verification
+            Votre compte est sous verification . Veuillez patientier .
         </div>
       </MereLayout>
     </>
