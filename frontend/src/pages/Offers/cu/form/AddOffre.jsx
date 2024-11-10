@@ -28,6 +28,7 @@ function AddOffre({ unite_id, handleAdd , method}) {
     const onSubmit = (data) => {
         const offre_data = {
             ...data,
+            nombre_stagiaire: Number(data.nombre_stagiaire),
             duree : Number(data.duree),
             unite_id: Number(unite_id),
         };
@@ -55,8 +56,8 @@ function AddOffre({ unite_id, handleAdd , method}) {
 
                         <div className="mt-2">
                             <Input
-                                label={"Theme"}
-                                name={"theme"}
+                                label={"Mention d'etude requise"}
+                                name={"mention_requise"}
                                 validation={{
                                     required: "Valeur requise",
                                 }}
@@ -65,8 +66,8 @@ function AddOffre({ unite_id, handleAdd , method}) {
 
                         <div className="mt-2">
                             <Input
-                                label={"Competence requise"}
-                                name={"competence_requis"}
+                                label={"Option de la Mention requise"}
+                                name={"option_requise"}
                                 validation={{
                                     required: "Valeur requise",
                                 }}
@@ -75,7 +76,19 @@ function AddOffre({ unite_id, handleAdd , method}) {
 
                         <div className="mt-2">
                             <Input
-                                label={"Durée du stage :"}
+                                label={"Nombre de Stagiaires requise"}
+                                name={"nombre_stagiaire"}
+                                validation={{
+                                    required: "Valeur requise",
+                                }}
+                                type='number'
+                                min={1}
+                            />
+                        </div>
+
+                        <div className="mt-2">
+                            <Input
+                                label={"Durée du stage (mois) :"}
                                 name={"duree"}
                                 validation={{
                                     required: "Valeur requise",

@@ -39,7 +39,7 @@ function PersCelluleLayout() {
     const isNewInterviews =
         isArray(interviews) &&
         interviews.some(
-            (interview) => interview.isNew && interview.date_interview
+            (interview) => (interview.isNew && interview.date_interview)
         );
     const isNewAttestation =
         isArray(attestations) &&
@@ -53,8 +53,9 @@ function PersCelluleLayout() {
     }, [user]);
 
     useEffect(() => {
-        // getAllAttestations();
+        getAllAttestations();
     }, [dispatch]);
+    
 
     return (
         <>
@@ -78,7 +79,7 @@ function PersCelluleLayout() {
                     />
                     <SideBarLinks
                         icon={<FileText size={22} />}
-                        text={"Livrables"}
+                        text={"Attestations"}
                         href={"/persCellule/attestation"}
                         alert={isNewAttestation}
                     />

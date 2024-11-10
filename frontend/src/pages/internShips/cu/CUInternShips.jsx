@@ -12,6 +12,7 @@ import Redocs from "./forms/Redocs";
 import Details from "./cards/Details";
 import Interns from "./cards/Interns";
 import { Search } from "lucide-react";
+import Tasks from "./cards/Tasks";
 
 function CUInternShips({ data }) {
     const current_user = useSelector((state) => state.currentUser.value);
@@ -113,6 +114,9 @@ function CUInternShips({ data }) {
                     </div>
                     <div className="relative flex-1 flex flex-col h-[80vh] mt-4 mr-2 rounded-[12px]">
                         <div className=" card h-full overflow-auto px-2">
+                            <div className="mb-3">
+                                <Tasks data={stage} />
+                            </div>
                             <div className="mb-3">
                                 <Details data={stage} />
                             </div>

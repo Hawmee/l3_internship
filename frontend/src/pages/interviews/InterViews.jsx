@@ -3,12 +3,14 @@ import { useSelector } from 'react-redux'
 import CSInterviews from './cs/CSInterviews'
 import PersInterviews from './pers/PersInterviews'
 import CU_interviews from './cu/CU_interviews'
+import { isArrayNotNull } from '../../functions/Functions'
 
 function InterViews() {
 
 
   const current_user = useSelector(state=>state.currentUser.value)
-  const interviews = useSelector(state=>state.entretient.value)
+  const interv = useSelector(state=>state.entretient.value)
+  const interviews = isArrayNotNull(interv) ? interv.filter(item=> (item.stagiaire && item.offre)) : []
 
   return (
     <>

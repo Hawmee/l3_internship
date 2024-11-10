@@ -9,7 +9,7 @@ export const stagiaire_status = {
 
 export const stage_observations = {
     re_valide:"Revalidation",
-    en_validation:" Validation",
+    en_validation:"Validation",
     en_cours :"En Cours",
     abandon : "Annulé",
     acheve: "Achevé"

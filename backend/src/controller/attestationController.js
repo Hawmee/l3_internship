@@ -1,3 +1,4 @@
+import { transporter } from "../config/mailConfig.js";
 import prismaClient from "./prismaClient.js";
 
 const prisma = prismaClient;
@@ -22,10 +23,10 @@ export const getAllAttestation = async (req, res) => {
                 },
             },
         });
-            res.status(200).send(attestation);
-        } catch (error) {
-            res.status(400).send({ message: error.message });
-        }
+        res.status(200).send(attestation);
+    } catch (error) {
+        res.status(400).send({ message: error.message });
+    }
 };
 
 export const newAttestation = async (req, res) => {
@@ -35,7 +36,7 @@ export const newAttestation = async (req, res) => {
             data: {
                 isNew: true,
                 status: false,
-                isInforme:false,
+                isInforme: false,
                 ...attestation_data,
             },
             include: {
@@ -73,10 +74,10 @@ export const newAttestation = async (req, res) => {
             //     },
             // });
 
-            if(attestation.stage){
-                req.io.emit("updated_stage" , attestation.stage)
+            if (attestation.stage) {
+                req.io.emit("updated_stage", attestation.stage);
             }
-            req.io.emit("new_attestation" , attestation)
+            req.io.emit("new_attestation", attestation);
         }
         res.status(200).send({ data: attestation });
     } catch (error) {
@@ -91,9 +92,9 @@ export const partialUpdateAttestation = async (req, res) => {
         const attestation = await prisma.attestation.update({
             where: { id: Number(id) },
             data: {
-                status:false,
-                isNew:true,
-                isInforme:false,
+                status: false,
+                isNew: true,
+                isInforme: false,
             },
             include: {
                 stage: {
@@ -113,12 +114,11 @@ export const partialUpdateAttestation = async (req, res) => {
             },
         });
 
-        if(attestation){
-
-            if(attestation.stage){
-                req.io.emit("updated_stage" , attestation.stage)
+        if (attestation) {
+            if (attestation.stage) {
+                req.io.emit("updated_stage", attestation.stage);
             }
-            req.io.emit("updated_attestation" , attestation)
+            req.io.emit("updated_attestation", attestation);
             res.status(200).send({ data: attestation });
         }
     } catch (error) {
@@ -126,15 +126,15 @@ export const partialUpdateAttestation = async (req, res) => {
     }
 };
 
-export const validate = async (req,res)=>{
-    const {id} = req.params
+export const validate = async (req, res) => {
+    const { id } = req.params;
     try {
         const attestation = await prisma.attestation.update({
-            where:{id:Number(id)},
-            data:{
-                status:true,
-                isNew:true,
-                isInforme:false,
+            where: { id: Number(id) },
+            data: {
+                status: true,
+                isNew: true,
+                isInforme: false,
             },
             include: {
                 stage: {
@@ -152,19 +152,108 @@ export const validate = async (req,res)=>{
                     },
                 },
             },
-        })
+        });
 
-        if(attestation){
-            if(attestation.stage){
-                req.io.emit("updated_stage" , attestation.stage)
+        if (attestation) {
+            if (attestation.stage) {
+                req.io.emit("updated_stage", attestation.stage);
             }
-            req.io.emit("updated_attestation" , attestation)
+            req.io.emit("updated_attestation", attestation);
             res.status(200).send({ data: attestation });
         }
     } catch (error) {
-        res.status(500).send({message:error})
+        res.status(500).send({ message: error.message });
     }
-}
+};
+
+export const inform = async (req, res) => {
+    const datas = req.body;
+    const { id } = req.params;
+    try {
+        const mail_option = {
+            to: datas.receiver_mail,
+            subject: "Attestation de Stage,",
+            text: datas.content,
+        };
+        const sent = await transporter.sendMail(mail_option);
+        if (sent) {
+            const attestation = await prisma.attestation.update({
+                where: { id: Number(id) },
+                data: {
+                    isInforme: true,
+                    isNew: false,
+                },
+                include: {
+                    stage: {
+                        include: {
+                            stagiaire: true,
+                            unite: {
+                                include: {
+                                    users: true,
+                                },
+                            },
+                            attestation: true,
+                            performance: true,
+                            taches: true,
+                            offre: true,
+                        },
+                    },
+                },
+            });
+
+            if (attestation) {
+                if (attestation.stage) {
+                    req.io.emit("updated_stage", attestation.stage);
+                }
+                req.io.emit("updated_attestation", attestation);
+                res.status(200).send({ message: "Action reussite !" });
+            }
+        }
+    } catch (error) {
+        res.status(500).send({ message: error.message });
+    }
+};
+
+export const collected = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const attestation = await prisma.attestation.update({
+            where: { id: Number(id) },
+            data: {
+                status: false,
+                isNew: false,
+                isInforme: false,
+                isCollected: true,
+            },
+            include: {
+                stage: {
+                    include: {
+                        stagiaire: true,
+                        unite: {
+                            include: {
+                                users: true,
+                            },
+                        },
+                        attestation: true,
+                        performance: true,
+                        taches: true,
+                        offre: true,
+                    },
+                },
+            },
+        });
+
+        if (attestation) {
+            if (attestation.stage) {
+                req.io.emit("updated_stage", attestation.stage);
+            }
+            req.io.emit("updated_attestation", attestation);
+            res.status(200).send({ data: attestation });
+        }
+    } catch (error) {
+        res.status(500).send({ message: error });
+    }
+};
 
 export const deleteAttestation = async (req, res) => {
     const { id } = req.params;

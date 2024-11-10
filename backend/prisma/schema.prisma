@@ -52,8 +52,9 @@ model Unites {
 model Offres {
   id Int @id @default(autoincrement())
   nom String
-  theme String
-  competence_requis String
+  mention_requise String
+  option_requise String
+  nombre_stagiaire Int @default(1)
   duree Int @default(1)
   isDispo Boolean @default(true)
   unite_id Int?
@@ -84,6 +85,7 @@ model Stagiaires {
 
 model Stages {
   id Int @id @default(autoincrement())
+  theme String
   offre_id Int?
   unite_id Int?
   stagiaire_id Int?
@@ -107,9 +109,11 @@ model Stages {
 
 model Attestation  {
   id Int @id @default(autoincrement())
+  numero String ?
   status Boolean @default(false)
   stage_id Int? @unique
   isInforme Boolean @default(false)
+  isCollected Boolean @default(false)
   isNew Boolean @default(false)
   stage Stages? @relation(fields: [stage_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
 }
@@ -127,11 +131,11 @@ model Performances {
 
 
 model Taches {
-  id Int @id @default(autoincrement())
+  id Int @id @default(autoincrement()) 
   nom String
   description String?
   status Boolean @default(false)
-  date_debut DateTime
+  observation String 
   date_fin DateTime
   stage_id Int?
   stage Stages? @relation("TacheStage" , fields: [stage_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)

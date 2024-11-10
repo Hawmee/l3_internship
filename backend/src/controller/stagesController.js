@@ -152,6 +152,7 @@ export const abandon = async (req, res) => {
                 where: { id: Number(stage.offre_id) },
                 data: {
                     isDispo: true,
+                    nombre_stagiaire:{increment:1}
                 },
                 include: {
                     entretiens: {
@@ -174,7 +175,7 @@ export const abandon = async (req, res) => {
             const stagiaire = await prisma.stagiaires.update({
                 where: { id: Number(stage.stagiaire_id) },
                 data: {
-                    observation: stagiaire_status.arret,
+                    observation: stagiaire_status.postulant,
                 },
                 include: {
                     entretiens: true,
@@ -279,7 +280,8 @@ export const finished = async (req,res) =>{
             });
 
             const performance = await prisma.performances.create({
-                data: { stage_id:Number(finishedStage.id) , ...performanceData }
+                data: { stage_id:Number(finishedStage.id) , ...performanceData },
+                include:{stage:true}
             });
 
             return { finishedStage, performance };
@@ -287,6 +289,9 @@ export const finished = async (req,res) =>{
 
         // Emit socket event after successful transaction
         req.io.emit('updated_stage', result.finishedStage);
+        if(result.performance.stage){
+            req.io.emit('updated_stage', result.performance.stage);
+        }
         req.io.emit('new_perf' , result.performance)
 
         return res.status(200).send({ 
@@ -309,7 +314,7 @@ export const revalid = async (req,res) =>{
     const { id } = req.params;
     
     try {
-
+        const performanceData = JSON.parse(req.body.performance);
         const existingStage = await prisma.stages.findUnique({
             where: { id: Number(id) },
         });
@@ -387,10 +392,21 @@ export const revalid = async (req,res) =>{
                 },
             });
 
-            return { finishedStage };
+
+            const performance = await prisma.performances.update({
+                where: {id: Number(finishedStage.performance.id)},
+                data: { ...performanceData },
+                include:{stage:true}
+            });
+
+            return { finishedStage  ,performance};
         });
 
         req.io.emit('updated_stage', result.finishedStage);
+        if(result.performance.stage){
+            req.io.emit('updated_stage', result.performance.stage);
+        }
+        req.io.emit('updated_performance' , result.performance)
 
         return res.status(200).send({ 
             message: "Stage terminé avec succès",
@@ -468,6 +484,7 @@ export const invalid = async (req,res) =>{
 
 export const valid = async (req,res) =>{
     const {id}=req.params
+    const numero = req.body.numero
     try {
         const validated = await prisma.stages.update({
             where: {id:Number(id)},
@@ -486,6 +503,49 @@ export const valid = async (req,res) =>{
             },
         })
         if(validated){
+
+            const stagiaire = await prisma.stagiaires.update({
+                where:{id: Number(validated.stagiaire_id)},
+                data:{observation: stagiaire_status.ancien},
+                include: {
+                    entretiens: true,
+                    stages: true ,
+                },
+            })
+
+            const attestation = await prisma.attestation.create({
+                data:{
+                    isNew:true,
+                    status:true,
+                    stage_id: Number(validated.id),
+                    numero: numero ,
+                },
+                include: {
+                    stage: {
+                        include: {
+                            stagiaire: true,
+                            unite: {
+                                include: {
+                                    users: true,
+                                },
+                            },
+                            attestation: true,
+                            performance: true,
+                            taches: true,
+                            offre: true,
+                        },
+                    },
+                },
+            })
+            
+            if(attestation){
+                if(attestation.stage){
+                    req.io.emit("updated_stage" , attestation.stage)
+                }
+                req.io.emit("new_attestation" , attestation)
+            }
+
+            req.io.emit('update_stagiaire' , stagiaire)
             req.io.emit('updated_stage' , validated)
             return res.status(200).send({message:"Action reussite!"})
         }

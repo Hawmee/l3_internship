@@ -7,7 +7,7 @@ import {
     isArrayNotNull,
 } from "../../../functions/Functions";
 
-function Table({ data, onAffirm, onDeny }) {
+function Table({ data, onValidate , onDecline }) {
     const tableContainerRef = useRef(null);
 
     useEffect(() => {
@@ -16,6 +16,9 @@ function Table({ data, onAffirm, onDeny }) {
                 tableContainerRef.current.scrollHeight;
         }
     }, [data]);
+
+    console.log(data);
+    
 
     return (
         <>
@@ -39,7 +42,7 @@ function Table({ data, onAffirm, onDeny }) {
                                 </tr>
                             </thead>
 
-                            {data && (
+                            {isArrayNotNull(data) && (
                                 <tbody>
                                     {data.map((item) => {
                                         const interv_date = item.date_interview;
@@ -56,7 +59,7 @@ function Table({ data, onAffirm, onDeny }) {
                                                 >
                                                     {item.offre.nom}
                                                 </td>
-                                                <td>...</td>
+                                                <td>{item.offre.mention_requise}</td>
                                                 <td>
                                                     {item.stagiaire.nom}{" "}
                                                     {item.stagiaire.prenom}
@@ -95,10 +98,18 @@ function Table({ data, onAffirm, onDeny }) {
                                                 <td>
                                                     {!interv_date && (
                                                         <div>
-                                                            <button className="mr-6 text-red-500">
+                                                            <button className="mr-6 text-red-500"
+                                                                onClick={()=>{
+                                                                    onDecline(item)
+                                                                }}
+                                                            >
                                                                 <X />
                                                             </button>
-                                                            <button className="text-blue-600">
+                                                            <button className="text-blue-600"
+                                                                onClick={()=>{
+                                                                    onValidate(item)
+                                                                }}
+                                                            >
                                                                 <Check />
                                                             </button>
                                                         </div>
@@ -114,7 +125,7 @@ function Table({ data, onAffirm, onDeny }) {
                             )}
                         </table>
                         {!isArrayNotNull(data) && (
-                            <div className="w-full text-gray-700 text-lgflex flex-col items-center">
+                            <div className="w-full text-gray-700 text-lg flex flex-col items-center justify-center mt-4">
                                 (Aucun element à afficher)
                             </div>
                         )}

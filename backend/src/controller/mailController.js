@@ -33,7 +33,8 @@ export const informIntern = async(req,res)=>{
                                         users:true
                                     }
                                 },
-                                stages:true
+                                stages:true,
+                                entretiens:true,
                             },
                         },
                         stagiaire: {

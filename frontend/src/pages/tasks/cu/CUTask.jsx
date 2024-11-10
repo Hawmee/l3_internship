@@ -8,7 +8,7 @@ import Add from "./forms/Add";
 import { Search } from "lucide-react";
 import PopUpContainer from "../../../components/containers/PopUpContainer";
 import Tasks from "./cards/Tasks";
-import { task_observations } from "../../../utils/Observations";
+import { observation_stage, task_observations } from "../../../utils/Observations";
 
 function CUTask({ data }) {
     const current_user = useSelector((state) => state.currentUser.value);
@@ -44,9 +44,11 @@ function CUTask({ data }) {
     const en_cours_number = isArrayNotNull(en_cours) ? en_cours.length : 0;
 
     const _finished =
-    isArrayNotNull(tasks) &&
-    tasks.filter((task) => task.observation == task_observations.acheve);
-const finished_number = isArrayNotNull(_finished) ? en_cours.length : 0;
+        isArrayNotNull(tasks) &&
+        tasks.filter((task) => task.observation == task_observations.acheve);
+    const finished_number = isArrayNotNull(_finished) ? en_cours.length : 0;
+
+    const isEnded = selected ? (selected.status || selected.observation !== observation_stage.en_cours) : true;
 
     useEffect(() => {
         if (selected) {
@@ -144,7 +146,7 @@ const finished_number = isArrayNotNull(_finished) ? en_cours.length : 0;
                                     </div>
                                 ))}
                         </div>
-                        {selected && (
+                        {(selected && !isEnded) && (
                             <div className="absolute bottom-0 right-0">
                                 <button
                                     className="bg-blue-500 text-white px-6 py-1 rounded-br-[12px] rounded-tl-[8px] hover:bg-blue-600"

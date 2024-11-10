@@ -15,17 +15,9 @@ function Print({data , onPrint}) {
     const [offre , setOffre] = useState(null)
 
     const generate = async (data)=>{
-        const today = today_string()
-        const info = {
-            nom: data.nom,
-            theme: data.theme ,
-            division:data.division,
-            debut:date_d_m_y(stage.date_debut),
-            fin:date_d_m_y(stage.date_fin),
-            date: today ,
-        }
 
-        const pdfBlob = await pdf(<AttesationPDF data={info} />).toBlob()
+
+        const pdfBlob = await pdf(<AttesationPDF />).toBlob()
         const url_pdf = URL.createObjectURL(pdfBlob)
         
         const printWindow = window.open(url_pdf)
@@ -62,7 +54,7 @@ function Print({data , onPrint}) {
             setOffre(offre)
             reset({
                 nom:`${stagiaire.nom} ${stagiaire.prenom}`,
-                theme: offre.theme,
+                theme: stage.theme,
                 division: division.nom
             })
         }

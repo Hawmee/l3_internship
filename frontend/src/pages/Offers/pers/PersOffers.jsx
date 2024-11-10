@@ -18,29 +18,26 @@ function PersOffers({ offers }) {
         reset: resetInterv,
     } = methods;
 
-    const offer_available = filterObjSame(offers, "isDispo");
+    const offer_available = filterObjSame(offers, "nombre_stagiaire" , 0);
     const [selectedOffre, setSelectedOffre] = useState(null);
     const [createInterviews, setCreateInterviews] = useState(false);
 
     const handleCreateInterview = (offre) => {
         setCreateInterviews(!createInterviews);
-        setSelectedOffre(offre);
-        resetInterv({
-            offre_id: offre.id,
-        });
+        if(offre){
+            setSelectedOffre(offre);
+            resetInterv({
+                offre_id: offre.id,
+            });
+        }
     };
 
-    const offres = isArrayNotNull(offer_available)
-    ? offer_available.filter(
-          (item) =>
-              item.stages.length === 0 ||
-              item.stages.some(
-                  (stage) =>
-                      stage.observation !== "Achevé" &&
-                      stage.status === true
-              )
-      )
-    : null;
+    // const offres = isArrayNotNull(offer_available)
+    // ? offer_available.filter(
+    //       (item) =>
+    //         item.
+    //   )
+    // : null;
 
     return (
         <>
@@ -81,7 +78,7 @@ function PersOffers({ offers }) {
                 </SearchContainer>
                 <div>
                     {/* <Card data={offer_available} handleCreateInterview={handleCreateInterview}  /> */}
-                    <Table data={offres} onInterview={handleCreateInterview} />
+                    <Table data={offer_available} onInterview={handleCreateInterview} />
                 </div>
             </MainContainer>
             {createInterviews && (

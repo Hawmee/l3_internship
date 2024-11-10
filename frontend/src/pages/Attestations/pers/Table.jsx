@@ -12,6 +12,7 @@ import {
     UserX,
 } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
+import { isArrayNotNull } from "../../../functions/Functions";
 
 function Table({ data, onRow, onInform, onAttestation }) {
     const tableContainerRef = useRef(null);
@@ -36,19 +37,19 @@ function Table({ data, onRow, onInform, onAttestation }) {
                             <thead className="rounded-[20px] s">
                                 <tr className="sticky text-gray-700 bg-gray-200 z-12 top-0 left-0">
                                     <th className="rounded-tl-[12px] rounded-bl-[12px]">
-                                        Stagiaire
+                                        Numero
                                     </th>
-                                    {/* <th> Theme </th> */}
+                                    <th> Stagiaire </th>
                                     <th> Division d'acceuil</th>
                                     <th> Attestation </th>
                                     <th className="rounded-tr-[12px] rounded-br-[12px]">
-                                        {" "}
+                                        
                                     </th>
                                 </tr>
                             </thead>
 
                             <tbody>
-                                {data &&
+                                {isArrayNotNull(data) && 
                                     data.map((item) => {
                                         const stagiaire = item.stagiaire;
                                         const division = item.unite;
@@ -61,8 +62,8 @@ function Table({ data, onRow, onInform, onAttestation }) {
                                         const disabledMail = attestation
                                             ? !attestation.status
                                             : true;
-                                        const status = attestation.status
-                                        const isDisabledFournie = !attestation.isInforme
+                                        // const status = attestation.status
+                                        const isDisabledFournie = !attestation.isInforme || !attestation.status || attestation.isCollected
                                         return (
                                             <tr
                                                 key={item.id}
@@ -76,6 +77,9 @@ function Table({ data, onRow, onInform, onAttestation }) {
                                                 }}
                                             >
                                                 <td className="rounded-l-[12px]">
+                                                    {attestation.numero}
+                                                </td>
+                                                <td >
                                                     {stagiaire.nom}{" "}
                                                     {stagiaire.prenom}
                                                 </td>
@@ -85,7 +89,11 @@ function Table({ data, onRow, onInform, onAttestation }) {
                                                     {attestation ? (
                                                         attestation.status ? (
                                                             <p className="bg-blue-500 px-3 rounded-xl">Pret</p>
-                                                        ) : (
+                                                        ) 
+                                                        : attestation.isInforme && !attestation.status ? (
+                                                            <p>livré</p>
+                                                        )
+                                                        : (
                                                             <p className="bg-gray-600 px-3 rounded-xl">En attente</p>
                                                         )
                                                     ) : (

@@ -20,7 +20,7 @@ function Generate({ data, handleAttestation }) {
     const generate = async ()=>{
         const info = {
             nom:`${stagiaire.nom} ${stagiaire.prenom}`,
-            theme: offre.theme ,
+            theme: stage.theme ,
             division:unite.nom,
             debut:date_d_m_y(data.date_debut),
             fin:date_d_m_y(data.date_fin),

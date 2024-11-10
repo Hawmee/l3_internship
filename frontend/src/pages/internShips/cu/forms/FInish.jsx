@@ -1,257 +1,211 @@
 import React, { useEffect, useState } from "react";
-import { FormProvider } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import FileInput from "../../../../components/forms/FileInput";
 import Input from "../../../../components/forms/Input";
-import axios from "axios";
-import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import AttestationPDF from "../../../../components/Files/AttesationPDF";
-import { pdf } from "@react-pdf/renderer";
 import { differenceInMonths } from "date-fns";
+import { pdf } from "@react-pdf/renderer";
+import AttestationPDF from "../../../../components/Files/AttesationPDF";
+import { useSelector } from "react-redux";
+import axios from "axios";
 
-function Finish({ data, method, onFinish }) {
-    const url = useSelector((state) => state.backendUrl.value);
-    const toastconf = useSelector((state) => state.toastConfig.value);
-
-    const id = data.id;
-    const stage = data;
-    const stagiaire = stage.stagiaire
-    const  unite = stage.unite
-    const encadreur = unite.users.find(user=>user.status)
-
-    const {watch ,reset}=method
-    const comp_pro = watch('comportement_pro')
-    const pert_tech = watch('pertinence_tech')
-    const pert_pedago = watch('pertinance_pedago')
-    const [obs,setObs]=useState('Bien')
-
-    const people = {
-        stagiaire:{
-            nom:stagiaire.nom+' '+stagiaire.prenom,
-            origine:stagiaire.etablissement,
-            niveau: stagiaire.niveau,
-            periode: differenceInMonths(stage.date_fin , stage.date_debut)
-        },
-        encadreur:{
-            nom: encadreur.nom+" "+encadreur.prenom,
-            fonction: "Chef de division",
-            serv: unite.nom
+const Finish = ({ data, onFinish }) => {
+    const url = useSelector(state=>state.backendUrl.value)
+    const methods = useForm({
+        mode: "onChange", // This enables real-time validation
+        defaultValues: {
+            pertinance_pro: "10",
+            pertinance_tech: "10",
+            pertinance_pedago: "10",
+            observation: "Bien"
         }
-    
-    }
+    });
 
-    const generate = async ()=>{
+    const { watch, reset, formState: { isSubmitting, errors } } = methods;
 
-        const formValue = method.getValues()
+    const comp_pro = watch('pertinance_pro');
+    const pert_tech = watch('pertinance_tech');
+    const pert_pedago = watch('pertinance_pedago');
+    const [obs, setObs] = useState('Bien');
+
+    const stage = data;
+    const stagiaire = stage.stagiaire;
+    const unite = stage.unite;
+    const encadreur = unite.users.find(user => user.status);
+
+    const generate = async () => {
+        const formValue = methods.getValues();
+        
+        const people = {
+            stagiaire: {
+                nom: `${stagiaire.nom} ${stagiaire.prenom}`,
+                origine: stagiaire.etablissement,
+                niveau: stagiaire.niveau,
+                periode: differenceInMonths(stage.date_fin, stage.date_debut)
+            },
+            encadreur: {
+                nom: `${encadreur.nom} ${encadreur.prenom}`,
+                fonction: "Chef de division",
+                serv: unite.nom
+            }
+        };
 
         const evaluation = {
-            pro: formValue.comportement_pro,
-            tech: formValue.pertinence_tech,
+            pro: formValue.pertinance_pro,
+            tech: formValue.pertinance_tech,
             pedago: formValue.pertinance_pedago,
-            total:
-                Number(formValue.comportement_pro) +
-                Number(formValue.pertinence_tech) +
-                Number(formValue.pertinance_pedago),
-            observ: obs.toUpperCase(),
+            total: Number(formValue.pertinance_pro) +
+                  Number(formValue.pertinance_tech) +
+                  Number(formValue.pertinance_pedago),
+            observ: formValue.observation.toUpperCase(),
             actor: people,
-        }
+        };
 
-        const pdfBlob = await pdf(<AttestationPDF isEvaluation={true} evaluation={evaluation} />).toBlob()
-        const url_pdf = URL.createObjectURL(pdfBlob)
-        
-        const printWindow = window.open(url_pdf)
-        if(printWindow){
-            printWindow.onload = ()=>{
-                printWindow.onafterprint = () => printWindow.close();
-            }            
-        }
-        
-    }
-
-
-    const submit = async (data) => {
-        if (!stage.performance) {
-            const { book, ...performance } = data;
-            const formData = new FormData();
-            if (data.book && data.book[0]) {
-                formData.append("book", data.book[0]);
+        try {
+            const pdfBlob = await pdf(<AttestationPDF isEvaluation={true} evaluation={evaluation} />).toBlob();
+            const url_pdf = URL.createObjectURL(pdfBlob);
+            
+            const printWindow = window.open(url_pdf);
+            if (printWindow) {
+                printWindow.onload = () => {
+                    printWindow.onafterprint = () => printWindow.close();
+                };
             }
-            formData.append("stage", JSON.stringify(stage));
-            formData.append("performance", JSON.stringify(performance));
-            try {
-                const finished = await axios.patch(
-                    `${url}/stage/finish/${id}`,
-                    formData,
-                    {
-                        headers: {
-                            "Content-Type": "multipart/form-data",
-                        },
-                    }
-                );
-                if (finished) {
-                    const message = "Action reussite !!";
-                    toast.success(message, toastconf);
-                    onFinish();
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        } else {
-            const { book, ...performance } = data;
-            const formData = new FormData();
-            if (data.book && data.book[0]) {
-                formData.append("book", data.book[0]);
-            }
-            formData.append("stage", JSON.stringify(stage));
-            formData.append("performance", JSON.stringify(performance));
-
-            try {
-                const finished = await axios.patch(
-                    `${url}/stage/revalid/${id}`,
-                    formData,
-                    {
-                        headers: {
-                            "Content-Type": "multipart/form-data",
-                        },
-                    }
-                );
-                if (finished) {
-                    const message = "Action reussite !!";
-                    toast.success(message, toastconf);
-                    onFinish();
-                }
-            } catch (error) {
-                console.log(error);
-            }
+        } catch (error) {
+            toast.error("Error generating PDF");
         }
     };
 
-    const onSubmit = (data) => {
-        submit(data);
+    const onSubmit = async (formData) => {
+        try {
+            const { book, ...performance } = formData;
+            const formDataToSend = new FormData();
+            
+            if (book?.[0]) {
+                formDataToSend.append("book", book[0]);
+            }
+            
+            formDataToSend.append("stage", JSON.stringify(stage));
+            formDataToSend.append("performance", JSON.stringify(performance));
+
+            // Uncomment and modify the axios calls as needed
+            const endpoint = !stage.performance 
+                ? `${url}/stage/finish/${data.id}`
+                : `${url}/stage/revalid/${data.id}`;
+            
+            const validate = await axios.patch(endpoint, formDataToSend, {
+                headers: { "Content-Type": "multipart/form-data" }
+            });
+
+            if(validate){
+                toast.success("Action réussie !");
+                onFinish();
+                generate()
+            }
+        } catch (error) {
+            toast.error("Une erreur s'est produite");
+            console.error(error);
+        }
     };
 
+    useEffect(() => {
+        const total = Number(comp_pro) + Number(pert_tech) + Number(pert_pedago);
+        let newObs = 'Mauvais';
+        
+        if (total >= 50) newObs = 'Excellent';
+        else if (total >= 40) newObs = 'Tres-Bien';
+        else if (total >= 30) newObs = 'Bien';
+        else if (total >= 20) newObs = 'Assez-Bien';
 
-    useEffect(()=>{
-        const total = Number(comp_pro)+Number(pert_tech)+Number(pert_pedago)
-        if(total <20 ){
-            setObs('Mauvais')
-        }else if(total<30){
-            setObs('Assez-Bien')
-        }else if(total<40){
-            setObs('Bien')
-        }else if(total<50){
-            setObs('Tres-Bien')
-        }else{
-            setObs('Excellent')
-        }
-
-
-        reset({
-            observation:obs,
-        })
-    } , [comp_pro,pert_tech,pert_pedago])
+        setObs(newObs);
+        reset({ ...methods.getValues(), observation: newObs });
+    }, [comp_pro, pert_tech, pert_pedago]);
 
     return (
-        <>
-            <div className="min-w-[25vw] text-lg text-center mb-4">
+        <div className="w-full max-w-2xl mx-auto p-4">
+            <h2 className="text-lg font-semibold text-center mb-6">
                 Validation du Stage
-            </div>
-            <FormProvider {...method}>
-                <form onSubmit={method.handleSubmit(onSubmit)}>
-                    <div className="pb-3 border-b-[2px] border-gray-300">
+            </h2>
+            
+            <FormProvider {...methods}>
+                <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">
+                    <div className="pb-4 border-b border-gray-200">
                         <FileInput
-                            label={"Rapport de stage"}
-                            name={"book"}
+                            label="Rapport de stage"
+                            name="book"
                             validation={{
-                                required:
-                                    "Fichier requise pour validation de stage",
+                                required: 'Le rapport de stage est requis'
                             }}
-                            className="border-[2px] border-gray-300 p-2 rounded-[8px]"
+                            className="border-2 border-gray-300 p-2 rounded-lg w-full"
                         />
                     </div>
 
-                        <div>
-                            <div className="text-center text-lg mt-2 mb-4">
-                                Performance du stage(/20)
-                            </div>
-                            <div className="mb-3">
-                                <Input 
-                                    label={"Comportement professionel"}
-                                    name={"comportement_pro"}
-                                    validation={{ 
-                                        required:"Valeur requise"
-                                     }}
-                                    type="number"
-                                    min={0}
-                                    max={20}
-                                    defaultValue={10}
-                                />
-                            </div>
-                            <div className="mb-3">
-                                <Input 
-                                    label={"Pertinance technique"}
-                                    name={"pertinence_tech"}
-                                    validation={{ 
-                                        required:"Valeur requise"
-                                     }}
-                                    type="number"
-                                    min={0}
-                                    max={20}
-                                    defaultValue={10}
-                                />
-                            </div>
-                            <div className="mb-3">
-                                <Input 
-                                    label={"Pertinence pedagogique"}
-                                    name={"pertinance_pedago"}
-                                    validation={{ 
-                                        required:"Valeur requise"
-                                     }}
-                                    type="number"
-                                    min={0}
-                                    max={20}
-                                    defaultValue={10}
-                                />
-                            </div>
-                            <div className="mb-3">
-                                <Input 
-                                        label={"Observation"}
-                                        name={"observation"}
-                                        validation={{ 
-                                            required:"Valeur requise"
-                                        }}
-                                        type="text"
-                                        readOnly
-                                    />
-                            </div>
+                    <div className="space-y-4">
+                        <h3 className="text-lg font-medium text-center">
+                            Performance du stage (/20)
+                        </h3>
+                        
+                        {[
+                            { name: 'pertinance_pro', label: 'Comportement professionnel' },
+                            { name: 'pertinance_tech', label: 'Pertinence technique' },
+                            { name: 'pertinance_pedago', label: 'Pertinence pédagogique' }
+                        ].map((field) => (
+                            <Input
+                                key={field.name}
+                                label={field.label}
+                                name={field.name}
+                                type="number"
+                                validation={{
+                                    required: 'Ce champ est requis',
+                                    min: { value: 0, message: 'Minimum 0' },
+                                    max: { value: 20, message: 'Maximum 20' }
+                                }}
+                                min={0}
+                                max={20}
+                                className="w-full"
+                            />
+                        ))}
 
-                            <div className="mt-3 flex felx-row justify-end">
-                                    <p className="text-blue-500 underline underline-offset-4 cursor-pointer "
-                                        onClick={()=>{
-                                            generate()
-                                        }}
-                                    >Voir apercu</p>   
-                            </div>
+                        <Input
+                            label="Observation"
+                            name="observation"
+                            type="text"
+                            readOnly
+                            className="w-full"
+                        />
+
+                        <div className="text-right">
+                            <button
+                                type="button"
+                                onClick={generate}
+                                className="text-blue-500 underline hover:text-blue-600"
+                            >
+                                Voir aperçu
+                            </button>
                         </div>
+                    </div>
 
-                    <div className="mt-6 flex flex-row justify-end text-white">
+                    <div className="flex justify-end space-x-4">
                         <button
-                            className="bg-gray-600 px-4 py-1 rounded-[8px] hover:bg-gray-500 mr-2"
-                            onClick={() => {
-                                onFinish();
-                            }}
                             type="button"
+                            onClick={onFinish}
+                            className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors"
+                            disabled={isSubmitting}
                         >
                             Annuler
                         </button>
-                        <button className="bg-blue-500 px-4 py-1 rounded-[8px] hover:bg-blue-600 ">
-                            Valider
+                        <button
+                            type="submit"
+                            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                            disabled={isSubmitting || Object.keys(errors).length > 0}
+                        >
+                            {isSubmitting ? 'En cours...' : 'Valider'}
                         </button>
                     </div>
                 </form>
             </FormProvider>
-        </>
+        </div>
     );
-}
+};
 
 export default Finish;

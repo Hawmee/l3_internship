@@ -10,7 +10,7 @@ import Socket from "../features/Socket";
 import { editStage, newStage, setStage } from "../features/stage";
 import { deleteStagiaire, editStagiaire, newStagiaire, setStagiaire } from "../features/stagiaire";
 import { isArrayNotNull } from "../functions/Functions";
-import { newPerf } from "../features/perf";
+import { newPerf, setPerf } from "../features/perf";
 import { editAttestation, newAttestation } from "../features/attestation";
 
 function Authenticated() {
@@ -145,6 +145,11 @@ function Authenticated() {
             dispatch(editOffre(offre))
         })
 
+
+        socket.on('updated_performance' , performance =>{
+            dispatch(setPerf(performance))
+        })
+
         socket.on('updated_entretient' , entretient=>{
             dispatch(editEntretient(entretient))            
         })
@@ -187,6 +192,7 @@ function Authenticated() {
             socket.off('new_perf')
             socket.off('new_attestation')
             socket.off('updated_offre')
+            socket.off('updated_performance')
             socket.off('updated_entretient')
             socket.off('update_stagiaire')
             socket.off('updated_stage')

@@ -14,8 +14,7 @@ import { useForm } from "react-hook-form";
 import { format } from "date-fns";
 import Edit from "./forms/Edit";
 
-function CSInterviews() {
-    const interviews = useSelector((state) => state.entretient.value);
+function CSInterviews({interviews}) {
     const [navigation, setNavigation] = useState("Demande");
     const [interview_data, setInterview_data] = useState(interviews);
     const [searchTerm, setSearchTerm] = useState("");
@@ -35,13 +34,15 @@ function CSInterviews() {
     const demand_CS = filterObjdiff(interview_data , 'date_interview')
 
     const demands_interv = filterObjSame(
-        interview_data,
+        demand_CS,
         "status"
     );
     const affirmed_interv = filterObjSame(
         interview_data,
         "date_interview",
     );
+
+    console.log(affirmed_interv)
 
     const handleAffirm = (interview) => {
         setAffirm(!affirm);

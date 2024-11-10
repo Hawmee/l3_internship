@@ -41,10 +41,9 @@ function Table({ data, onAdd, onEdit, onDelete }) {
                                     <th className="rounded-tl-[12px] rounded-bl-[12px]">
                                         Offre
                                     </th>
-                                    <th> Theme </th>
+                                    <th> Mention Requise </th>
                                     <th> Durée </th>
-                                    <th>Disponibilité</th>
-                                    <th>Observation</th>
+                                    <th>Place Disponible</th>
                                     <th className="rounded-tr-[12px] rounded-br-[12px]">
                                         {" "}
                                     </th>
@@ -54,57 +53,24 @@ function Table({ data, onAdd, onEdit, onDelete }) {
                             <tbody>
                                 {data &&
                                     data.map((item) => {
-                                        const isDispo = item.isDispo;
+                                        const isDispo = (item.nombre_stagiaire > 0)
                                         return (
                                             <tr key={item.id} className="h-1">
                                                 <td>{item.nom}</td>
-                                                <td>{item.theme}</td>
+                                                <td>{item.mention_requise}</td>
                                                 <td>{item.duree} Mois</td>
 
                                                 <td>
                                                     <div className="flex flex-row">
                                                         <p
                                                             className={`
-                                                            px-2 text-white rounded-[20px]
-                                                            ${isDispo && "bg-blue-500" }
-                                                            ${!isDispo && "bg-red-500" }
+                                                            ${isDispo && "text-blue-600" }
+                                                            ${!isDispo && "text-red-500" }
                                                         `}
                                                         >
-                                                        {isDispo? "Disponible" : "Indisponible"}
+                                                        ({item.nombre_stagiaire}) places disponible
                                                         </p>
                                                     </div>
-                                                </td>
-                                                <td>
-                                                    {item.entretiens?.some(
-                                                        (entretien) =>
-                                                            !entretien.status
-                                                    ) ? (
-                                                        <p className="text-blue-400 cursor-pointer">
-                                                            (
-                                                            {
-                                                                item.entretiens.filter(
-                                                                    (
-                                                                        entretien
-                                                                    ) =>
-                                                                        !entretien.statu
-                                                                ).length
-                                                            }
-                                                            ) entretien
-                                                        </p>
-                                                    ) : item.entretiens
-                                                          .length <= 0 &&
-                                                      item.stage?.some(
-                                                          (stage) =>
-                                                              !stage.status
-                                                      ) ? (
-                                                        <p className="text-blue-400 cursor-pointer">
-                                                            (1) stage en cours
-                                                        </p>
-                                                    ) : (
-                                                        <p className="text-gray-700">
-                                                            - - -
-                                                        </p>
-                                                    )}
                                                 </td>
                                                 <td>
                                                     <div className="flex flex-row items-center justify-start text-white">
@@ -117,9 +83,7 @@ function Table({ data, onAdd, onEdit, onDelete }) {
                                                                         !entretien.status
                                                                 ) ||
                                                                 (item.entretiens
-                                                                    .length <=
-                                                                    0 &&
-                                                                    !item.isDispo)
+                                                                    .length >0)
                                                                     ? "text-red-200 mr-2 px-3 py-1 "
                                                                     : "text-red-500 mr-2 px-3 py-1 hover:text-red-400"
                                                             }
@@ -128,15 +92,10 @@ function Table({ data, onAdd, onEdit, onDelete }) {
                                                             }}
                                                             disabled={
                                                                 item.entretiens?.some(
-                                                                    (
-                                                                        entretien
-                                                                    ) =>
+                                                                    (entretien) =>
                                                                         !entretien.status
                                                                 ) ||
-                                                                (item.entretiens
-                                                                    .length <=
-                                                                    0 &&
-                                                                    !item.isDispo)
+                                                                (item.entretiens?.length >0 )
                                                             }
                                                         >
                                                             <Trash2 size={22} />
@@ -166,6 +125,11 @@ function Table({ data, onAdd, onEdit, onDelete }) {
                                 </tr>
                             </tbody>
                         </table>
+                        {!isArrayNotNull(data) && (
+                            <div className="w-full text-gray-700 text-lg flex flex-col items-center justify-center">
+                                (Aucun element à afficher)
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className="btn_place absolute bottom-0 right-0 pb-2 pr-[8px]">

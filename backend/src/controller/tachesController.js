@@ -36,7 +36,7 @@ export const newTache = async (req, res) => {
                         },
                     },
                     stagiaire: true,
-                    livrables: true,
+                    attestation: true,
                     performance: true,
                     taches: true,
                     offre: true,

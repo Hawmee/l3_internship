@@ -1,9 +1,7 @@
 import fs from "fs";
 import { drive, FOLDER_ID } from "../config/GDrive.js";
-import prismaClient from "./prismaClient.js";
-import { count } from "console";
-import { firebaseml_v1beta2 } from "googleapis";
 import { stagiaire_status } from "../utils/Observations.js";
+import prismaClient from "./prismaClient.js";
 
 const prisma = prismaClient;
 
@@ -19,12 +17,13 @@ export const getAllEntretient = async (req, res) => {
                 },
                 offre: {
                     include: {
-                        unite:{
-                            include:{
-                                users:true
-                            }
+                        unite: {
+                            include: {
+                                users: true,
+                            },
                         },
-                        stages:true
+                        stages: true,
+                        entretiens:true,
                     },
                 },
             },
@@ -36,29 +35,32 @@ export const getAllEntretient = async (req, res) => {
     }
 };
 
-export const markViewed = async (req,res)=>{
+export const markViewed = async (req, res) => {
     try {
         const viewed = await prisma.entretients.updateMany({
-            where:{
-                isNew:true,
-                date_interview:{not:null}
+            where: {
+                isNew: true,
+                date_interview: { not: null },
             },
-            data:{
-                isNew:false,
-            }
-        })
+            data: {
+                isNew: false,
+            },
+        });
 
-        if(viewed.count){
+        if (viewed.count) {
             const viewed_items = await prisma.entretients.findMany({
-                where:{isNew:false}
-            }) 
-             req.io.emit("updated_entretient" , viewed_items)
+                where: { isNew: false },
+            });
+            req.io.emit("updated_entretient", viewed_items);
         }
-        res.status(200).send({ message: "Records updated successfully", count: viewed.count });
+        res.status(200).send({
+            message: "Records updated successfully",
+            count: viewed.count,
+        });
     } catch (error) {
         res.status(500).send({ error: error });
     }
-}
+};
 
 export const newEntretient = async (req, res) => {
     const entretient_data = req.body;
@@ -74,12 +76,13 @@ export const newEntretient = async (req, res) => {
                 },
                 offre: {
                     include: {
-                        unite:{
-                            include:{
-                                users:true
-                            }
+                        unite: {
+                            include: {
+                                users: true,
+                            },
                         },
-                        stages:true
+                        stages: true,
+                        entretiens:true
                     },
                 },
             },
@@ -90,7 +93,7 @@ export const newEntretient = async (req, res) => {
                     id: entretient.stagiaire_id,
                 },
                 data: {
-                    observation: "A entretenir",
+                    observation: stagiaire_status.a_entretenir,
                 },
                 include: {
                     entretiens: true,
@@ -101,7 +104,7 @@ export const newEntretient = async (req, res) => {
             const offre = await prisma.offres.update({
                 where: { id: Number(entretient.offre_id) },
                 data: {
-                    isDispo: false,
+                    nombre_stagiaire: { decrement: 1 },
                 },
                 include: {
                     entretiens: {
@@ -109,13 +112,38 @@ export const newEntretient = async (req, res) => {
                             stagiaire: true,
                         },
                     },
-                    unite:{
-                        include:{
-                            users:true
-                        }
-                    }
+                    unite: {
+                        include: {
+                            users: true,
+                        },
+                    },
                 },
             });
+
+            if (offre.nombre_stagiaire <= 0) {
+                const offre = await prisma.offres.update({
+                    where: { id: Number(entretient.offre_id) },
+                    data: {
+                        isDispo: false,
+                    },
+                    include: {
+                        entretiens: {
+                            include: {
+                                stagiaire: true,
+                            },
+                        },
+                        unite: {
+                            include: {
+                                users: true,
+                            },
+                        },
+                    },
+                });
+
+                if (offre) {
+                    req.io.emit("updated_offre", offre);
+                }
+            }
 
             if (stagiaire) {
                 req.io.emit("update_stagiaire", stagiaire);
@@ -220,12 +248,13 @@ export const newEntretientStagiaire = async (req, res) => {
                         },
                         offre: {
                             include: {
-                                unite:{
-                                    include:{
-                                        users:true
-                                    }
+                                unite: {
+                                    include: {
+                                        users: true,
+                                    },
                                 },
-                                stages:true
+                                stages: true,
+                                entretiens:true
                             },
                         },
                     },
@@ -237,7 +266,7 @@ export const newEntretientStagiaire = async (req, res) => {
                             id: Number(offre_id),
                         },
                         data: {
-                            isDispo: false,
+                            nombre_stagiaire: { decrement: 1 },
                         },
                         include: {
                             entretiens: {
@@ -245,13 +274,40 @@ export const newEntretientStagiaire = async (req, res) => {
                                     stagiaire: true,
                                 },
                             },
-                            unite:{
-                                include:{
-                                    users:true
-                                }
-                            }
+                            unite: {
+                                include: {
+                                    users: true,
+                                },
+                            },
                         },
                     });
+
+                    if (offre.nombre_stagiaire <= 0) {
+                        const offre = await prisma.offres.update({
+                            where: { id: Number(entretient.offre_id) },
+                            data: {
+                                isDispo: false,
+                            },
+                            include: {
+                                entretiens: {
+                                    include: {
+                                        stagiaire: true,
+                                    },
+                                },
+                                unite: {
+                                    include: {
+                                        users: true,
+                                    },
+                                },
+                            },
+                        });
+        
+                        if (offre) {
+                            req.io.emit("updated_offre", offre);
+                        }
+                    }
+
+
 
                     req.io.emit("updated_offre", offre);
                     req.io.emit("new_entretient", entretient);
@@ -264,6 +320,43 @@ export const newEntretientStagiaire = async (req, res) => {
             .send({ message: "Erreur lors de l'importation des fichiers" });
     } catch (error) {
         return res.status(500).send({ message: error.message });
+    }
+};
+
+export const validateEntretient = async (req, res) => {
+    const { id } = req.params;
+    const updated_entretient_data = req.body;
+    try {
+        const entretient = await prisma.entretients.update({
+            where: { id: Number(id) },
+            data: {
+                status: true,
+                isNew: true,
+            },
+            include: {
+                offre: {
+                    include: {
+                        unite: {
+                            include: {
+                                users: true,
+                            },
+                        },
+                        stages: true,
+                        entretiens:true,
+                    },
+                },
+                stagiaire: {
+                    include: {
+                        entretiens: true,
+                        stages: true,
+                    },
+                },
+            },
+        });
+        req.io.emit("updated_entretient", entretient);
+        res.status(200).send(entretient);
+    } catch (error) {
+        res.status(400).send({ message: error.message });
     }
 };
 
@@ -281,12 +374,13 @@ export const partialUpdateEntretient = async (req, res) => {
             include: {
                 offre: {
                     include: {
-                        unite:{
-                            include:{
-                                users:true
-                            }
+                        unite: {
+                            include: {
+                                users: true,
+                            },
                         },
-                        stages:true
+                        stages: true,
+                        entretiens:true
                     },
                 },
                 stagiaire: {
@@ -317,12 +411,13 @@ export const AffirmEntretient = async (req, res) => {
             include: {
                 offre: {
                     include: {
-                        unite:{
-                            include:{
-                                users:true
-                            }
+                        unite: {
+                            include: {
+                                users: true,
+                            },
                         },
-                        stages:true
+                        stages: true,
+                        entretiens:true
                     },
                 },
                 stagiaire: {
@@ -340,21 +435,22 @@ export const AffirmEntretient = async (req, res) => {
     }
 };
 
-export const informedEntretien = async (req,res)=> {
-    const {id}=req.params
+export const informedEntretien = async (req, res) => {
+    const { id } = req.params;
     try {
         const informed = await prisma.entretients.update({
-            where:{id:Number(id)},
-            data:{isInforme:true ,isNew:false },
+            where: { id: Number(id) },
+            data: { isInforme: true, isNew: false },
             include: {
                 offre: {
                     include: {
-                        unite:{
-                            include:{
-                                users:true
-                            }
+                        unite: {
+                            include: {
+                                users: true,
+                            },
                         },
-                        stages:true
+                        stages: true,
+                        entretiens:true,
                     },
                 },
                 stagiaire: {
@@ -364,18 +460,19 @@ export const informedEntretien = async (req,res)=> {
                     },
                 },
             },
-        })
+        });
 
-        if(informed){
-            req.io.emit("updated_entretient" , informed)
-            if(informed.offre){
-                req.io.emit("updated_offre", informed.offre)
+        if (informed) {
+            req.io.emit("updated_entretient", informed);
+            if (informed.offre) {
+                req.io.emit("updated_offre", informed.offre);
             }
-            res.status(200).send({message:"Stagiaire Informé"})
+            res.status(200).send({ message: "Stagiaire Informé" });
         }
     } catch (error) {
-        res.status(500).send({message: error})    }
-}
+        res.status(500).send({ message: error });
+    }
+};
 
 export const deleteEntretient = async (req, res) => {
     const { id } = req.params;
@@ -409,7 +506,7 @@ export const cancelEntretient = async (req, res) => {
 
             const offre = await prisma.offres.update({
                 where: { id: Number(deleted.offre_id) },
-                data: { isDispo: true },
+                data: { nombre_stagiaire: { increment: 1 }, isDispo: true },
 
                 include: {
                     entretiens: {
@@ -417,11 +514,12 @@ export const cancelEntretient = async (req, res) => {
                             stagiaire: true,
                         },
                     },
-                    unite:{
-                        include:{
-                            users:true
-                        }
-                    }
+                    unite: {
+                        include: {
+                            users: true,
+                        },
+                    },
+                    stages: true,
                 },
             });
 
@@ -429,8 +527,8 @@ export const cancelEntretient = async (req, res) => {
                 req.io.emit("update_stagiaire", stagiaire);
             }
 
-            if(offre){
-                req.io.emit("updated_offre" , offre)
+            if (offre) {
+                req.io.emit("updated_offre", offre);
             }
             req.io.emit("deleted_entretient", id);
             res.status(200).send({ message: "Action reussite" });

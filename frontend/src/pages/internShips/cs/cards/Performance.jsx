@@ -10,16 +10,12 @@ function Performance({ data }) {
                 {data && (
                     <>
                         <div className="flex flex-col mt-6">
-                            <div className="mb-3">-Communication: {data.communication}</div>
+                            <div className="mb-3">-Comportement Professionnel: {data.pertinance_pro} /20</div>
                             <div className="mb-3">
-                                -Proposition de solution: {data.proposition_solution}
+                                -Pertinence technique: {data.pertinance_tech} /20
                             </div>
-                            <div className="mb-3">-Integrité: {data.integrite}</div>
-                            <div className="mb-3">-Ponctuqlité: {data.ponctualite}</div>
-                            <div className="mb-3">-Respect: {data.respect}</div>
-                            <div className="mb-3">-Autonomie: {data.autonomie}</div>
-                            <div className="mb-3">-Assiduité: {data.assiduite}</div>
-                            <div></div>
+                            <div className="mb-3">-Pertinence pedagogique: {data.pertinance_pedago} /20</div>
+                            <div className="mb-3">Observation : {data.observation} </div>
                         </div>
                     </>
                 )}

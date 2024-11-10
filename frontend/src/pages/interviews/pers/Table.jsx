@@ -1,6 +1,7 @@
 import { addHours, format, isBefore, parseISO, startOfMinute } from "date-fns";
 import { Mail, MailCheck } from "lucide-react";
 import React, { useEffect, useRef, onInform } from "react";
+import { isArrayNotNull } from "../../../functions/Functions";
 
 function Table({ data, onMail, onInform }) {
     const tableContainerRef = useRef(null);
@@ -129,9 +130,11 @@ function Table({ data, onMail, onInform }) {
                                 </tr>
                             </tbody>
                         </table>
-                        {/* <div className="w-full h-[50vh] flex flex-row justify-center items-center text-[20px]">
-                            [Pas d'elements]
-                        </div> */}
+                        {!isArrayNotNull(data) && (
+                            <div className="w-full text-gray-700 text-lg flex flex-col items-center justify-center">
+                                (Aucun element à afficher)
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

@@ -20,7 +20,7 @@ function InternShips({ data }) {
                             <div className="mb-4">
                                 <p className="inline">-Theme:</p>
                                 <p className="inline ml-2">
-                                    {data.offre.theme}
+                                    {data.theme}
                                 </p>
                             </div>
                             <div className="mb-4">

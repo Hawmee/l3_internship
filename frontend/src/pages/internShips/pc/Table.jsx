@@ -59,7 +59,7 @@ function Table({ data, popup, addPopUp, del, setDel, onEdit }) {
                                                 {item.stagiaire.nom}{" "}
                                                 {item.stagiaire.prenom}{" "}
                                             </td>
-                                            <td>{item.offre.theme}</td>
+                                            <td>{item.theme}</td>
                                             <td>{item.unite.nom}</td>
                                             <td>
                                                 {date_d_m_y(item.date_debut)}

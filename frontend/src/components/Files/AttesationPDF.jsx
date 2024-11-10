@@ -9,7 +9,7 @@ import {
 import mref from "./Logos/mef.jpg";
 import rpbk from "./Logos/rpbm.jpg";
 
-function AttestationPDF({ attesation , reponse , evaluation , isAttestation, isReponse, isEvaluation }) {
+function AttestationPDF({ attestation , reponse , evaluation , isAttestation, isReponse, isEvaluation }) {
     const styles = StyleSheet.create({
         page: {
             paddingHorizontal: 24,
@@ -177,7 +177,7 @@ function AttestationPDF({ attesation , reponse , evaluation , isAttestation, isR
                             ATTESTATION DE STAGE
                         </Text>
                         <Text style={styles.certificateNumber}>
-                            --- 110601 ----
+                            --- {attestation.numero} ----
                         </Text>
 
                         {/* Main Content */}
@@ -189,9 +189,9 @@ function AttestationPDF({ attesation , reponse , evaluation , isAttestation, isR
                             </Text>
                             <Text style={{ marginTop: 12 }}>
                                 <Text style={styles.boldText}>
-                                    RANDRIANAIVO VALISOA NOMENA LOIC
+                                    {attestation.stagiaire}
                                 </Text>{" "}
-                                a effectué un stage de trois (3) mois auprès de
+                                a effectué un stage de {attestation.lettre_duree} ({attestation.duree}) mois auprès de
                                 mon établissement dans le cadre d'une initiation
                                 professionnelle.
                             </Text>
@@ -260,16 +260,16 @@ function AttestationPDF({ attesation , reponse , evaluation , isAttestation, isR
                             </Text>
                         </View>
                         <Text style={{ fontSize: 14, marginTop: 12 }}>
-                            Raison Social:
+                            Raison Social: {SRB.raison_social}
                         </Text>
                         <Text style={{ fontSize: 14, marginTop: 12 }}>
-                            Siege:
+                            Siege: {SRB.siege}
                         </Text>
                         <Text style={{ fontSize: 14, marginTop: 12 }}>
-                            Email:
+                            Email: {SRB.email}
                         </Text>
                         <Text style={{ fontSize: 14, marginTop: 12 }}>
-                            Contact:
+                            Contact: {SRB.contact}
                         </Text>
 
                         <View
@@ -285,13 +285,13 @@ function AttestationPDF({ attesation , reponse , evaluation , isAttestation, isR
                             </Text>
                         </View>
                         <Text style={{ fontSize: 14, marginTop: 12 }}>
-                            Nom et Prenoms:
+                            Nom et Prenoms: {reponse.encadreur.nom}
                         </Text>
                         <Text style={{ fontSize: 14, marginTop: 12 }}>
-                            Fonction:
+                            Fonction: {reponse.encadreur.fonction}
                         </Text>
                         <Text style={{ fontSize: 14, marginTop: 12 }}>
-                            Departement/Service:
+                            Departement/Service: {reponse.encadreur.serv}
                         </Text>
 
                         <View
@@ -307,13 +307,16 @@ function AttestationPDF({ attesation , reponse , evaluation , isAttestation, isR
                             </Text>
                         </View>
                         <Text style={{ fontSize: 14, marginTop: 12 }}>
-                            Competence:
+                            Mention : {reponse.offre.mention}
                         </Text>
                         <Text style={{ fontSize: 14, marginTop: 12 }}>
-                            Nombre:
+                            Option : {reponse.offre.option}
                         </Text>
                         <Text style={{ fontSize: 14, marginTop: 12 }}>
-                            Periode de Stage:
+                            Nombre: {reponse.offre.nombre}
+                        </Text>
+                        <Text style={{ fontSize: 14, marginTop: 12 }}>
+                            Periode de Stage: {reponse.offre.periode} Mois
                         </Text>
                     </View>
                     <View
@@ -425,7 +428,7 @@ function AttestationPDF({ attesation , reponse , evaluation , isAttestation, isR
                             Niveau d'Etude: {evaluation.actor.stagiaire.niveau}
                         </Text>
                         <Text style={{ fontSize: 12, marginTop: 10 }}>
-                            Periode de Stage: {evaluation.actor.stagiaire.periode}
+                            Periode de Stage: {evaluation.actor.stagiaire.periode} mois
                         </Text>
 
                         <View

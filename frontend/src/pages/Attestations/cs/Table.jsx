@@ -1,16 +1,8 @@
 import {
-    Check,
     CheckCheck,
-    CopyPlus,
     Eye,
-    FileText,
     Printer,
-    SquarePen,
-    SquareX,
-    Trash2,
-    UserCheck,
-    UserPen,
-    UserX,
+
 } from "lucide-react";
 import React, { useEffect, useRef } from "react";
 import { date_d_m_y, today_string } from "../../../functions/Functions";
@@ -45,7 +37,7 @@ function Table({ data, onValidate , onPrint }) {
             const today = today_string()
             const info = {
                 nom:`${stagiaire.nom} ${stagiaire.prenom}`,
-                theme:offre.theme,
+                theme:stage.theme,
                 division:division.nom,
                 debut:date_d_m_y(stage.date_debut),
                 fin:date_d_m_y(stage.date_fin),
@@ -74,6 +66,7 @@ function Table({ data, onValidate , onPrint }) {
                         <table className="table table-fixed text-left  w-full  p-[1rem] border-collapse">
                             <thead className="rounded-[20px] s">
                                 <tr className="sticky text-gray-700 bg-gray-200 z-12 top-0 left-0">
+                                    <th>Numero</th>
                                     <th className="rounded-tl-[12px] rounded-bl-[12px]">
                                         Stagiaire
                                     </th>
@@ -96,19 +89,22 @@ function Table({ data, onValidate , onPrint }) {
                                         const isDisabled = item.status
                                         return (
                                             <tr key={item.id} className="h-1">
+                                                <td>{item.numero}</td>
                                                 <td>
                                                     {stagiaire.nom}{" "}
                                                     {stagiaire.prenom}
                                                 </td>
                                                 <td>{unite.nom}</td>
-                                                <td>{offre.theme}</td>
+                                                <td>{stage.theme}</td>
                                                 <td>
                                                     <div className="flex flex-row justify-start">
-                                                        {item.status ? (
+                                                        {(item.status ) ? (
                                                             <p className="bg-blue-600 text-white px-3 py-1 rounded-[20px]">
                                                                 Fournie
                                                             </p>
-                                                        ) : (
+                                                        )
+
+                                                        : (
                                                             <p className="bg-red-500 text-white px-3  rounded-[20px]">Non founrie</p>
                                                         )}
                                                     </div>

@@ -1,14 +1,15 @@
+import axios from "axios";
+import { addMonths, format } from "date-fns";
 import React, { useEffect, useState } from "react";
 import { FormProvider } from "react-hook-form";
-import Input from "../../../../components/forms/Input";
-import DatePicker from "../../../../components/forms/DatePicker";
-import { formatDate, isArrayNotNull } from "../../../../functions/Functions";
-import { addMonths, format } from "date-fns";
 import { useSelector } from "react-redux";
-import axios from "axios";
 import { toast } from "react-toastify";
-import Select from "../../../../components/forms/Select";
+import DatePicker from "../../../../components/forms/DatePicker";
+import Input from "../../../../components/forms/Input";
+import { formatDate } from "../../../../functions/Functions";
 import { observation_stage } from "../../../../utils/Observations";
+import { pdf } from "@react-pdf/renderer";
+import AttestationPDF from "../../../../components/Files/AttesationPDF";
 
 function Confirm({ method, data, handleConfirm }) {
     const url = useSelector((state) => state.backendUrl.value);
@@ -27,24 +28,42 @@ function Confirm({ method, data, handleConfirm }) {
         "yyyy-MM-dd'T'HH:mm"
     );
 
-    // const offre_options_data = offre_data.filter(offre=>(
-    //   (offre.unite_id == offres.unite_id) && offre.isDispo
-    // ))
 
-    // const offre_options = isArrayNotNull(offre_options_data) ?
-    // [
-    //   { value: offres.id, label: offres.nom },
-    //   ...offre_options_data.map((offre) => ({
-    //       value: offre.id,
-    //       label: offre.nom,
-    //   })),
-    // ] :[
-    //   { value: offres.id, label: offres.nom }
-    // ]
+    console.log(offres)
+
+    const generate = async (data)=>{
+        const encadreur = unite.users.find(user=>user.status)
+        const reposne = {
+            encadreur:{
+                nom: encadreur.nom+" "+encadreur.prenom,
+                fonction: 'Chef de division',
+                serv: unite.nom,
+            },
+            offre:{
+                mention: offres.mention_requise ,
+                option : offres.option_requise ,
+                nombre : Number(offres.nombre_stagiaire)+ Number(offres.entretiens.length)+Number(offres.stages.length) ,
+                periode: offres.duree,
+            }
+        }
+
+        const pdfBlob = await pdf(<AttestationPDF isReponse={true} reponse={reposne} />).toBlob()
+        const url_pdf = URL.createObjectURL(pdfBlob)
+        
+        const printWindow = window.open(url_pdf)
+        if(printWindow){
+            printWindow.onload = ()=>{
+                printWindow.onafterprint = () => printWindow.close();
+            }            
+        }
+        
+    }
+
 
     const submit = async (data) => {
         const body = {
-            offre_id:Number(offres.id),
+            theme: data.theme,
+            offre_id: Number(offres.id),
             interview_id: interv.id,
             unite_id: unite.id,
             stagiaire_id: stagiaire.id,
@@ -57,18 +76,17 @@ function Confirm({ method, data, handleConfirm }) {
         };
 
         try {
-          const created = await axios.post(`${url}/newStage`, body)
-          if(created){
-            const message = "Stage créé avec succes !"
-            toast(message,toastconfig)
-            handleConfirm()
-          }
+            const created = await axios.post(`${url}/newStage`, body);
+            if (created) {
+                const message = "Stage créé avec succes !";
+                toast(message, toastconfig);
+                handleConfirm();
+                generate(data)
+            }
         } catch (error) {
             console.log(error);
         }
 
-        // console.log(body);
-        
     };
 
     const onSubmit = (data) => {
@@ -116,6 +134,16 @@ function Confirm({ method, data, handleConfirm }) {
                         </div> */}
 
                         <div className="mb-3">
+                            <Input
+                                label={"Theme de Stage"}
+                                name={"theme"}
+                                validation={{
+                                    required: "Valeur requise",
+                                }}
+                            />
+                        </div>
+
+                        <div className="mb-3">
                             <DatePicker
                                 label={"Date debut"}
                                 name={"date_debut"}
@@ -141,11 +169,17 @@ function Confirm({ method, data, handleConfirm }) {
                             />
                         </div>
 
+                        <div className="flex flex-row justify-end text-blue-500">
+                            <p className="underline underline-offset-4 cursor-pointer" onClick={()=>{generate()}}>Voire l'apercu de la fiche-reponse</p>
+                        </div>
+
                         <div className="tex-white flex flex-row justify-end mt-6 text-white">
                             <button
                                 type="button"
                                 className=" bg-gray-600 hover:bg-gray-700 rounded-[8px] py-1 px-4 "
-                                onClick={()=>{handleConfirm}}
+                                onClick={() => {
+                                    handleConfirm;
+                                }}
                             >
                                 Valider
                             </button>

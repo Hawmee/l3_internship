@@ -46,12 +46,7 @@ function ChefUnitsOffers({ offers }) {
     const offres = isArrayNotNull(offre_units)
         ? offre_units.filter(
               (item) =>
-                  item.stages.length <= 0 ||
-                  item.stages.some(
-                      (stage) =>
-                          stage.observation !== "Achevé" &&
-                          (stage.status === true || stage.status ===false)
-                  )
+                  item.nombre_stagiaire > 0
           )
         : null;
 

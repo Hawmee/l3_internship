@@ -10,6 +10,7 @@ import {
     UserX,
 } from "lucide-react";
 import React, { useEffect, useRef } from "react";
+import { isArrayNotNull } from "../../../functions/Functions";
 
 function Table({ data, onInterview }) {
     const tableContainerRef = useRef(null);
@@ -35,7 +36,7 @@ function Table({ data, onInterview }) {
                                     <th className="rounded-tl-[12px] rounded-bl-[12px]">
                                         Offre
                                     </th>
-                                    <th> Theme </th>
+                                    <th> Mention Requise </th>
                                     <th>Unité d'acceuil</th>
                                     <th> Durée </th>
                                     <th>Disponibilité</th>
@@ -48,11 +49,11 @@ function Table({ data, onInterview }) {
                             <tbody>
                                 {data &&
                                     data.map((item) => {
-                                        const isDispo = item.isDispo
+                                        const isDispo = (item.nombre_stagiaire > 0)
                                         return(
                                         <tr key={item.id} className="h-1">
                                             <td>{item.nom}</td>
-                                            <td>{item.theme}</td>
+                                            <td>{item.mention_requise}</td>
                                             <td>{item.unite.nom}</td>
                                             <td>
                                                 {item.duree}{" "}
@@ -62,12 +63,11 @@ function Table({ data, onInterview }) {
                                                 <div className="flex flex-row">
                                                     <p
                                                         className={`
-                                                        px-2 text-white rounded-[20px]
-                                                        ${isDispo && "bg-blue-500" }
-                                                        ${!isDispo && "bg-red-500" }
+                                                        ${isDispo && "text-blue-500" }
+                                                        ${!isDispo && "text-red-500" }
                                                     `}
                                                     >
-                                                    {isDispo? "Disponible" : "Indisponible"}
+                                                    ({item.nombre_stagiaire}) places Disponible
                                                     </p>
                                                 </div>
                                             </td>
@@ -101,6 +101,11 @@ function Table({ data, onInterview }) {
                                 </tr>
                             </tbody>
                         </table>
+                        {!isArrayNotNull(data) && (
+                            <div className="w-full text-gray-700 text-lg flex flex-col items-center justify-center">
+                                (Aucun element à afficher)
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

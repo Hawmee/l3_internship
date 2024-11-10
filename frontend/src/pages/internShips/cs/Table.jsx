@@ -50,7 +50,8 @@ function Table({ data, onSelect, selected, onValidate, onDeny }) {
                                 {data &&
                                     data.map((item) => {
                                         const observation = item.observation
-                                        const isDisabled = ( observation !== observation_stage.en_validation || observation !== observation_stage.re_valide)
+                                        const isDisabled = (( observation !== observation_stage.en_validation))
+                                        console.log(isDisabled)
                                         return(
                                         <tr
                                             key={item.id}
@@ -66,13 +67,13 @@ function Table({ data, onSelect, selected, onValidate, onDeny }) {
                                                 {item.stagiaire.nom}
                                                 {item.stagiaire.prenom}
                                             </td>
-                                            <td>{item.offre.theme}</td>
+                                            <td>{item.theme}</td>
                                             <td>{item.unite.nom}</td>
                                             <td className="">
-                                                <div className="flex  flex-row justify-startr">
+                                                <div className="flex  flex-row justify-start">
                                                     <p
                                                         className={`px-2 rounded-[20px] ${
-                                                            (observation == observation_stage || observation == observation_stage.re_valide) &&
+                                                            (observation == observation_stage.abandon || observation == observation_stage.re_valide) &&
                                                             "bg-red-400 text-white"
                                                         }
                                                         ${

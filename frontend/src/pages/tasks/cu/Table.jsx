@@ -98,7 +98,7 @@ function Table({ data, onSelect, selected }) {
                                                     {stagiaire.nom}{" "}
                                                     {stagiaire.prenom}
                                                 </td>
-                                                <td>{offre.theme}</td>
+                                                <td>{item.theme}</td>
                                                 <td>{unite.nom}</td>
                                                 <td className="rounded-r-[12px]">
                                                     ({taches.length}) taches

@@ -1,10 +1,14 @@
 import { CheckCheck, CircleCheckBig, OctagonX, StopCircle } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
-import { date_d_m_y } from "../../../functions/Functions";
+import { date_d_m_y, isArrayNotNull } from "../../../functions/Functions";
+import { observation_stage } from "../../../utils/Observations";
 
 function Table({ data, onFinish, onAbanon, onRow  }) {
     const tableContainerRef = useRef(null);
     const [selectedR , setSelectedR] = useState(null)
+    const stage = isArrayNotNull(data) ? data.filter(item=> item.stagiaire) : null
+    
+    console.log(data)
 
     useEffect(() => {
         if (tableContainerRef.current) {
@@ -34,10 +38,12 @@ function Table({ data, onFinish, onAbanon, onRow  }) {
                             </thead>
 
                             <tbody>
-                                {data &&
-                                    data.map((item) => {
+                                {isArrayNotNull(stage) &&
+                                    stage.map((item) => {
                                         const isdisabled =
                                             item.book_link || item.status;
+                                        const observation = item.observation
+                                        const stagiaire = item.stagiaire
                                         return (
                                             <tr 
                                                 key={item.id} 
@@ -54,9 +60,27 @@ function Table({ data, onFinish, onAbanon, onRow  }) {
                                                     {item.stagiaire.nom}{" "}
                                                     {item.stagiaire.prenom}{" "}
                                                 </td>
-                                                <td>{item.offre.theme}</td>
+                                                <td>{item.theme}</td>
                                                 <td>
-                                                    <p>{item.observation}</p>
+                                                <div className="flex  flex-row justify-start">
+                                                    <p
+                                                        className={`px-2 rounded-[20px] ${
+                                                            (observation == observation_stage.abandon || observation == observation_stage.re_valide) &&
+                                                            "bg-red-400 text-white"
+                                                        }
+                                                        ${
+                                                            (observation == observation_stage.acheve )&&
+                                                            "bg-blue-500 text-white"
+                                                        }
+                                                        ${
+                                                            (observation == observation_stage.en_validation || observation == observation_stage.en_cours) &&
+                                                            "bg-gray-600 text-white"
+                                                        }
+                                                        `}
+                                                    >
+                                                        {item.observation}
+                                                    </p>
+                                                </div>
                                                 </td>
                                                 <td className="rounded-r-[12px]">
                                                     <div className="flex flex-row items-center justify-start text-white">

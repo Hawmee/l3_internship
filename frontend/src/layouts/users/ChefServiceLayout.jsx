@@ -61,7 +61,7 @@ function ChefServiceLayout() {
 
     const isNewInterviews =
         isArray(interviews) &&
-        interviews.some((interv) => interv.isNew && !interv.date_interview);
+        interviews.some((interv) => interv.isNew && !interv.date_interview && interv.status);
 
     // const isNewInternShip = isArray(attestations)
     //     ? attestations.some((attestation) => attestation.isNew)

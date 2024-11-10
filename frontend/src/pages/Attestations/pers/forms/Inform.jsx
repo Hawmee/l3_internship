@@ -4,6 +4,8 @@ import { useSelector } from "react-redux";
 import Input from "../../../../components/forms/Input";
 import TextArea from "../../../../components/forms/TextArea";
 import { today_string } from "../../../../functions/Functions";
+import { notifyError, notifySuccess } from "../../../../layouts/MereLayout";
+import axios from "axios";
 
 function Inform({onInform , data}) {
 
@@ -23,27 +25,24 @@ function Inform({onInform , data}) {
         const body = {
             ...data,
             content: content(data.content),
-            attestatioon_id: attestation.id
         };
         
 
         console.log(body);
         
 
-        // try {
-        //     console.log(body)
-        //     const sent = await axios.post(`${url}/informStagiaire` , body)
-        //     if(sent){
-        //         const message = "Mail envoyé avec success !"
-        //         onInform()
-        //         notifySuccess(message)
-        //     }
-        // } catch (error) {   
-        //     console.log(error);
-        //     const message = "Erreur lors de l'operation!"
-        //     onInform()
-        //     notifySuccess(message)
-        // }
+        try {
+            console.log(body)
+            const sent = await axios.patch(`${url}/attetation/inform/${attestation.id}` , body)
+            if(sent){
+                const message = "Mail envoyé avec success !"
+                onInform()
+                notifySuccess(message)
+            }
+        } catch (error) {   
+            console.log(error);
+            notifyError()
+        }
     };
 
     const onSubmit = (data) => {

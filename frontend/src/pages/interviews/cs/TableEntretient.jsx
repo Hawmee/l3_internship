@@ -5,7 +5,7 @@ import {
     CalendarX,
 } from "lucide-react";
 import React, { useEffect, useRef } from "react";
-import { date_time } from "../../../functions/Functions";
+import { date_time, isArrayNotNull } from "../../../functions/Functions";
 
 function TableEntretient({ data, onConfirm, onEdit , onCancel }) {
     const tableContainerRef = useRef(null);
@@ -50,7 +50,7 @@ function TableEntretient({ data, onConfirm, onEdit , onCancel }) {
                             </thead>
 
                             <tbody>
-                                {data &&
+                                {isArrayNotNull(data) &&
                                     data.map((item) =>{ 
                                         const date_interv = item.date_interview
                                         return(
@@ -147,6 +147,11 @@ function TableEntretient({ data, onConfirm, onEdit , onCancel }) {
                                 </tr>
                             </tbody>
                         </table>
+                        {!isArrayNotNull(data) && (
+                            <div className="w-full text-gray-700 text-lg flex flex-col items-center justify-center">
+                                (Aucun element à afficher)
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

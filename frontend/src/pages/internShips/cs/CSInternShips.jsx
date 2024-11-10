@@ -44,6 +44,8 @@ function CSInternShips({ data }) {
         if (selected) {
             setStagiaire(selected.stagiaire);
             setPerf(selected.performance);
+
+            console.log(selected)
         }
     }, [selected]);
 

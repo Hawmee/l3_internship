@@ -1,12 +1,35 @@
-import React from "react";
+import React, { useState } from "react";
 import MainContainer from "../../../components/containers/MainContainer";
 import SearchContainer from "../../../components/containers/SearchContainer";
 import Table from "./Table";
 import { Search } from "lucide-react";
 import { isArrayNotNull } from "../../../functions/Functions";
 import InterViews from "../InterViews";
+import PopUpContainer from "../../../components/containers/PopUpContainer";
+import Validate from "./forms/Validate";
+import Decline from "./forms/Decline";
 
 function CU_interviews({ interviews }) {
+
+    const [validate,setValidate]= useState(false)
+    const [decline,setDecline]= useState(false)
+    const [selected, setSelected] = useState(null)
+
+    const hanldeValidate = (item)=>{
+        if(item){
+            setSelected(item)
+        }
+        setValidate(!validate)
+    }
+
+    const handleDecline = (item)=>{
+        if(item){
+            setSelected(item)
+        }
+        setDecline(!decline)
+    }
+
+
     const interv_CU = isArrayNotNull(interviews)
         ? interviews.filter(
               (interv) =>
@@ -53,9 +76,21 @@ function CU_interviews({ interviews }) {
                     </div>
                 </SearchContainer>
                 <div className="">
-                    <Table data={interv_CU} />
+                    <Table data={interv_CU} onValidate={hanldeValidate} onDecline={handleDecline} />
                 </div>
             </MainContainer>
+
+            {validate && (
+                <PopUpContainer>
+                    <Validate data={selected} onValidate={hanldeValidate} />
+                </PopUpContainer>
+            )}
+
+            {decline && (
+                <PopUpContainer>
+                    <Decline data={selected} onDecline={handleDecline} />
+                </PopUpContainer>
+            )}
         </>
     );
 }

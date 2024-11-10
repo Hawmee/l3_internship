@@ -2,6 +2,7 @@ import {
     MessageSquareWarning,
 } from "lucide-react";
 import React, { useEffect, useRef } from "react";
+import { isArrayNotNull } from "../../../functions/Functions";
 
 function Table({ data, onAffirm, onDeny }) {
     const tableContainerRef = useRef(null);
@@ -35,7 +36,7 @@ function Table({ data, onAffirm, onDeny }) {
                             </thead>
 
                             <tbody>
-                                {data &&
+                                {isArrayNotNull(data) &&
                                     data.map((item) => (
                                         <tr key={item.id} className="h-1">
                                             <td
@@ -94,6 +95,11 @@ function Table({ data, onAffirm, onDeny }) {
                                 </tr>
                             </tbody>
                         </table>
+                        {!isArrayNotNull(data) && (
+                            <div className="w-full text-gray-700 text-lg flex flex-col items-center justify-center">
+                                (Aucun element à afficher)
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

@@ -5,6 +5,7 @@ const prisma = prismaClient;
 
 const main = async () => {
     const hashed_password = await bcrypt.hash("0000", 10);
+      
 
     await prisma.users.create({
         data: {

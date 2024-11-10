@@ -31,6 +31,7 @@ function Edit({offre , hanldeEdit , method}) {
     const onSubmit = (data)=>{
         const offer_data = {
             ...data ,
+            nombre_stagiaire: Number(data.nombre_stagiaire),
             duree : Number(data.duree)
         }
 
@@ -41,8 +42,9 @@ function Edit({offre , hanldeEdit , method}) {
         if(offre){
             reset({
                 nom:offre.nom,
-                theme:offre.theme,
-                competence_requis:offre.competence_requis,
+                mention_requise:offre.mention_requise,
+                option_requise:offre.option_requise,
+                nombre_stagiaire: offre.nombre_stagiaire,
                 duree:offre.duree,
             })
         }
@@ -70,10 +72,11 @@ function Edit({offre , hanldeEdit , method}) {
                             />
                         </div>
 
+                        
                         <div className="mt-2">
                             <Input
-                                label={"Theme"}
-                                name={"theme"}
+                                label={"Mention requise"}
+                                name={"mention_requise"}
                                 validation={{
                                     required: "Valeur requise",
                                 }}
@@ -82,11 +85,22 @@ function Edit({offre , hanldeEdit , method}) {
 
                         <div className="mt-2">
                             <Input
-                                label={"Competence requise"}
-                                name={"competence_requis"}
+                                label={"Option requise"}
+                                name={"option_requise"}
                                 validation={{
                                     required: "Valeur requise",
                                 }}
+                            />
+                        </div>
+                        <div className="mt-2">
+                            <Input
+                                label={"Nobre de Stagiaire Requise"}
+                                name={"nombre_stagiaire"}
+                                validation={{
+                                    required: "Valeur requise",
+                                }}
+                                type='number'
+                                min={1}
                             />
                         </div>
 

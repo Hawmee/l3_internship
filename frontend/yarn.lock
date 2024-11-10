@@ -2616,6 +2616,11 @@ mz@^2.7.0:
     object-assign "^4.0.1"
     thenify-all "^1.0.0"
 
+n2words@^1.21.0:
+  version "1.21.0"
+  resolved "https://registry.yarnpkg.com/n2words/-/n2words-1.21.0.tgz#b5b6c52f60ad1de9f58c0fd2115b60fb903d7f89"
+  integrity sha512-R+HAae+qVpgDsV2XFnELNmBk8fILv/epGVoCjvnF1+QfOlzX92Pe/zN4B1tOA17uOuR6A8ARSUbUpjUtTyiiNg==
+
 nanoid@^3.3.7:
   version "3.3.7"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.7.tgz#d0c301a691bc8d54efa0a2226ccf3fe2fd656bd8"
@@ -2654,6 +2659,11 @@ normalize-svg-path@^1.1.0:
   integrity sha512-r9KHKG2UUeB5LoTouwDzBy2VxXlHsiM6fyLQvnJa0S5hrhzqElH/CH7TUGhT1fVvIYBIKf3OpY4YJ4CK+iaqHg==
   dependencies:
     svg-arc-to-cubic-bezier "^3.0.0"
+
+number-to-words@^1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/number-to-words/-/number-to-words-1.2.4.tgz#e0f124de9628f8d86c4eeb89bac6c07699264501"
+  integrity sha512-/fYevVkXRcyBiZDg6yzZbm0RuaD6i0qRfn8yr+6D0KgBMOndFPxuW10qCHpzs50nN8qKuv78k8MuotZhcVX6Pw==
 
 object-assign@^4.0.1, object-assign@^4.1.1:
   version "4.1.1"
