@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Loader2 } from "lucide-react";
 import { useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import { notifyError, notifySuccess } from "../../../../layouts/MereLayout";
 import Input from "../../../../components/forms/Input";
 import FileInput from "../../../../components/forms/FileInput";
 import axios from "axios";
@@ -10,11 +10,11 @@ import axios from "axios";
 function New({ handle_new }) {
     const method = useForm();
     const url = useSelector(state => state.backendUrl.value);
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
 
-    const Submit = async(data) => {
-      setIsSubmitting(true);
+    const submit = async(data) => {
+      setIsLoading(true);
       const formData = new FormData();
       formData.append('nom', (data.nom).toUpperCase());
       formData.append('prenom', data.prenom);
@@ -24,15 +24,15 @@ function New({ handle_new }) {
       formData.append("filiere", data.filiere);
       formData.append("etablissement", data.etablissement);
 
-      if (data.cv_link && data.cv_link.length > 0) {
+      if (data.cv_link?.[0]) {
           formData.append("cv_link", data.cv_link[0]);
       }
-      if (data.lm_link && data.lm_link.length > 0) {
+      if (data.lm_link?.[0]) {
           formData.append("lm_link", data.lm_link[0]);
       }
 
       try {
-        const submited = await axios.post(
+        await axios.post(
           `${url}/stagiaire`,
           formData,
           {
@@ -48,113 +48,105 @@ function New({ handle_new }) {
           }
         );
         
-        toast.success("Stagiaire ajouté avec succès!");
+        notifySuccess("Stagiaire ajouté avec succès!");
         handle_new();
       } catch (error) {
         console.error(error);
-        toast.error("Erreur lors de l'ajout du stagiaire. Veuillez réessayer.");
+        notifyError("Erreur lors de l'ajout du stagiaire");
       } finally {
-        setIsSubmitting(false);
+        setIsLoading(false);
         setUploadProgress(0);
       }
-    }
+    };
 
     const onSubmit = (data) => {
-      Submit(data);
-    }
+      submit(data);
+    };
 
     return (
-        <div className={`relative ${isSubmitting ? 'opacity-70' : ''}`}>
-            {isSubmitting && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-white bg-opacity-50 z-10">
-                    <Loader2 className="h-8 w-8 animate-spin text-blue-500 mb-2" />
-                    {uploadProgress > 0 && (
-                        <div className="w-64">
-                            <div className="text-sm text-center mb-1">
-                                Téléchargement: {uploadProgress}%
-                            </div>
-                            <div className="h-2 bg-gray-200 rounded-full">
-                                <div 
-                                    className="h-full bg-blue-500 rounded-full transition-all duration-300"
-                                    style={{ width: `${uploadProgress}%` }}
-                                />
-                            </div>
+        <div className="min-w-[25vw]">
+            <div className="mb-4 text-[18px]">
+                Nouveau Stagiaire
+                {uploadProgress > 0 && (
+                    <div className="mt-2 text-sm text-gray-600">
+                        Téléchargement: {uploadProgress}%
+                        <div className="h-2 bg-gray-200 rounded-full mt-1">
+                            <div 
+                                className="h-full bg-blue-500 rounded-full transition-all duration-300"
+                                style={{ width: `${uploadProgress}%` }}
+                            />
                         </div>
-                    )}
-                </div>
-            )}
-            
-            <div className="flex flex-col min-w-[25vw]">
-                <div className="mb-4 text-[18px]">Nouveau Stagiaire</div>
+                    </div>
+                )}
             </div>
             
             <FormProvider {...method}>
                 <form onSubmit={method.handleSubmit(onSubmit)}>
-                    <div className="flex flex-row mb-3 justify-between mt-3">
-                        <div className="">
+                    <div className="flex flex-row mb-3 justify-between">
+                        <div className="w-[48%]">
                             <Input
                                 label="Nom"
                                 name="nom"
                                 validation={{
                                     required: "Valeur requise"
                                 }}
-                                disabled={isSubmitting}
+                                disabled={isLoading}
                             />
                         </div>
-                        <div className="">
+                        <div className="w-[48%]">
                             <Input
                                 label="Prenom"
                                 name="prenom"
                                 validation={{
                                     required: "Valeur requise"
                                 }}
-                                disabled={isSubmitting}
+                                disabled={isLoading}
                             />
                         </div>
                     </div>
 
                     <div className="flex flex-row mb-3 justify-between">
-                        <div className="">
+                        <div className="w-[48%]">
                             <Input
                                 label="Email"
                                 name="email"
                                 validation={{
                                     required: "Valeur requise"
                                 }}
-                                disabled={isSubmitting}
+                                disabled={isLoading}
                             />
                         </div>
-                        <div className="">
+                        <div className="w-[48%]">
                             <Input
                                 label="Phone"
                                 name="phone"
                                 validation={{
                                     required: "Valeur requise"
                                 }}
-                                disabled={isSubmitting}
+                                disabled={isLoading}
                             />
                         </div>
                     </div>
 
                     <div className="flex flex-row mb-3 justify-between">
-                        <div className="">
+                        <div className="w-[48%]">
                             <Input
                                 label="Niveau"
                                 name="niveau"
                                 validation={{
                                     required: "Valeur requise"
                                 }}
-                                disabled={isSubmitting}
+                                disabled={isLoading}
                             />
                         </div>
-                        <div className="">
+                        <div className="w-[48%]">
                             <Input
                                 label="Filiere"
                                 name="filiere"
                                 validation={{
                                     required: "Valeur requise"
                                 }}
-                                disabled={isSubmitting}
+                                disabled={isLoading}
                             />
                         </div>
                     </div>
@@ -166,7 +158,7 @@ function New({ handle_new }) {
                             validation={{
                                 required: "Valeur requise"
                             }}
-                            disabled={isSubmitting}
+                            disabled={isLoading}
                         />
                     </div>
 
@@ -178,7 +170,7 @@ function New({ handle_new }) {
                                 required: "Valeur requise"
                             }}
                             className="p-2 border-[2px] border-gray-300 rounded-[8px]"
-                            disabled={isSubmitting}
+                            disabled={isLoading}
                         />
                     </div>
 
@@ -190,31 +182,31 @@ function New({ handle_new }) {
                                 required: "Valeur requise"
                             }}
                             className="p-2 border-[2px] border-gray-300 rounded-[8px]"
-                            disabled={isSubmitting}
+                            disabled={isLoading}
                         />
                     </div>
 
-                    <div className="mt-9 flex flex-row justify-end">
+                    <div className="text-white mt-5 flex flex-row justify-end">
                         <button 
-                            className="bg-gray-500 text-white py-2 px-6 rounded-lg mr-4 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed" 
+                            className="px-4 py-1 bg-gray-600 rounded-[8px] hover:bg-gray-700 mr-2 disabled:opacity-50"
                             type="button" 
                             onClick={handle_new}
-                            disabled={isSubmitting}
+                            disabled={isLoading}
                         >
                             Annuler
                         </button>
                         <button 
-                            className="bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                            className="px-4 py-1 bg-blue-500 rounded-[8px] hover:bg-blue-600 disabled:opacity-50 flex items-center"
                             type="submit"
-                            disabled={isSubmitting}
+                            disabled={isLoading}
                         >
-                            {isSubmitting ? (
+                            {isLoading ? (
                                 <>
-                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                     <span>Traitement...</span>
                                 </>
                             ) : (
-                                <span>Valider</span>
+                                'Valider'
                             )}
                         </button>
                     </div>

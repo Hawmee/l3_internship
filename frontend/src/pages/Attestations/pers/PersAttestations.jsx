@@ -9,6 +9,7 @@ import Interns from "./cards/Interns";
 import PopUpContainer from "../../../components/containers/PopUpContainer";
 import Generate from "./forms/Generate";
 import Inform from "./forms/Inform";
+import Collected from "./forms/Collected";
 
 function PersAttestations({data}) {
 
@@ -19,6 +20,7 @@ function PersAttestations({data}) {
     const [selected , setSelected] = useState(null)
     const [attestation , setAttestation] = useState(false)
     const [inform , setInform] = useState(false)
+    const [collected, setCollected]= useState(false)
 
 
     const handleAttestation = (item)=>{
@@ -30,6 +32,13 @@ function PersAttestations({data}) {
 
     const handleInform = (item)=>{
       setInform(!inform)
+      if(item){
+        setSelected(item)
+      }
+    }
+
+    const handleCollected=(item)=>{
+      setCollected(!collected)
       if(item){
         setSelected(item)
       }
@@ -91,6 +100,7 @@ function PersAttestations({data}) {
                           onRow = {handleRow}
                           onAttestation={handleAttestation}
                           onInform={handleInform}
+                          onCollected={handleCollected}
                         />
                     </div>
                     <div className="relative flex-1 flex flex-col h-[80vh] mt-4 mr-2 rounded-[12px]">
@@ -116,6 +126,13 @@ function PersAttestations({data}) {
               inform && (
                 <PopUpContainer>
                   <Inform onInform={handleInform} data={selected}/>
+                </PopUpContainer>
+              )
+            }
+            {
+              collected && (
+                <PopUpContainer>
+                  <Collected data={selected} onCollected={handleCollected} />
                 </PopUpContainer>
               )
             }

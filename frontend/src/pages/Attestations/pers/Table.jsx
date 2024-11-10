@@ -4,6 +4,7 @@ import {
     File,
     FileText,
     Mail,
+    Printer,
     SquarePen,
     SquareX,
     Trash2,
@@ -14,7 +15,7 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import { isArrayNotNull } from "../../../functions/Functions";
 
-function Table({ data, onRow, onInform, onAttestation }) {
+function Table({ data, onRow, onInform, onAttestation, onCollected }) {
     const tableContainerRef = useRef(null);
     const [selected, setSelected] = useState(false);
 
@@ -24,6 +25,8 @@ function Table({ data, onRow, onInform, onAttestation }) {
                 tableContainerRef.current.scrollHeight;
         }
     }, [data]);
+
+    console.log(data);
 
     return (
         <>
@@ -42,14 +45,12 @@ function Table({ data, onRow, onInform, onAttestation }) {
                                     <th> Stagiaire </th>
                                     <th> Division d'acceuil</th>
                                     <th> Attestation </th>
-                                    <th className="rounded-tr-[12px] rounded-br-[12px]">
-                                        
-                                    </th>
+                                    <th className="rounded-tr-[12px] rounded-br-[12px]"></th>
                                 </tr>
                             </thead>
 
                             <tbody>
-                                {isArrayNotNull(data) && 
+                                {isArrayNotNull(data) &&
                                     data.map((item) => {
                                         const stagiaire = item.stagiaire;
                                         const division = item.unite;
@@ -59,11 +60,14 @@ function Table({ data, onRow, onInform, onAttestation }) {
                                             : false;
                                         const disabledAttestation =
                                             !item.observaion == "Achevé";
-                                        const disabledMail = attestation
-                                            ? !attestation.status
-                                            : true;
+                                        const disabledMail =
+                                            !attestation.status ||
+                                            attestation.isCollected;
                                         // const status = attestation.status
-                                        const isDisabledFournie = !attestation.isInforme || !attestation.status || attestation.isCollected
+                                        const isDisabledFournie =
+                                            !attestation.isInforme ||
+                                            !attestation.status ||
+                                            attestation.isCollected;
                                         return (
                                             <tr
                                                 key={item.id}
@@ -77,32 +81,38 @@ function Table({ data, onRow, onInform, onAttestation }) {
                                                 }}
                                             >
                                                 <td className="rounded-l-[12px]">
-                                                    {attestation.numero}
+                                                    {!attestation.isCollected
+                                                        ? attestation.numero
+                                                        : "- - - "}
                                                 </td>
-                                                <td >
+                                                <td>
                                                     {stagiaire.nom}{" "}
                                                     {stagiaire.prenom}
                                                 </td>
                                                 <td> {division.nom} </td>
                                                 <td>
                                                     <div className="flex flex-row text-white">
-                                                    {attestation ? (
-                                                        attestation.status ? (
-                                                            <p className="bg-blue-500 px-3 rounded-xl">Pret</p>
-                                                        ) 
-                                                        : attestation.isInforme && !attestation.status ? (
-                                                            <p>livré</p>
-                                                        )
-                                                        : (
-                                                            <p className="bg-gray-600 px-3 rounded-xl">En attente</p>
-                                                        )
-                                                    ) : (
-                                                        <p>---</p>
-                                                    )}
+                                                        {attestation ? (
+                                                            attestation.isCollected ? (
+                                                                <p className="bg-gray-600 px-3 rounded-xl">
+                                                                    livré
+                                                                </p>
+                                                            ) : attestation.status ? (
+                                                                <p className="bg-blue-500 px-3 rounded-xl">
+                                                                    Pret
+                                                                </p>
+                                                            ) : (
+                                                                <p className="bg-gray-600 px-3 rounded-xl">
+                                                                    En attente
+                                                                </p>
+                                                            )
+                                                        ) : (
+                                                            <p>---</p>
+                                                        )}
                                                     </div>
                                                 </td>
                                                 <td className="rounded-r-[12px]">
-                                                    <div className="flex flex-row items-center justify-start text-white">                                                       
+                                                    <div className="flex flex-row items-center justify-start text-white">
                                                         <button
                                                             className="text-gray-500 mr-2 px-3 py-1 hover:text-gray-700"
                                                             disabled={
@@ -114,7 +124,7 @@ function Table({ data, onRow, onInform, onAttestation }) {
                                                                 );
                                                             }}
                                                         >
-                                                            <FileText
+                                                            <Printer
                                                                 size={22}
                                                             />
                                                         </button>
@@ -150,13 +160,17 @@ function Table({ data, onRow, onInform, onAttestation }) {
                                                                 }     
                                                             `}
                                                             onClick={() => {
-                                                                onInform(item);
+                                                                onCollected(
+                                                                    item
+                                                                );
                                                             }}
                                                             disabled={
                                                                 isDisabledFournie
                                                             }
                                                         >
-                                                            <CheckCheck size={22} />
+                                                            <CheckCheck
+                                                                size={22}
+                                                            />
                                                         </button>
                                                     </div>
                                                 </td>

@@ -98,12 +98,11 @@ function Table({ data, onValidate , onPrint }) {
                                                 <td>{stage.theme}</td>
                                                 <td>
                                                     <div className="flex flex-row justify-start">
-                                                        {(item.status ) ? (
+                                                        {item.status ? (
                                                             <p className="bg-blue-600 text-white px-3 py-1 rounded-[20px]">
                                                                 Fournie
                                                             </p>
                                                         )
-
                                                         : (
                                                             <p className="bg-red-500 text-white px-3  rounded-[20px]">Non founrie</p>
                                                         )}
@@ -125,7 +124,7 @@ function Table({ data, onValidate , onPrint }) {
                                                                 size={22}
                                                             />
                                                         </button>
-                                                        <button
+                                                        {/* <button
                                                             className={`
                                                                 ${!isDisabled && " text-gray-600 mr-2 px-3 py-1 hover:text-gray-500"}
                                                                 ${isDisabled && " text-gray-600 mr-2 px-3 py-1 opacity-40"}
@@ -138,7 +137,7 @@ function Table({ data, onValidate , onPrint }) {
                                                             <Printer
                                                                 size={22}
                                                             />
-                                                        </button>
+                                                        </button> */}
                                                         <button className={`
                                                             ${!isDisabled && " text-blue-600 mr-2 px-3 py-1 hover:text-blue-800"}
                                                             ${isDisabled && " text-blue-600 mr-2 px-3 py-1 opacity-40"}

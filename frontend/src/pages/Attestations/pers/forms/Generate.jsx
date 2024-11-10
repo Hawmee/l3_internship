@@ -5,6 +5,9 @@ import { pdf } from "@react-pdf/renderer";
 import { notifyError, notifySuccess } from "../../../../layouts/MereLayout";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { differenceInDays, differenceInMonths, format } from "date-fns";
+import n2words from 'n2words'
+
 
 function Generate({ data, handleAttestation }) {
     const url = useSelector(state=>state.backendUrl.value)
@@ -12,22 +15,20 @@ function Generate({ data, handleAttestation }) {
     const stage = data
     const stagiaire = data.stagiaire;
     const attestation = data.attestation
-    const offre = data.offre
-    const unite = data.unite;
-    const today = today_string();
     const id = data.id
+    const date = format(new Date() , 'yyyy-MM')
+    const numero = `${date}${stagiaire.id}`
+    const duree = differenceInMonths(stage.date_fin , stage.date_debut)
 
     const generate = async ()=>{
-        const info = {
-            nom:`${stagiaire.nom} ${stagiaire.prenom}`,
-            theme: stage.theme ,
-            division:unite.nom,
-            debut:date_d_m_y(data.date_debut),
-            fin:date_d_m_y(data.date_fin),
-            date:today ,
+        const attestation = {
+            numero: numero,
+            stagiaire: `${stagiaire.nom} ${stagiaire.prenom}`,
+            lettre_duree: n2words(duree , {lang: 'fr'}),
+            duree: duree
         }
 
-        const pdfBlob = await pdf(<AttesationPDF data={info} />).toBlob()
+        const pdfBlob = await pdf(<AttesationPDF isAttestation={true} attestation={attestation} />).toBlob()
         const url_pdf = URL.createObjectURL(pdfBlob)
         
         const printWindow = window.open(url_pdf)
@@ -44,7 +45,8 @@ function Generate({ data, handleAttestation }) {
         try {
             if(!attestation){
                 const body ={
-                    stage_id:Number(id)
+                    stage_id:Number(id),
+                    numero:numero,
                 }
                 const new_Attestation = await axios.post(`${url}/attestation` , body)
                 if(new_Attestation){
@@ -54,7 +56,7 @@ function Generate({ data, handleAttestation }) {
                     handleAttestation()
                 }
             }else{
-                const update_Attesation = await axios.patch(`${url}/attestation/${attestation.id}`)
+                const update_Attesation = await axios.patch(`${url}/attestation/${attestation.id}` , {numero:numero})
                 if(update_Attesation){
                     const message = "Action reussite !"
                     notifySuccess(message)
@@ -71,13 +73,14 @@ function Generate({ data, handleAttestation }) {
 
     return (
         <>
-            <div className="flex flex-col min-w-[15vw]">
+            <div className="flex flex-col w-[24vw]">
                 <div className="text-center text-lg  mb-3">
                     <div className="border-b-[2px] border-gray-300 pb-2 ">
                         Generer une Attestation
                     </div>
                 </div>
-                <div className="text-lg">Voulez vous poursuivre cette action ?</div>
+                <div className="text-lg text-center">Voulez vous vraiment generer une Attestation ?</div>
+                <div className="text-sm text-blue-500 underline underline-offset-4 text-end mt-4 cursor-pointer" onClick={()=>{generate()}}> Voir l'apercu de l'attestation</div>
                 <div className="flex flex-row justify-end text-white mt-4">
                     <button
                         className="bg-gray-600 hover:bg-gray-700 rounded-[8px] px-4 py-1 mr-3"

@@ -87,7 +87,7 @@ export const newAttestation = async (req, res) => {
 
 export const partialUpdateAttestation = async (req, res) => {
     const { id } = req.params;
-    // const updated_attestation_data = req.body;
+    const data= req.body;
     try {
         const attestation = await prisma.attestation.update({
             where: { id: Number(id) },
@@ -95,6 +95,8 @@ export const partialUpdateAttestation = async (req, res) => {
                 status: false,
                 isNew: true,
                 isInforme: false,
+                isCollected:false,
+                ...data
             },
             include: {
                 stage: {
@@ -122,7 +124,7 @@ export const partialUpdateAttestation = async (req, res) => {
             res.status(200).send({ data: attestation });
         }
     } catch (error) {
-        res.status(400).send({ message: error.message });
+        res.status(400).send({ message: error });
     }
 };
 
@@ -220,7 +222,6 @@ export const collected = async (req, res) => {
         const attestation = await prisma.attestation.update({
             where: { id: Number(id) },
             data: {
-                status: false,
                 isNew: false,
                 isInforme: false,
                 isCollected: true,

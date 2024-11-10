@@ -177,7 +177,7 @@ function AttestationPDF({ attestation , reponse , evaluation , isAttestation, is
                             ATTESTATION DE STAGE
                         </Text>
                         <Text style={styles.certificateNumber}>
-                            --- {attestation.numero} ----
+                            ---  {attestation.numero}  ---
                         </Text>
 
                         {/* Main Content */}

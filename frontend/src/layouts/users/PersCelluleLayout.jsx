@@ -11,7 +11,7 @@ import MereLayout from "../MereLayout";
 import { SideBarLinks } from "../../components/Sidebar";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { isArray } from "../../functions/Functions";
+import { isArray, isArrayNotNull } from "../../functions/Functions";
 import axios from "axios";
 import { setAttestation } from "../../features/attestation";
 
@@ -19,7 +19,7 @@ function PersCelluleLayout() {
     const url = useSelector((state) => state.backendUrl.value);
     const dispatch = useDispatch();
     const user = useSelector((state) => state.currentUser.value);
-    const attestations = useSelector((state) => state.attestation.value);
+    const attestation = useSelector((state) => state.attestation.value);
     const interns = useSelector((state) => state.stagiaire.value);
     const interviews = useSelector((state) => state.entretient.value);
     const navigate = useNavigate();
@@ -41,6 +41,9 @@ function PersCelluleLayout() {
         interviews.some(
             (interview) => (interview.isNew && interview.date_interview)
         );
+
+
+    const attestations = isArrayNotNull(attestation) ? attestation.filter(item=> item.stage.stagiaire && item.stage.offre) : []
     const isNewAttestation =
         isArray(attestations) &&
         attestations.some(

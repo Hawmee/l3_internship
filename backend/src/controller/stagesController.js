@@ -100,6 +100,18 @@ export const partialUpdateStage = async (req, res) => {
         const stage = await prisma.stages.update({
             where: { id: Number(id) },
             data: updated_stage_data,
+            include: {
+                unite:{
+                    include:{
+                        users:true
+                    }
+                },
+                stagiaire: true,
+                attestation: true,
+                performance: true,
+                taches: true,
+                offre: true,
+            },
         });
 
         res.status(200).send({ data: stage });
