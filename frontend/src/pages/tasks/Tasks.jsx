@@ -1,10 +1,16 @@
 import React from 'react'
 import CUTask from './cu/CUTask'
 import { useSelector } from 'react-redux'
+import { isArrayNotNull } from '../../functions/Functions'
 
 function Tasks() {
 
-  const interns = useSelector(state=>state.stage.value)
+  const intern = useSelector(state=>state.stage.value)
+  const interns = isArrayNotNull(intern) ? intern.filter(item=>
+    !item.offre && item.stagiaire
+  ) : []
+
+  console.log(interns)
 
   return (
     <>

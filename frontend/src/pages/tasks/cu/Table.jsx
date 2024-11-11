@@ -64,7 +64,6 @@ function Table({ data, onSelect, selected }) {
                                         Stagiaire
                                     </th>
                                     <th> Theme </th>
-                                    <th> Division d'acceuil </th>
                                     <th className="rounded-tr-[12px] rounded-br-[12px]">
                                         Taches
                                     </th>
@@ -99,7 +98,6 @@ function Table({ data, onSelect, selected }) {
                                                     {stagiaire.prenom}
                                                 </td>
                                                 <td>{item.theme}</td>
-                                                <td>{unite.nom}</td>
                                                 <td className="rounded-r-[12px]">
                                                     ({taches.length}) taches
                                                 </td>

@@ -1,21 +1,20 @@
 import {
     CheckCheck,
     Eye,
-    Printer,
-
 } from "lucide-react";
 import React, { useEffect, useRef } from "react";
-import { date_d_m_y, today_string } from "../../../functions/Functions";
+import {  today_string } from "../../../functions/Functions";
 import { pdf } from "@react-pdf/renderer";
 import AttesationPDF from "../../../components/Files/AttesationPDF";
+import {  differenceInMonths } from "date-fns";
+import n2words from 'n2words'
 
 function Table({ data, onValidate , onPrint }) {
     const tableContainerRef = useRef(null);
 
-
     const generate = async (data)=>{
         const today = today_string()
-        const pdfBlob = await pdf(<AttesationPDF data={data} />).toBlob()
+        const pdfBlob = await pdf(<AttesationPDF isAttestation={true} attestation={data} />).toBlob()
         const url_pdf = URL.createObjectURL(pdfBlob)
         
         const printWindow = window.open(url_pdf)
@@ -32,18 +31,14 @@ function Table({ data, onValidate , onPrint }) {
             const attestation = item
             const stage = attestation.stage
             const stagiaire = stage.stagiaire
-            const offre = stage.offre
-            const division = stage.unite
-            const today = today_string()
+            const duree = differenceInMonths(stage.date_fin , stage.date_debut)
+            const lettre_duree = n2words(duree , {lang :'fr'})
             const info = {
-                nom:`${stagiaire.nom} ${stagiaire.prenom}`,
-                theme:stage.theme,
-                division:division.nom,
-                debut:date_d_m_y(stage.date_debut),
-                fin:date_d_m_y(stage.date_fin),
-                date: today ,
+                numero : attestation.numero,
+                stagiaire:`${stagiaire.nom} ${stagiaire.prenom}`,
+                lettre_duree : lettre_duree,
+                duree: duree,
             }
-
             generate(info)
         }
     }

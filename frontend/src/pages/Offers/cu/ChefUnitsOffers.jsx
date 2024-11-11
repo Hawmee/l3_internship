@@ -46,7 +46,7 @@ function ChefUnitsOffers({ offers }) {
     const offres = isArrayNotNull(offre_units)
         ? offre_units.filter(
               (item) =>
-                  item.nombre_stagiaire > 0
+                  item.nombre_stagiaire >= 0
           )
         : null;
 

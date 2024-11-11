@@ -87,7 +87,7 @@ export const newAttestation = async (req, res) => {
 
 export const partialUpdateAttestation = async (req, res) => {
     const { id } = req.params;
-    const data= req.body;
+    const data = req.body;
     try {
         const attestation = await prisma.attestation.update({
             where: { id: Number(id) },
@@ -95,8 +95,8 @@ export const partialUpdateAttestation = async (req, res) => {
                 status: false,
                 isNew: true,
                 isInforme: false,
-                isCollected:false,
-                ...data
+                isCollected: false,
+                ...data,
             },
             include: {
                 stage: {

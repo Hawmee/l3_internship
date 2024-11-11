@@ -296,14 +296,27 @@ export const finished = async (req,res) =>{
                 include:{stage:true}
             });
 
-            return { finishedStage, performance };
+            const updatedStage = await prisma.stages.findUnique({
+                where: { id: Number(id) },
+                include: {
+                    stagiaire: true,
+                    unite: {
+                        include: {
+                            users: true,
+                        },
+                    },
+                    attestation: true,
+                    performance: true,
+                    taches: true,
+                    offre: true,
+                },
+            });
+
+            return { updatedStage, performance };
         });
 
         // Emit socket event after successful transaction
-        req.io.emit('updated_stage', result.finishedStage);
-        if(result.performance.stage){
-            req.io.emit('updated_stage', result.performance.stage);
-        }
+        req.io.emit('updated_stage', result.updatedStage);
         req.io.emit('new_perf' , result.performance)
 
         return res.status(200).send({ 
@@ -411,13 +424,26 @@ export const revalid = async (req,res) =>{
                 include:{stage:true}
             });
 
-            return { finishedStage  ,performance};
+            const updatedStage = await prisma.stages.findUnique({
+                where: { id: Number(id) },
+                include: {
+                    stagiaire: true,
+                    unite: {
+                        include: {
+                            users: true,
+                        },
+                    },
+                    attestation: true,
+                    performance: true,
+                    taches: true,
+                    offre: true,
+                },
+            });
+
+            return { updatedStage  ,performance};
         });
 
-        req.io.emit('updated_stage', result.finishedStage);
-        if(result.performance.stage){
-            req.io.emit('updated_stage', result.performance.stage);
-        }
+        req.io.emit('updated_stage', result.updatedStage);
         req.io.emit('updated_performance' , result.performance)
 
         return res.status(200).send({ 

@@ -55,7 +55,7 @@ function Inform({onInform, data}) {
             const today = today_string();
 
             const Message = `Bonjour ${NomStagiaire} ,\nSuite à l'aboutissement de votre stage au sein du SRB Vakinankaratra ,\nNous avons le plaisir de vous informer que votre attestation de stage est désormais disponible depuis le ${today}.
-            \nVous pouvez venir la récupérer à votre convenance , en presenatnt ce numero: ${attestation.numero}. N'hésitez pas à nous contacter pour toute question ou précision.`;
+            \nVous pouvez venir la récupérer à votre convenance , en presentant ce numero: ${attestation.numero} au niveau de la Cellule d'Appui.\nN'hésitez pas à nous contacter pour toute question ou précision.`;
 
             reset({
                 content: Message,

@@ -9,6 +9,9 @@ import { Search } from "lucide-react";
 import PopUpContainer from "../../../components/containers/PopUpContainer";
 import Tasks from "./cards/Tasks";
 import { observation_stage, task_observations } from "../../../utils/Observations";
+import Finish from "./forms/Finish";
+import Delete from "./forms/Delete";
+import Edit from "./forms/Edit";
 
 function CUTask({ data }) {
     const current_user = useSelector((state) => state.currentUser.value);
@@ -18,6 +21,7 @@ function CUTask({ data }) {
 
     const [selected, setSelected] = useState(null);
     const [tasks, setTasks] = useState(null);
+    const [selectedTask , setSelectedTasks] = useState(null)
     const [add, setAdd] = useState(false);
     const [edit, setEdit] = useState(false);
     const [del, setDel] = useState(false);
@@ -26,6 +30,28 @@ function CUTask({ data }) {
     const handleAdd = () => {
         setAdd(!add);
     };
+
+
+    const handleFinish =(item)=>{
+        setFinised(!finished)
+        if(item){
+            setSelectedTasks(item)
+        }
+    }
+
+    const handleEdit =(item)=>{
+        setEdit(!edit)
+        if(item){
+            setSelectedTasks(item)
+        }
+    }
+
+    const handleDelete =(item)=>{
+        setDel(!del)
+        if(item){
+            setSelectedTasks(item)
+        }
+    }
 
     const handleSelect = (item) => {
         if (item) {
@@ -36,7 +62,7 @@ function CUTask({ data }) {
     const unfinished =
         isArrayNotNull(tasks) &&
         tasks.filter((task) => task.observation == task_observations.inacheve);
-    const unfinished_number = isArrayNotNull(finished) ? unfinished.length : 0;
+    const unfinished_number = isArrayNotNull(unfinished) ? unfinished.length : 0;
 
     const en_cours =
         isArrayNotNull(tasks) &&
@@ -46,7 +72,7 @@ function CUTask({ data }) {
     const _finished =
         isArrayNotNull(tasks) &&
         tasks.filter((task) => task.observation == task_observations.acheve);
-    const finished_number = isArrayNotNull(_finished) ? en_cours.length : 0;
+    const finished_number = isArrayNotNull(_finished) ? _finished.length : 0;
 
     const isEnded = selected ? (selected.status || selected.observation !== observation_stage.en_cours) : true;
 
@@ -122,7 +148,7 @@ function CUTask({ data }) {
                                         En cours:({en_cours_number})
                                     </div>
                                     <div className="text-blue-400">
-                                        Achevéé:({finished_number})
+                                        Achevée:({finished_number})
                                     </div>
                                 </div>
                             </div>
@@ -142,7 +168,7 @@ function CUTask({ data }) {
                             {tasks &&
                                 tasks.map((task) => (
                                     <div className="mb-3" key={task.id}>
-                                        <Tasks data={task} />
+                                        <Tasks data={task} onFinish={handleFinish} onEdit={handleEdit} onDelete={handleDelete} />
                                     </div>
                                 ))}
                         </div>
@@ -164,6 +190,24 @@ function CUTask({ data }) {
             {add && (
                 <PopUpContainer>
                     <Add onAddTasks={handleAdd} data={selected} />
+                </PopUpContainer>
+            )}
+
+            {edit &&(
+                <PopUpContainer>
+                    <Edit />
+                </PopUpContainer>
+            )}
+
+            {finished && (
+                <PopUpContainer>
+                    <Finish onFInish={handleFinish} data={selectedTask}/>
+                </PopUpContainer>
+            )}
+
+            {del && (
+                <PopUpContainer>
+                    <Delete />
                 </PopUpContainer>
             )}
         </>

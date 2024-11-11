@@ -7,6 +7,9 @@ function Interns() {
   const current_user= useSelector(state=>state.currentUser.value)
   const interns = useSelector(state=>state.stagiaire.value)
 
+
+  console.log(interns)
+
   return (
     <>
       {(current_user&&(current_user.isPersCellule||current_user.isPersSecretariat))&& <PersIntern interns={interns} /> }

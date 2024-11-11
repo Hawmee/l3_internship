@@ -8,6 +8,8 @@ function Offers() {
     const current_user = useSelector((state)=>state.currentUser.value)
     const offers = useSelector((state)=>state.offre.value)
 
+    console.log(offers)
+
   return (
     <>
         {(current_user&&current_user.isChefUnit) && <ChefUnitsOffers offers={offers} />}

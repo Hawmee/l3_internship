@@ -39,7 +39,9 @@ export default function Sidebar({ children }) {
             <aside className="h-full">
                 <nav className="h-full flex flex-col bg-white border-r-[2px] shadow-sm">
                     <div className="text-center text-[18px] p-4">
-                        <div className="border-b-[2px] text-gray-700 pb-4">{user && (user.unite? user.unite.nom : "S R B")}</div>
+                        <div className="border-b-[2px] text-gray-700 pb-4">
+                            {user && (user.unite ? user.unite.nom : "S R B")}
+                        </div>
                     </div>
                     <div className="flex-1 px-3 ">{children}</div>
 
@@ -112,7 +114,7 @@ export default function Sidebar({ children }) {
 }
 
 // eslint-disable-next-line react/prop-types
-export function SideBarLinks({ icon, text, href, alert }) {
+export function SideBarLinks({ icon, text, href, alert ,alertRed }) {
     return (
         <li>
             <NavLink
@@ -131,6 +133,9 @@ export function SideBarLinks({ icon, text, href, alert }) {
                 <span className=" ml-3">{text}</span>
                 {alert && (
                     <div className="absolute right-2 p-[5px] rounded-[10px] bg-blue-400 w-2 text-gray-50" />
+                )}
+                {alertRed && (
+                    <div className="absolute right-2 p-[5px] rounded-[10px] bg-red-500 w-2 text-gray-50" />
                 )}
             </NavLink>
         </li>

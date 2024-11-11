@@ -33,7 +33,7 @@ function Table({ data, onFinish, onAbanon, onRow  }) {
                                     </th>
                                     <th> Theme </th>
                                     <th>Status</th>
-                                    <th className="rounded-tr-[12px] rounded-br-[12px]"></th>
+                                    <th className="rounded-tr-[12px] rounded-br-[12px] opacity-100"> </th>
                                 </tr>
                             </thead>
 
@@ -83,12 +83,12 @@ function Table({ data, onFinish, onAbanon, onRow  }) {
                                                 </div>
                                                 </td>
                                                 <td className="rounded-r-[12px]">
-                                                    <div className="flex flex-row items-center justify-start text-white">
+                                                    <div className="text-sta text-white">
                                                         <button
                                                             className={
                                                                 !isdisabled
                                                                     ? "text-red-500 mr-2 px-3 py-1 hover:text-red-400"
-                                                                    : "text-red-500 opacity-40 mr-2 px-3 py-1"
+                                                                    : "text-red-300  mr-2 px-3 py-1"
                                                             }
                                                             onClick={() => {
                                                                 onAbanon(item);
@@ -105,7 +105,7 @@ function Table({ data, onFinish, onAbanon, onRow  }) {
                                                             className={
                                                                 !isdisabled
                                                                     ? "text-blue-500 mr-2 px-3 py-1 hover:text-blue-700"
-                                                                    : "text-blue-500 opacity-40 mr-2 px-3 py-1"
+                                                                    : "text-blue-300  mr-2 px-3 py-1"
                                                             }
                                                             onClick={() => {
                                                                 onFinish(item);

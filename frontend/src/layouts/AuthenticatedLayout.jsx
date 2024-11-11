@@ -12,6 +12,7 @@ import { deleteStagiaire, editStagiaire, newStagiaire, setStagiaire } from "../f
 import { isArrayNotNull } from "../functions/Functions";
 import { newPerf, setPerf } from "../features/perf";
 import { editAttestation, newAttestation } from "../features/attestation";
+import { editTache, newTache } from "../features/tache";
 
 function Authenticated() {
     const navigate = useNavigate();
@@ -139,6 +140,10 @@ function Authenticated() {
             dispatch(newAttestation(attestation))
         })
 
+        socket.on('new_tache' , tache=>{
+            dispatch(newTache(tache))
+        })
+
 
         
         socket.on('updated_offre' , offre=>{
@@ -166,6 +171,12 @@ function Authenticated() {
             dispatch(editAttestation(attestation))
         })
 
+        socket.on('updated_tache', tache=>{
+            dispatch(editTache(tache))
+        })
+
+
+
 
 
 
@@ -191,12 +202,14 @@ function Authenticated() {
             socket.off('new_stage')
             socket.off('new_perf')
             socket.off('new_attestation')
+            socket.off('new_tache')
             socket.off('updated_offre')
             socket.off('updated_performance')
             socket.off('updated_entretient')
             socket.off('update_stagiaire')
             socket.off('updated_stage')
             socket.off('updated_attestation')
+            socket.off('updated_tache')
             socket.off('deleted_stagiaire')
             socket.off('deleted_offre')
             socket.off('deleted_entretient')
