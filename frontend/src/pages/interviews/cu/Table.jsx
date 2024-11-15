@@ -1,4 +1,4 @@
-import { Check, MessageSquareWarning, X } from "lucide-react";
+import { Check, FileQuestion, MessageSquareWarning, X } from "lucide-react";
 import React, { useEffect, useRef } from "react";
 import {
     date_d_m_y,
@@ -16,10 +16,7 @@ function Table({ data, onValidate , onDecline }) {
                 tableContainerRef.current.scrollHeight;
         }
     }, [data]);
-
-    console.log(data);
     
-
     return (
         <>
             <div className="px-3 mt-4 pb-2 relative text-[16px] bg-gray-50 ">
@@ -125,8 +122,20 @@ function Table({ data, onValidate , onDecline }) {
                             )}
                         </table>
                         {!isArrayNotNull(data) && (
-                            <div className="w-full text-gray-700 text-lg flex flex-col items-center justify-center mt-4">
-                                (Aucun element à afficher)
+                            <div className="flex flex-col items-center justify-center w-full h-[50vh] text-gray-500">
+                                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                                    <FileQuestion
+                                        className="text-gray-400"
+                                        size={32}
+                                    />
+                                </div>
+                                <div className="text-lg font-medium">
+                                    Aucune donnée disponible
+                                </div>
+                                <p className="text-sm text-gray-400">
+                                    Les données d'entretiens apparaîtront ici
+                                    une fois disponible
+                                </p>
                             </div>
                         )}
                     </div>

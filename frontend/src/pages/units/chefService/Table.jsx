@@ -61,6 +61,9 @@ function Table({ data, popup, addPopUp, del, setDel, onEdit }) {
                                             </td>
                                             <td>
                                                 <div className="flex flex-row items-center justify-center text-white">
+                                                    <button className="text-red-500 mr-2 px-3 py-1 hover:text-red-400">
+                                                        <Trash2 size={22} />
+                                                    </button>
                                                     <button
                                                         className="text-blue-500 mr-2 px-3 py-1 hover:text-blue-700"
                                                         onClick={() => {
@@ -68,9 +71,6 @@ function Table({ data, popup, addPopUp, del, setDel, onEdit }) {
                                                         }}
                                                     >
                                                         <SquarePen size={22} />
-                                                    </button>
-                                                    <button className="text-gray-500 mr-2 px-3 py-1 hover:text-gray-700">
-                                                        <Trash2 size={22} />
                                                     </button>
                                                 </div>
                                             </td>

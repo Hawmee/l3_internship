@@ -1,6 +1,7 @@
 import {
     CalendarPlus,
     CopyPlus,
+    FileQuestion,
     SquarePen,
     SquareX,
     Trash2,
@@ -9,8 +10,9 @@ import {
     UserX,
 } from "lucide-react";
 import React, { useEffect, useRef } from "react";
+import { isArrayNotNull } from "../../../functions/Functions";
 
-function Table({ data, onAdd, onEdit, onDelete , onDocs }) {
+function Table({ data, onAdd, onEdit, onDelete, onDocs }) {
     const tableContainerRef = useRef(null);
 
     useEffect(() => {
@@ -55,7 +57,8 @@ function Table({ data, onAdd, onEdit, onDelete , onDocs }) {
                                             <td>{item.filiere}</td>
                                             <td>{item.observation}</td>
                                             <td>
-                                                {item.cv_link && item.lm_link ?
+                                                {item.cv_link &&
+                                                item.lm_link ? (
                                                     <div className="flex flex-row">
                                                         <a
                                                             href={item.cv_link}
@@ -74,15 +77,16 @@ function Table({ data, onAdd, onEdit, onDelete , onDocs }) {
                                                             LM (lien)
                                                         </a>
                                                     </div>
-                                                :
-                                                    <div className="underkine underline-offset-2 text-blue-500 cursor-pointer hover:text-blue-600" 
-                                                        onClick={()=>{
-                                                            onDocs(item)
+                                                ) : (
+                                                    <div
+                                                        className="underkine underline-offset-2 text-blue-500 cursor-pointer hover:text-blue-600"
+                                                        onClick={() => {
+                                                            onDocs(item);
                                                         }}
                                                     >
                                                         (Ajouter les documents)
                                                     </div>
-                                                }
+                                                )}
                                             </td>
                                             <td>
                                                 <div className="flex flex-row  justify-start text-white">
@@ -123,6 +127,23 @@ function Table({ data, onAdd, onEdit, onDelete , onDocs }) {
                                 </tr>
                             </tbody>
                         </table>
+                        {!isArrayNotNull(data) && (
+                            <div className="flex flex-col items-center justify-center w-full h-[50vh] text-gray-500">
+                                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                                    <FileQuestion
+                                        className="text-gray-400"
+                                        size={32}
+                                    />
+                                </div>
+                                <div className="text-lg font-medium">
+                                    Aucune donnée disponible
+                                </div>
+                                <p className="text-sm text-gray-400">
+                                    Les données de stagiaires apparaîtront ici
+                                    une fois disponible
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className="btn_place absolute bottom-0 right-0 pb-2 pr-[8px]">

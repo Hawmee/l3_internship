@@ -6,23 +6,21 @@ import {
     isArrayNotNull,
 } from "../../../functions/Functions";
 import { Mail } from "lucide-react";
-import { differenceInDays, parseISO, startOfDay } from "date-fns";
+import { addDays, differenceInDays, isWithinInterval, parseISO, startOfDay } from "date-fns";
 
 function Table({ data, onSelect, selected }) {
     const tableContainerRef = useRef(null);
     const [selectedRow, setSelectedRow] = useState(null);
 
-    const hasNearDeadlines = (tasks) => {
-        if (isArrayNotNull(tasks)) {
-            const today = startOfDay(new Date());
-            return tasks.some((task) => {
-                const deadlineDate = startOfDay(formatDate(task.date_fin));
-                const daysUntilDeadline = differenceInDays(deadlineDate, today);
-                return daysUntilDeadline >= 0 && daysUntilDeadline <= 3;
-            });
-        }
-        return false;
-    };
+    const hasNearDeadlines = (tasks) => 
+        tasks?.some((task) => {
+          const today = startOfDay(new Date());
+          const deadlineDate = parseISO(task.date_fin);
+          const interval = { start: today, end: addDays(today, 3) };
+          const isNotFinished = !task.status;
+      
+          return isWithinInterval(deadlineDate, interval) && isNotFinished;
+        }) ?? false;
 
     const countNearDeadlines = (tasks) => {
         if (isArrayNotNull(tasks)) {
@@ -82,13 +80,16 @@ function Table({ data, onSelect, selected }) {
                                         const offre = item.offre;
                                         const nearDeadline =
                                             hasNearDeadlines(taches);
+                                        
                                         return (
                                             <tr
                                                 key={item.id}
                                                 className={`cursor:pointer h-1 rounded-[12px] hover:bg-gray-100 pt-2 cursor-pointer ${
                                                     selectedRow == item.id &&
                                                     "border-r-[4px] border-blue-400 bg-gray-100"
-                                                } `}
+                                                } 
+                                                    ${nearDeadline && 'border-l-[4px] border-blue-400'}
+                                                `}
                                                 onClick={() => {
                                                     onSelect(item);
                                                 }}

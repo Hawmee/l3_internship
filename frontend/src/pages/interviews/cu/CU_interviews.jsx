@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MainContainer from "../../../components/containers/MainContainer";
 import SearchContainer from "../../../components/containers/SearchContainer";
 import Table from "./Table";
@@ -8,12 +8,17 @@ import InterViews from "../InterViews";
 import PopUpContainer from "../../../components/containers/PopUpContainer";
 import Validate from "./forms/Validate";
 import Decline from "./forms/Decline";
+import { observation_stagiaire } from "../../../utils/Observations";
+import { useSelector } from "react-redux";
 
 function CU_interviews({ interviews }) {
-
+    const [searchTerm, setSearchTerm] = useState("");
+    const [selectedStatus, setSelectedStatus] = useState("all");
+    const [filteredData, setFilteredData] = useState([]);
     const [validate,setValidate]= useState(false)
     const [decline,setDecline]= useState(false)
     const [selected, setSelected] = useState(null)
+    const currentUser = useSelector(state=>state.currentUser.value)
 
     const hanldeValidate = (item)=>{
         if(item){
@@ -38,6 +43,63 @@ function CU_interviews({ interviews }) {
           )
         : [];
 
+    const interv = interv_CU.filter(item=>
+        item.offre.unite_id == currentUser.unite_id
+    )
+
+        useEffect(() => {
+            if (!interv) {
+                setFilteredData([]);
+                return;
+            }
+    
+            const filtered = interv.filter((item) => {
+                const statusMatch =
+                    selectedStatus == "all" ||
+                    (selectedStatus == "demande"
+                        ? !item.status
+                        : item.status && item.date_interview);
+    
+                if (!searchTerm) return statusMatch;
+    
+                const searchLower = searchTerm.toLowerCase();
+                const stagiaire = item.stagiaire
+                const offre = item.offre
+                const nameMatch =
+                    stagiaire.nom?.toLowerCase().includes(searchLower) ||
+                    stagiaire.prenom?.toLowerCase().includes(searchLower);
+                const allNameMatch = (
+                    stagiaire.nom +
+                    " " +
+                    stagiaire.prenom
+                )
+                    .toLowerCase()
+                    .includes(searchLower);
+                const offreMatch = offre.nom
+                    ?.toLowerCase()
+                    .includes(searchLower);
+    
+                return (
+                    statusMatch &&
+                    (nameMatch || allNameMatch || offreMatch)
+                );
+            });
+        
+            setFilteredData(filtered);
+        }, [interviews, selectedStatus, searchTerm]);
+
+
+        useEffect(()=>{
+            if(interviews){
+                const demande = interv.some(item=> !item.status)
+                if(demande){
+                    setSelectedStatus('demande')
+                }else{
+                    setSelectedStatus('entretient')
+                }
+            }
+        } , [interviews])
+
     return (
         <>
             <MainContainer>
@@ -48,13 +110,13 @@ function CU_interviews({ interviews }) {
                                 name=""
                                 id=""
                                 className="px-2 py-1 border-[2px] border-gray-400  rounded-[12px] cursor-pointer outline-none"
-                                value={navigation}
-                                onChange={(e) => setNavigation(e.target.value)}
+                                value={selectedStatus}
+                                onChange={(e) => setSelectedStatus(e.target.value)}
                             >
-                                <option value="Demande">
+                                <option value="demande">
                                     Demande d'entretient
                                 </option>
-                                <option value="Entretient">Entretient</option>
+                                <option value="entretient">Entretient à venir</option>
                             </select>
                         </div>
 
@@ -64,9 +126,9 @@ function CU_interviews({ interviews }) {
                                     type="text"
                                     placeholder="Rechercher(offre , stagiaire , date)"
                                     className="w-64 bg-transparent outline-none placeholder:text-gray-500 px-1"
-                                    // onChange={(e) => {
-                                    //     setSearchTerm(e.target.value);
-                                    // }}
+                                    onChange={(e) => {
+                                        setSearchTerm(e.target.value);
+                                    }}
                                 />
                                 <div className="mr-1  px-1 flex flex-row items-center cursor-pointer">
                                     <Search size={18} />
@@ -76,7 +138,7 @@ function CU_interviews({ interviews }) {
                     </div>
                 </SearchContainer>
                 <div className="">
-                    <Table data={interv_CU} onValidate={hanldeValidate} onDecline={handleDecline} />
+                    <Table data={filteredData} onValidate={hanldeValidate} onDecline={handleDecline} />
                 </div>
             </MainContainer>
 

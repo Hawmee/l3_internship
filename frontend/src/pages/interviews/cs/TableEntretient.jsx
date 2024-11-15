@@ -3,6 +3,7 @@ import {
     CalendarCheck,
     CalendarCog,
     CalendarX,
+    FileQuestion,
 } from "lucide-react";
 import React, { useEffect, useRef } from "react";
 import { date_time, isArrayNotNull } from "../../../functions/Functions";
@@ -119,7 +120,7 @@ function TableEntretient({ data, onConfirm, onEdit , onCancel }) {
                                                         <CalendarCog size={25} />
                                                     </button>
                                                     <button
-                                                        className={!((isBefore( startOfMinute(new Date()) , formated_date(item.date_interview)))&& !item.isInforme)?"text-red-500 mr-2 px-3 py-1 hover:text-red-400":"text-red-500 mr-2 px-3 py-1 opacity-30"}
+                                                        className={!((isBefore( startOfMinute(new Date()) , formated_date(item.date_interview)))&& !item.isInforme)?"text-red-500 mr-2 px-3 py-1 hover:text-red-400":"text-red-300 mr-2 px-3 py-1 "}
                                                         onClick={() => {
                                                             onCancel(item);
                                                         }}
@@ -128,7 +129,7 @@ function TableEntretient({ data, onConfirm, onEdit , onCancel }) {
                                                         <CalendarX size={25} />
                                                     </button>
                                                     <button 
-                                                        className={!((isBefore( startOfMinute(new Date()) , formated_date(item.date_interview))) && !item.isInforme)?"text-blue-500 mr-2 px-3 py-1 hover:text-blue-700" :"text-blue-500 opacity-40 mr-2 px-3 py-1 "}
+                                                        className={!((isBefore( startOfMinute(new Date()) , formated_date(item.date_interview))) && !item.isInforme)?"text-blue-500 mr-2 px-3 py-1 hover:text-blue-700" :"text-blue-300  mr-2 px-3 py-1 "}
                                                         onClick={()=>{
                                                             onConfirm(item)
                                                         }}
@@ -148,8 +149,20 @@ function TableEntretient({ data, onConfirm, onEdit , onCancel }) {
                             </tbody>
                         </table>
                         {!isArrayNotNull(data) && (
-                            <div className="w-full text-gray-700 text-lg flex flex-col items-center justify-center">
-                                (Aucun element à afficher)
+                            <div className="flex flex-col items-center justify-center w-full h-[50vh] text-gray-500">
+                                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                                    <FileQuestion
+                                        className="text-gray-400"
+                                        size={32}
+                                    />
+                                </div>
+                                <div className="text-lg font-medium">
+                                    Aucune donnée disponible
+                                </div>
+                                <p className="text-sm text-gray-400">
+                                    Les données d'entretiens apparaîtront ici
+                                    une fois disponible
+                                </p>
                             </div>
                         )}
                     </div>

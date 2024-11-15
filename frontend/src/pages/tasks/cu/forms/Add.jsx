@@ -11,9 +11,10 @@ import { useSelector } from 'react-redux'
 function Add({onAddTasks , data}) {
 
   const method = useForm()
-  const today = format(new Date() , "yyyy-MM-dd'T'HH:mm")
   const stage = data
+  const today = format(new Date() , "yyyy-MM-dd")
   const url = useSelector(state=>state.backendUrl.value)
+  const fin = format(new Date(stage.date_fin) , "yyyy-MM-dd" )
 
 
 
@@ -66,9 +67,10 @@ function Add({onAddTasks , data}) {
                     <DatePicker 
                       label='Date limite'
                       name='date_fin'
-                      type="datetime-local"
+                      type="date"
                       min={today}
                       defaultValue={today}
+                      max={fin}
                     />
                   </div>
                     <div className='text-white flex flex-row justify-end mt-6'>

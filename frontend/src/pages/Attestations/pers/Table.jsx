@@ -2,6 +2,7 @@ import {
     CheckCheck,
     CopyPlus,
     File,
+    FileQuestion,
     FileText,
     Mail,
     Printer,
@@ -65,7 +66,6 @@ function Table({ data, onRow, onInform, onAttestation, onCollected }) {
                                             attestation.isCollected;
                                         // const status = attestation.status
                                         const isDisabledFournie =
-                                            !attestation.isInforme ||
                                             !attestation.status ||
                                             attestation.isCollected;
                                         return (
@@ -94,7 +94,7 @@ function Table({ data, onRow, onInform, onAttestation, onCollected }) {
                                                     <div className="flex flex-row text-white">
                                                         {attestation ? (
                                                             attestation.isCollected ? (
-                                                                <p className="bg-gray-600 px-3 rounded-xl">
+                                                                <p className="bg-blue-500 px-3 rounded-xl">
                                                                     livré
                                                                 </p>
                                                             ) : attestation.status ? (
@@ -136,7 +136,7 @@ function Table({ data, onRow, onInform, onAttestation, onCollected }) {
                                                                 }
                                                                 ${
                                                                     disabledMail &&
-                                                                    "text-blue-500 mr-2 px-3 py-1 opacity-40"
+                                                                    "text-blue-300 mr-2 px-3 py-1 "
                                                                 }     
                                                             `}
                                                             onClick={() => {
@@ -156,7 +156,7 @@ function Table({ data, onRow, onInform, onAttestation, onCollected }) {
                                                                 }
                                                                 ${
                                                                     isDisabledFournie &&
-                                                                    "text-blue-500 mr-6 px-3 py-1 opacity-40"
+                                                                    "text-blue-300 mr-6 px-3 py-1 "
                                                                 }     
                                                             `}
                                                             onClick={() => {
@@ -182,6 +182,23 @@ function Table({ data, onRow, onInform, onAttestation, onCollected }) {
                                 </tr>
                             </tbody>
                         </table>
+                        {!isArrayNotNull(data) && (
+                            <div className="flex flex-col items-center justify-center w-full h-[50vh] text-gray-500">
+                                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                                    <FileQuestion
+                                        className="text-gray-400"
+                                        size={32}
+                                    />
+                                </div>
+                                <div className="text-lg font-medium">
+                                    Aucune donnée disponible
+                                </div>
+                                <p className="text-sm text-gray-400">
+                                    Les données d'attesttions apparaîtront ici
+                                    une fois disponible
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

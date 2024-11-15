@@ -10,15 +10,17 @@ export const getAllStages = async (req, res) => {
     try {
         const stages = await prisma.stages.findMany({
             include: {
-                unite:{
-                    include:{
-                        users:true
-                    }
-                },
                 stagiaire: true,
+                unite: {
+                    include: {
+                        users: true,
+                    },
+                },
                 attestation: true,
                 performance: true,
-                taches: true,
+                taches: {include:{
+                    stage:true
+                }},
                 offre: true,
             },
 
@@ -45,7 +47,9 @@ export const createStageFromInterview = async (req, res) => {
                 },
                 attestation: true,
                 performance: true,
-                taches: true,
+                taches: {include:{
+                    stage:true
+                }},
                 offre: true,
             },
         });
@@ -101,15 +105,17 @@ export const partialUpdateStage = async (req, res) => {
             where: { id: Number(id) },
             data: updated_stage_data,
             include: {
-                unite:{
-                    include:{
-                        users:true
-                    }
-                },
                 stagiaire: true,
+                unite: {
+                    include: {
+                        users: true,
+                    },
+                },
                 attestation: true,
                 performance: true,
-                taches: true,
+                taches: {include:{
+                    stage:true
+                }},
                 offre: true,
             },
         });
@@ -144,15 +150,17 @@ export const abandon = async (req, res) => {
                 observation: stage_observations.abandon,
             },
             include: {
-                unite:{
-                    include:{
-                        users:true
-                    }
-                },
                 stagiaire: true,
+                unite: {
+                    include: {
+                        users: true,
+                    },
+                },
                 attestation: true,
                 performance: true,
-                taches: true,
+                taches: {include:{
+                    stage:true
+                }},
                 offre: true,
             },
         });
@@ -278,15 +286,17 @@ export const finished = async (req,res) =>{
                     isNew: true,
                 },
                 include: {
-                    unite:{
-                        include:{
-                            users:true
-                        }
-                    },
                     stagiaire: true,
+                    unite: {
+                        include: {
+                            users: true,
+                        },
+                    },
                     attestation: true,
                     performance: true,
-                    taches: true,
+                    taches: {include:{
+                        stage:true
+                    }},
                     offre: true,
                 },
             });
@@ -307,7 +317,9 @@ export const finished = async (req,res) =>{
                     },
                     attestation: true,
                     performance: true,
-                    taches: true,
+                    taches: {include:{
+                        stage:true
+                    }},
                     offre: true,
                 },
             });
@@ -404,15 +416,17 @@ export const revalid = async (req,res) =>{
                     isNew: true,
                 },
                 include: {
-                    unite:{
-                        include:{
-                            users:true
-                        }
-                    },
                     stagiaire: true,
+                    unite: {
+                        include: {
+                            users: true,
+                        },
+                    },
                     attestation: true,
                     performance: true,
-                    taches: true,
+                    taches: {include:{
+                        stage:true
+                    }},
                     offre: true,
                 },
             });
@@ -435,7 +449,9 @@ export const revalid = async (req,res) =>{
                     },
                     attestation: true,
                     performance: true,
-                    taches: true,
+                    taches: {include:{
+                        stage:true
+                    }},
                     offre: true,
                 },
             });
@@ -496,15 +512,17 @@ export const invalid = async (req,res) =>{
                 book_link:null,
             },
             include: {
-                unite:{
-                    include:{
-                        users:true
-                    }
-                },
                 stagiaire: true,
+                unite: {
+                    include: {
+                        users: true,
+                    },
+                },
                 attestation: true,
                 performance: true,
-                taches: true,
+                taches: {include:{
+                    stage:true
+                }},
                 offre: true,
             },
 
@@ -528,15 +546,17 @@ export const valid = async (req,res) =>{
             where: {id:Number(id)},
             data:{isNew:true , status:true , observation:stage_observations.acheve},
             include: {
-                unite:{
-                    include:{
-                        users:true
-                    }
-                },
                 stagiaire: true,
+                unite: {
+                    include: {
+                        users: true,
+                    },
+                },
                 attestation: true,
                 performance: true,
-                taches: true,
+                taches: {include:{
+                    stage:true
+                }},
                 offre: true,
             },
         })
@@ -584,7 +604,6 @@ export const valid = async (req,res) =>{
             }
 
             req.io.emit('update_stagiaire' , stagiaire)
-            req.io.emit('updated_stage' , validated)
             return res.status(200).send({message:"Action reussite!"})
         }
     } catch (error) {

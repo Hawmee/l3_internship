@@ -2,6 +2,7 @@ import { differenceInMonths, format } from "date-fns";
 import {
     CalendarPlus,
     CopyPlus,
+    FileQuestion,
     SquarePen,
     SquareX,
     Trash2,
@@ -77,7 +78,7 @@ function Table({ data, onInterview }) {
                                                         className={
                                                             isDispo
                                                                 ? "flex px-2 py-1 rounded-[12px] flex-row bg-blue-500 cursor-pointer hover:bg-blue-600"
-                                                                : "flex px-2 py-1 rounded-[12px] flex-row bg-blue-500 opacity-30 cursor-default "
+                                                                : "flex px-2 py-1 rounded-[12px] flex-row bg-blue-300  cursor-default "
                                                         }
 
                                                         onClick={()=>{
@@ -102,8 +103,20 @@ function Table({ data, onInterview }) {
                             </tbody>
                         </table>
                         {!isArrayNotNull(data) && (
-                            <div className="w-full text-gray-700 text-lg flex flex-col items-center justify-center">
-                                (Aucun element à afficher)
+                            <div className="flex flex-col items-center justify-center w-full h-[50vh] text-gray-500">
+                                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                                    <FileQuestion
+                                        className="text-gray-400"
+                                        size={32}
+                                    />
+                                </div>
+                                <div className="text-lg font-medium">
+                                    Aucune donnée disponible
+                                </div>
+                                <p className="text-sm text-gray-400">
+                                    Les données d'offres apparaîtront ici
+                                    une fois disponible
+                                </p>
                             </div>
                         )}
                     </div>

@@ -10,6 +10,7 @@ import { formatDate } from "../../../../functions/Functions";
 import { observation_stage } from "../../../../utils/Observations";
 import { pdf } from "@react-pdf/renderer";
 import AttestationPDF from "../../../../components/Files/AttesationPDF";
+import { notifyError, notifySuccess } from "../../../../layouts/MereLayout";
 
 function Confirm({ method, data, handleConfirm }) {
     const url = useSelector((state) => state.backendUrl.value);
@@ -78,13 +79,13 @@ function Confirm({ method, data, handleConfirm }) {
         try {
             const created = await axios.post(`${url}/newStage`, body);
             if (created) {
-                const message = "Stage créé avec succes !";
-                toast(message, toastconfig);
+                notifySuccess()
                 handleConfirm();
                 generate(data)
             }
         } catch (error) {
             console.log(error);
+            notifyError()
         }
 
     };

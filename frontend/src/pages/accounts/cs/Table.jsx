@@ -9,7 +9,10 @@ import {
 } from "lucide-react";
 import React from "react";
 
-function Table({ data  , onValidate}) {
+function Table({ data, onValidate }) {
+
+    console.log(data)
+
     return (
         <>
             <div className="px-2 pb-2 relative">
@@ -33,9 +36,19 @@ function Table({ data  , onValidate}) {
 
                             <tbody>
                                 {data &&
-                                    data.map((item) => (
-                                        <tr key={item.id} >
-                                            <td className={item.isNew?"border-l-[5px] border-blue-400":""}>{item.matricule}</td>
+                                    data.map((item) => {
+                                        const isDisabledValidate = item.status
+                                        return(
+                                        <tr key={item.id}>
+                                            <td
+                                                className={
+                                                    item.isNew
+                                                        ? "border-l-[5px] border-blue-400"
+                                                        : ""
+                                                }
+                                            >
+                                                {item.matricule}
+                                            </td>
                                             <td>
                                                 {item.nom} {item.prenom}
                                             </td>
@@ -71,22 +84,25 @@ function Table({ data  , onValidate}) {
                                             </td>
                                             <td>
                                                 <div className="flex flex-row items-center justify-start text-white">
-                                                    <button className="text-blue-500 mr-2 px-3 py-1">
-                                                        <UserPen />
+                                                    <button className="text-red-500 mr-2 px-3 py-1">
+                                                        <UserX  />
                                                     </button>
-                                                    <button className="text-gray-500 mr-2 px-3 py-1">
-                                                        <UserX />
+                                                    <button
+                                                        className=" text-blue-500 disabled:text-blue-300 hover:text-blue-600 "
+                                                        onClick={() => {
+                                                            onValidate(item);
+                                                        }}
+                                                        disabled={isDisabledValidate}
+                                                    >
+                                                        <UserCheck />
                                                     </button>
-                                                    {!item.status && (
-                                                        <button className=" text-green-500" onClick={()=>{onValidate(item)}}>
-                                                            <UserCheck />
-                                                        </button>
-                                                    )}
                                                 </div>
                                             </td>
                                         </tr>
-                                    ))}
-                                <tr><td></td></tr>
+                                    )})}
+                                <tr>
+                                    <td></td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>

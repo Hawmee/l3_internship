@@ -51,7 +51,7 @@ export default function Sidebar({ children }) {
                         </div>
                         <div className="flex items-center justify-between w-52 ml-3">
                             <div className="leading-4 cursor-pointer">
-                                <div>
+                                <NavLink to={`profile`}>
                                     <h4 className="font-semibold text-gray-600 hover:text-gray-600 mb-1 text-[1.1rem]">
                                         {user && user.nom} {user && user.prenom}
                                     </h4>
@@ -66,7 +66,7 @@ export default function Sidebar({ children }) {
                                                 ? "Personnel"
                                                 : "Utilisateur")}
                                     </span>
-                                </div>
+                                </NavLink>
                             </div>
                             <button
                                 className="text-red-400 hover:text-red-500"

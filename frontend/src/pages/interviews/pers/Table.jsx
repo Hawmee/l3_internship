@@ -1,5 +1,5 @@
 import { addHours, format, isBefore, parseISO, startOfMinute } from "date-fns";
-import { Mail, MailCheck } from "lucide-react";
+import { FileQuestion, Mail, MailCheck } from "lucide-react";
 import React, { useEffect, useRef, onInform } from "react";
 import { isArrayNotNull } from "../../../functions/Functions";
 
@@ -113,7 +113,7 @@ function Table({ data, onMail, onInform }) {
                                                         <Mail size={25} />
                                                     </button>
                                                     <button
-                                                        className={!item.isInforme ?"text-blue-600 mr-2 px-3 py-1 hover:text-blue-700" :"text-blue-600 opacity-30 mr-2 px-3 py-1" }
+                                                        className={!item.isInforme ?"text-blue-600 mr-2 px-3 py-1 hover:text-blue-700" :"text-blue-300  mr-2 px-3 py-1" }
                                                         onClick={() => {
                                                             onInform(item);
                                                         }}
@@ -131,8 +131,20 @@ function Table({ data, onMail, onInform }) {
                             </tbody>
                         </table>
                         {!isArrayNotNull(data) && (
-                            <div className="w-full text-gray-700 text-lg flex flex-col items-center justify-center">
-                                (Aucun element à afficher)
+                            <div className="flex flex-col items-center justify-center w-full h-[50vh] text-gray-500">
+                                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                                    <FileQuestion
+                                        className="text-gray-400"
+                                        size={32}
+                                    />
+                                </div>
+                                <div className="text-lg font-medium">
+                                    Aucune donnée disponible
+                                </div>
+                                <p className="text-sm text-gray-400">
+                                    Les données d'entretiens apparaîtront ici
+                                    une fois disponible
+                                </p>
                             </div>
                         )}
                     </div>

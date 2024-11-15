@@ -38,7 +38,9 @@ export const newTache = async (req, res) => {
                     stagiaire: true,
                     attestation: true,
                     performance: true,
-                    taches: true,
+                    taches: {include:{
+                        stage:true
+                    }},
                     offre: true,
                 },
             });
@@ -60,8 +62,30 @@ export const partialUpdateTache = async (req, res) => {
             where: { id: Number(id) },
             data: updated_tache_data,
         });
+        
+        if (tache) {
+            const updatedStage = await prisma.stages.findUnique({
+                where: { id: tache.stage_id },
+                include: {
+                    unite: {
+                        include: {
+                            users: true,
+                        },
+                    },
+                    stagiaire: true,
+                    attestation: true,
+                    performance: true,
+                    taches: {include:{
+                        stage:true
+                    }},
+                    offre: true,
+                },
+            });
 
-        res.status(200).send({ data: tache });
+            req.io.emit("updated_stage", updatedStage);
+            req.io.emit('updated_tache' , tache)
+        }
+        res.status(200).send({ message: "Action reussite !" })
     } catch (error) {
         res.status(400).send({ message: error.message });
     }
@@ -104,13 +128,15 @@ export const finished = async (req, res) => {
                     stagiaire: true,
                     attestation: true,
                     performance: true,
-                    taches: true,
+                    taches: {include:{
+                        stage:true
+                    }},
                     offre: true,
                 },
             });
 
             req.io.emit("updated_stage", updatedStage);
-            req.io.emit('new_tache' , tache)
+            req.io.emit('updated_tache' , tache)
         }
         res.status(200).send({ message: "Action reussite !" });
 
@@ -159,7 +185,9 @@ export const unfinished_tasks = async(req,res)=>{
                     stagiaire: true,
                     attestation: true,
                     performance: true,
-                    taches: true,
+                    taches: {include:{
+                        stage:true
+                    }},
                     offre: true,
                 },
             })

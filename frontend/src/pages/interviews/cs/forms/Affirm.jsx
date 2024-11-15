@@ -5,22 +5,28 @@ import DatePicker from '../../../../components/forms/DatePicker'
 import { addDays, format, startOfToday } from 'date-fns'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
+import { notifyError, notifySuccess } from '../../../../layouts/MereLayout'
 
-function Affirm({method , interview}) {
+function Affirm({method , interview , onAffirm}) {
 
     const url = useSelector(state=>state.backendUrl.value)
     const today_date = startOfToday()
     const today = format(today_date, "yyyy-MM-dd'T'HH:mm");
     const afterOneDay = format(addDays(today , 1) , "yyyy-MM-dd'T'HH:mm")
+    const {reset} = method
 
     const Submit = async(data)=>{
         try {
             const submited = await axios.patch(`${url}/entretient/affirm/${interview.id}` , data)
             if(submited){
-                console.log("Entretient En attente");              
+                console.log("Entretient En attente"); 
+                notifySuccess() 
+                onAffirm()
+                reset()      
             }
         } catch (error) {
             console.log(error);
+            notifyError()
         }
     }
 

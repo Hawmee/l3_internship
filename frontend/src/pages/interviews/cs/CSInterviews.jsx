@@ -167,7 +167,7 @@ function CSInterviews({interviews}) {
             {affirm && (
                 <PopUpContainer popup={affirm} closePopUp={setAffirm}>
                     {" "}
-                    <Affirm method={methodAffirm} interview={selected_interview} />
+                    <Affirm method={methodAffirm} interview={selected_interview} onAffirm={handleAffirm} />
                 </PopUpContainer>
             )}
             {confirm && (

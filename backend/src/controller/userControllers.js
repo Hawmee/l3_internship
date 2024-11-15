@@ -5,7 +5,11 @@ const prisma = prismaClient;
 export const getAllUser = async (req, res) => {
     try {
         const users = await prisma.users.findMany({
-            include:{unite:true}
+            include:{unite:{
+                include:{
+                    users:true
+                }
+            }}
         })
 
         res.status(200).send(users)

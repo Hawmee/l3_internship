@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MainContainer from "../../../components/containers/MainContainer";
 import SearchContainer from "../../../components/containers/SearchContainer";
 import Table from "./Table";
@@ -9,8 +9,12 @@ import { useForm } from "react-hook-form";
 import Delete from "./forms/Delete";
 import Docs from "./forms/Docs";
 import { Search } from "lucide-react";
+import { observation_stagiaire } from "../../../utils/Observations";
 
 function PersIntern({ interns }) {
+    const [searchTerm, setSearchTerm] = useState("");
+    const [selectedStatus, setSelectedStatus] = useState("all");
+    const [filteredData, setFilteredData] = useState([]);
     const [new_intern, setNew_intern] = useState(false);
     const [edit_intern, setEdit_intern] = useState(false);
     const [delete_intern, setDelete_intern] = useState(false);
@@ -56,6 +60,69 @@ function PersIntern({ interns }) {
         }
     };
 
+
+    useEffect(() => {
+        if (!interns) {
+            setFilteredData([]);
+            return;
+        }
+
+        const filtered = interns.filter((item) => {
+            const statusMatch =
+                selectedStatus == "all" ||
+                (selectedStatus == "Postulant"
+                    ? item.observation == observation_stagiaire.postulant
+                    : selectedStatus == "En cours de stage"
+                    ? item.observation == observation_stagiaire.en_stage
+                    : selectedStatus == "A entretenir"
+                    ? item.observation == observation_stagiaire.a_entretenir
+                    : item.observation == observation_stagiaire.ancien);
+
+            if (!searchTerm) return statusMatch;
+
+            const searchLower = searchTerm.toLowerCase();
+            const nameMatch =
+                item.nom?.toLowerCase().includes(searchLower) ||
+                item.prenom?.toLowerCase().includes(searchLower);
+            const niveau = item.niveau
+                ?.toLowerCase()
+                .includes(searchLower);
+            const allNameMatch = (
+                item.nom +
+                " " +
+                item.prenom
+            )
+                .toLowerCase()
+                .includes(searchLower);
+            const filiere = item.filiere
+                ?.toLowerCase()
+                .includes(searchLower);
+
+            return (
+                statusMatch &&
+                (nameMatch || allNameMatch || filiere|| niveau)
+            );
+        });
+
+        console.log(interns)
+        console.log(observation_stagiaire)
+
+        setFilteredData(filtered);
+    }, [interns, selectedStatus, searchTerm]);
+
+
+    useEffect(()=>{
+        if(interns){
+            const postulant = interns.some(item=>item.observation == observation_stagiaire.postulant)
+            if(postulant){
+                setSelectedStatus('Postulant')
+            }else {
+                setSelectedStatus('all')
+            }
+        }
+    } , [interns])
+
+
     return (
         <>
             <MainContainer>
@@ -66,13 +133,24 @@ function PersIntern({ interns }) {
                                 name=""
                                 id=""
                                 className="px-2 py-2 border-[2px] border-gray-400  rounded-[12px] cursor-pointer outline-none"
-                                // value={navigation}
-                                // onChange={(e) => setNavigation(e.target.value)}
+                                value={selectedStatus}
+                                onChange={(e) => setSelectedStatus(e.target.value)}
                             >
-                                <option value="Demande">
-                                    Demande d'entretient
+                                <option value="all">
+                                    Tous
                                 </option>
-                                <option value="Entretient">Entretient</option>
+                                <option value="Postulant">
+                                    Postulant
+                                </option>
+                                <option value="A entretenir">
+                                    A entretenir
+                                </option>
+                                <option value="En cours de stage">
+                                    En cours de stage
+                                </option>
+                                <option value="Anciens">
+                                    Anciens
+                                </option>
                             </select>
                         </div>
 
@@ -80,11 +158,11 @@ function PersIntern({ interns }) {
                             <div className="flex flex-row  text-gray-600 py-2 rounded-[12px] bg-gray-200 px-2">
                                 <input
                                     type="text"
-                                    placeholder="Rechercher(offre , stagiaire , date)"
+                                    placeholder="Rechercher(stagiaire , niveau ,...)"
                                     className="w-64 bg-transparent outline-none placeholder:text-gray-500 px-1"
-                                    // onChange={(e) => {
-                                    //     setSearchTerm(e.target.value);
-                                    // }}
+                                    onChange={(e) => {
+                                        setSearchTerm(e.target.value);
+                                    }}
                                 />
                                 <div className="mr-1  px-1 flex flex-row items-center cursor-pointer">
                                     <Search size={18} />
@@ -95,7 +173,7 @@ function PersIntern({ interns }) {
                 </SearchContainer>
                 <div>
                     <Table
-                        data={interns}
+                        data={filteredData}
                         onAdd={handle_new}
                         onEdit={handle_edit}
                         onDelete={handle_delete}

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { include } from "../../../functions/Functions";
-import { CopyCheck, CopyX } from "lucide-react";
+import { include, isArrayNotNull } from "../../../functions/Functions";
+import { CopyCheck, CopyX, FileQuestion } from "lucide-react";
 import { observation_stage } from "../../../utils/Observations";
 
 function Table({ data, onSelect, selected, onValidate, onDeny }) {
@@ -93,14 +93,10 @@ function Table({ data, onSelect, selected, onValidate, onDeny }) {
                                             <td className="rounded-r-[12px]">
                                                 <div className="flex flex-row justify-center">
                                                     <button
-                                                        className={`mr-6
+                                                        className={`mr-6 disabled:text-red-300
                                                                 ${
                                                                     item.book_link &&
                                                                     "text-red-500"
-                                                                }
-                                                                ${
-                                                                    (item.status || !item.book_link) &&
-                                                                    "text-red-500 opacity-30"
                                                                 }
                                                             `}
                                                         onClick={() => {
@@ -111,9 +107,8 @@ function Table({ data, onSelect, selected, onValidate, onDeny }) {
                                                         <CopyX size={22} />
                                                     </button>
                                                     <button
-                                                        className={`
+                                                        className={` disabled:text-blue-300
                                                             ${item.book_link && "text-blue-500"}
-                                                            ${(item.status || !item.book_link)&& "text-blue-500 opacity-30"}
                                                         `}
                                                         onClick={() => {
                                                             onValidate(item);
@@ -146,6 +141,23 @@ function Table({ data, onSelect, selected, onValidate, onDeny }) {
                                 </tr>
                             </tbody>
                         </table>
+                        {!isArrayNotNull(data) && (
+                            <div className="flex flex-col items-center justify-center w-full h-[50vh] text-gray-500">
+                                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                                    <FileQuestion
+                                        className="text-gray-400"
+                                        size={32}
+                                    />
+                                </div>
+                                <div className="text-lg font-medium">
+                                    Aucune donnée disponible
+                                </div>
+                                <p className="text-sm text-gray-400">
+                                    Les données de stages apparaîtront ici
+                                    une fois disponible
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

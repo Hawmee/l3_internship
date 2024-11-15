@@ -3,6 +3,7 @@ import {
     BadgeAlert,
     CalendarPlus,
     CopyPlus,
+    FileQuestion,
     PenSquare,
     SquarePen,
     SquareX,
@@ -53,7 +54,8 @@ function Table({ data, onAdd, onEdit, onDelete }) {
                             <tbody>
                                 {data &&
                                     data.map((item) => {
-                                        const isDispo = (item.nombre_stagiaire > 0)
+                                        const isDispo =
+                                            item.nombre_stagiaire > 0;
                                         return (
                                             <tr key={item.id} className="h-1">
                                                 <td>{item.nom}</td>
@@ -64,11 +66,21 @@ function Table({ data, onAdd, onEdit, onDelete }) {
                                                     <div className="flex flex-row">
                                                         <p
                                                             className={`
-                                                            ${isDispo && "text-blue-600" }
-                                                            ${!isDispo && "text-red-500" }
+                                                            ${
+                                                                isDispo &&
+                                                                "text-blue-600"
+                                                            }
+                                                            ${
+                                                                !isDispo &&
+                                                                "text-red-500"
+                                                            }
                                                         `}
                                                         >
-                                                        ({item.nombre_stagiaire}) places disponible
+                                                            (
+                                                            {
+                                                                item.nombre_stagiaire
+                                                            }
+                                                            ) places disponible
                                                         </p>
                                                     </div>
                                                 </td>
@@ -82,8 +94,8 @@ function Table({ data, onAdd, onEdit, onDelete }) {
                                                                     ) =>
                                                                         !entretien.status
                                                                 ) ||
-                                                                (item.entretiens
-                                                                    .length >0)
+                                                                item.entretiens
+                                                                    .length > 0
                                                                     ? "text-red-200 mr-2 px-3 py-1 "
                                                                     : "text-red-500 mr-2 px-3 py-1 hover:text-red-400"
                                                             }
@@ -92,10 +104,13 @@ function Table({ data, onAdd, onEdit, onDelete }) {
                                                             }}
                                                             disabled={
                                                                 item.entretiens?.some(
-                                                                    (entretien) =>
+                                                                    (
+                                                                        entretien
+                                                                    ) =>
                                                                         !entretien.status
                                                                 ) ||
-                                                                (item.entretiens?.length >0 )
+                                                                item.entretiens
+                                                                    ?.length > 0
                                                             }
                                                         >
                                                             <Trash2 size={22} />
@@ -126,8 +141,20 @@ function Table({ data, onAdd, onEdit, onDelete }) {
                             </tbody>
                         </table>
                         {!isArrayNotNull(data) && (
-                            <div className="w-full text-gray-700 text-lg flex flex-col items-center justify-center">
-                                (Aucun element à afficher)
+                            <div className="flex flex-col items-center justify-center w-full h-[50vh] text-gray-500">
+                                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center">
+                                    <FileQuestion
+                                        className="text-gray-400"
+                                        size={32}
+                                    />
+                                </div>
+                                <div className="text-lg font-medium">
+                                    Aucune donnée disponible
+                                </div>
+                                <p className="text-sm text-gray-400">
+                                    Les données d'offres apparaîtront ici une
+                                    fois disponible
+                                </p>
                             </div>
                         )}
                     </div>

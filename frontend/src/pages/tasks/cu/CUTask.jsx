@@ -8,7 +8,10 @@ import Add from "./forms/Add";
 import { Search } from "lucide-react";
 import PopUpContainer from "../../../components/containers/PopUpContainer";
 import Tasks from "./cards/Tasks";
-import { observation_stage, task_observations } from "../../../utils/Observations";
+import {
+    observation_stage,
+    task_observations,
+} from "../../../utils/Observations";
 import Finish from "./forms/Finish";
 import Delete from "./forms/Delete";
 import Edit from "./forms/Edit";
@@ -21,7 +24,7 @@ function CUTask({ data }) {
 
     const [selected, setSelected] = useState(null);
     const [tasks, setTasks] = useState(null);
-    const [selectedTask , setSelectedTasks] = useState(null)
+    const [selectedTask, setSelectedTasks] = useState(null);
     const [add, setAdd] = useState(false);
     const [edit, setEdit] = useState(false);
     const [del, setDel] = useState(false);
@@ -31,27 +34,26 @@ function CUTask({ data }) {
         setAdd(!add);
     };
 
-
-    const handleFinish =(item)=>{
-        setFinised(!finished)
-        if(item){
-            setSelectedTasks(item)
+    const handleFinish = (item) => {
+        setFinised(!finished);
+        if (item) {
+            setSelectedTasks(item);
         }
-    }
+    };
 
-    const handleEdit =(item)=>{
-        setEdit(!edit)
-        if(item){
-            setSelectedTasks(item)
+    const handleEdit = (item) => {
+        setEdit(!edit);
+        if (item) {
+            setSelectedTasks(item);
         }
-    }
+    };
 
-    const handleDelete =(item)=>{
-        setDel(!del)
-        if(item){
-            setSelectedTasks(item)
+    const handleDelete = (item) => {
+        setDel(!del);
+        if (item) {
+            setSelectedTasks(item);
         }
-    }
+    };
 
     const handleSelect = (item) => {
         if (item) {
@@ -62,7 +64,9 @@ function CUTask({ data }) {
     const unfinished =
         isArrayNotNull(tasks) &&
         tasks.filter((task) => task.observation == task_observations.inacheve);
-    const unfinished_number = isArrayNotNull(unfinished) ? unfinished.length : 0;
+    const unfinished_number = isArrayNotNull(unfinished)
+        ? unfinished.length
+        : 0;
 
     const en_cours =
         isArrayNotNull(tasks) &&
@@ -71,10 +75,12 @@ function CUTask({ data }) {
 
     const _finished =
         isArrayNotNull(tasks) &&
-        tasks.filter((task) => task.observation == task_observations.acheve);
+        tasks.filter((task) => ( task.observation == task_observations.acheve || task.observation == task_observations.retard));
     const finished_number = isArrayNotNull(_finished) ? _finished.length : 0;
 
-    const isEnded = selected ? (selected.status || selected.observation !== observation_stage.en_cours) : true;
+    const isEnded = selected
+        ? selected.status || selected.observation !== observation_stage.en_cours
+        : true;
 
     useEffect(() => {
         if (selected) {
@@ -153,7 +159,7 @@ function CUTask({ data }) {
                                 </div>
                             </div>
                         )}
-                        <div className=" card h-full overflow-auto px-2 py-1">
+                        <div className=" card h-full overflow-auto px-2 py-1 pb-8 ">
                             {!selected ? (
                                 <div className="h-full w-full flex flex-col justify-center items-center text-lg text-gray-600">
                                     ( Veuillez Choisir un Stagiaire)
@@ -168,11 +174,16 @@ function CUTask({ data }) {
                             {tasks &&
                                 tasks.map((task) => (
                                     <div className="mb-3" key={task.id}>
-                                        <Tasks data={task} onFinish={handleFinish} onEdit={handleEdit} onDelete={handleDelete} />
+                                        <Tasks
+                                            data={task}
+                                            onFinish={handleFinish}
+                                            onEdit={handleEdit}
+                                            onDelete={handleDelete}
+                                        />
                                     </div>
                                 ))}
                         </div>
-                        {(selected && !isEnded) && (
+                        {selected && !isEnded && (
                             <div className="absolute bottom-0 right-0">
                                 <button
                                     className="bg-blue-500 text-white px-6 py-1 rounded-br-[12px] rounded-tl-[8px] hover:bg-blue-600"
@@ -193,15 +204,15 @@ function CUTask({ data }) {
                 </PopUpContainer>
             )}
 
-            {edit &&(
+            {edit && (
                 <PopUpContainer>
-                    <Edit />
+                    <Edit onEdit={handleEdit} data={selectedTask}/>
                 </PopUpContainer>
             )}
 
             {finished && (
                 <PopUpContainer>
-                    <Finish onFInish={handleFinish} data={selectedTask}/>
+                    <Finish onFInish={handleFinish} data={selectedTask} />
                 </PopUpContainer>
             )}
 

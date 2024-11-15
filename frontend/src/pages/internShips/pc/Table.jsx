@@ -110,13 +110,13 @@ function Table({ data, popup, addPopUp, del, setDel, onEdit }) {
                                             </td>
                                             <td>
                                                 <div className="flex flex-row items-center justify-center text-white">
-                                                    <button className={ !(include(item.observation , "bandon") || include(item.observation , "cien")) ? "text-gray-500 mr-2 px-3 py-1 hover:text-gray-700" :"text-gray-500 mr-2 px-3 py-1 opacity-40 "}
+                                                    <button className={ !(include(item.observation , "bandon") || include(item.observation , "cien")) ? "text-gray-500 mr-2 px-3 py-1 hover:text-gray-700" :"text-gray-300 mr-2 px-3 py-1 "}
                                                         disabled={include(item.observation , "bandon") || include(item.observation , "cien") }
                                                     >
                                                         <Mail size={22} />
                                                     </button>
                                                     <button
-                                                        className={(item.book_link && !item.attestation) ? "text-blue-500 mr-2 px-3 py-1 hover:text-blue-700" : "text-blue-500 opacity-40 mr-2 px-3 py-1"}
+                                                        className={(item.book_link && !item.attestation) ? "text-blue-500 mr-2 px-3 py-1 hover:text-blue-700" : "text-blue-300 mr-2 px-3 py-1"}
                                                         onClick={() => {
                                                             onEdit(item);
                                                         }}

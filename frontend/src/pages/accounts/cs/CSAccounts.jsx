@@ -7,6 +7,7 @@ import PopUpContainer from '../../../components/containers/PopUpContainer'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { filterObjdiff, isArrayNotNull } from '../../../functions/Functions'
+import Validate from './forms/Validate'
 
 function CSAccounts() {
 
@@ -22,7 +23,9 @@ function CSAccounts() {
 
     const handleValidate = (account)=>{
       setValidate(!validate)
-      setSelected_user(account)
+      if(account){
+        setSelected_user(account)
+      }
     }
 
     const onValidate = async()=>{
@@ -50,12 +53,7 @@ function CSAccounts() {
 
 
         {validate && <PopUpContainer popup={validate} closePopUp={setValidate} >
-          <div>
-            validate
-          </div>
-          <div>
-            <button className='text-white bg-blue-500' onClick={()=>{onValidate()}}>Validatessssss</button>
-          </div>
+            <Validate onValidate={handleValidate} submit={onValidate}/>
         </PopUpContainer>}
 
         {/* <div className='bg-blue-400 w-[100vw] absolute right-0 top-0'>

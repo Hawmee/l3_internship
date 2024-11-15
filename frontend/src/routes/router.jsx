@@ -18,6 +18,7 @@ import Login from '../pages/auth/Login'
 import Register from '../pages/auth/Register'
 import ChefUnitLayout from "../layouts/users/ChefUnitLayout";
 import PersCelluleLayout from "../layouts/users/PersCelluleLayout";
+import Profile from "../pages/profile/Profile";
 
 
 const router = createBrowserRouter([
@@ -57,6 +58,10 @@ const router = createBrowserRouter([
                         path: "units",
                         element: <Units />,
                     },
+                    {
+                        path: 'profile',
+                        element:<Profile />
+                    },
                 ],
             },
             {
@@ -82,6 +87,10 @@ const router = createBrowserRouter([
                     {
                         path: "tasks",
                         element: <Tasks />,
+                    },
+                    {
+                        path: 'profile',
+                        element:<Profile />
                     },
                 ],
             },
@@ -110,6 +119,10 @@ const router = createBrowserRouter([
                         path: "attestation",
                         element: <Attestation />,
                     },
+                    {
+                        path: 'profile',
+                        element:<Profile />
+                    },
                 ],
             },
             {
@@ -127,6 +140,10 @@ const router = createBrowserRouter([
                     {
                         path: "interviews",
                         element: <InterViews />,
+                    },
+                    {
+                        path: 'profile',
+                        element:<Profile />
                     },
                 ],
             },
