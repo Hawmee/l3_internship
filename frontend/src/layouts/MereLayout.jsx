@@ -24,7 +24,7 @@ export default function MereLayout({ children }) {
                         </div>
                     </div>
                     <div className="dark/light px-10 flex flex-row items-center justify-between">
-                        <div className="mr-5">{today_date}</div>
+                        <div className="mr-5 text-lg text-gray-600">{today_date}</div>
                     </div>
                 </div>
 

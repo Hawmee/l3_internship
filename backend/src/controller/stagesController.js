@@ -1,8 +1,8 @@
+import { format, isAfter, isBefore, isEqual } from "date-fns";
+import fs from "fs";
 import { drive, FOLDER_ID } from "../config/GDrive.js";
-import fs from 'fs'
 import { stage_observations, stagiaire_status } from "../utils/Observations.js";
 import prismaClient from "./prismaClient.js";
-import { validate } from "node-cron";
 
 const prisma = prismaClient;
 
@@ -18,13 +18,12 @@ export const getAllStages = async (req, res) => {
                 },
                 attestation: true,
                 performance: true,
-                taches: {include:{
-                    stage:true
-                }},
-                offre: true,
+                taches: {
+                    include: {
+                        stage: true,
+                    },
+                },
             },
-
-
         });
 
         res.status(200).send(stages);
@@ -33,11 +32,158 @@ export const getAllStages = async (req, res) => {
     }
 };
 
-export const createStageFromInterview = async (req, res) => {
-    const { interview_id, ...stages_data } = req.body;
+export const affirmStage = async (req, res) => {
     try {
-        const stage = await prisma.stages.create({
-            data: { ...stages_data, isNew: true },
+        const { id } = req.params;
+
+        const stage_find = await prisma.stages.findUnique({
+            where: { id: Number(id) },
+        });
+
+        if (stage_find) {
+            const today = format(new Date(), "yyyy-MM-dd");
+            const stageDate = format(stage_find.date_debut, "yyyy-MM-dd");
+            const isBeforOrEqual = (stageDate, today) => {
+                return isEqual(stageDate, today) || isBefore(stageDate, today);
+            };
+
+            let observation;
+
+            if (isAfter(stageDate, today)) {
+                observation = stage_observations.a_venir;
+            } else if (isBeforOrEqual(stageDate, today)) {
+                observation = stage_observations.en_cours;
+            }
+
+            const stage = await prisma.stages.update({
+                where: { id: Number(id) },
+                data: {
+                    observation: observation,
+                },
+                include: {
+                    stagiaire: true,
+                    unite: {
+                        include: {
+                            users: true,
+                        },
+                    },
+                    attestation: true,
+                    performance: true,
+                    taches: {
+                        include: {
+                            stage: true,
+                        },
+                    },
+                },
+            });
+
+            req.io.emit("updated_stage", stage);
+            res.status(200).send("Action reussite");
+        }
+    } catch (error) {
+        res.status(500).send({ message: error.message });
+    }
+};
+
+export const markviewed_affirmed = async (req, res) => {
+    try {
+        const { ids } = req.body;
+        const viewed = await prisma.stages.updateMany({
+            where: {
+                observation: {
+                    notIn: [
+                        stage_observations.non_affirme,
+                        stage_observations.acheve,
+                        stage_observations.cloture,
+                    ],
+                },
+                isNew: true,
+                id: { in: ids },
+            },
+            data: {
+                isNew: false,
+            },
+        });
+
+        if (viewed.count) {
+            const viewed_stages = await prisma.stages.findMany({
+                where: { isNew: false },
+                include: {
+                    stagiaire: true,
+                    unite: {
+                        include: {
+                            users: true,
+                        },
+                    },
+                    attestation: true,
+                    performance: true,
+                    taches: {
+                        include: {
+                            stage: true,
+                        },
+                    },
+                },
+            });
+            req.io.emit("updated_stage", viewed_stages);
+        }
+        res.status(200).send("Action reussite");
+    } catch (error) {
+        res.status(500).send({ message: error.message });
+    }
+};
+
+export const stage_en_cours = async (req, res) => {
+    try {
+        const { ids } = req.body;
+        const en_cours = await prisma.stages.updateMany({
+            where: {
+                id: { in: ids },
+                observation: stage_observations.a_venir,
+            },
+            data: {
+                observation: stage_observations.en_cours,
+            },
+        });
+
+        if (en_cours.count) {
+            const en_cours_stages = await prisma.stages.findMany({
+                where: { observation: stage_observations.en_cours },
+                include: {
+                    stagiaire: true,
+                    unite: {
+                        include: {
+                            users: true,
+                        },
+                    },
+                    attestation: true,
+                    performance: true,
+                    taches: {
+                        include: {
+                            stage: true,
+                        },
+                    },
+                },
+            });
+
+            req.io.emit("updated_stage", en_cours_stages);
+        }
+
+        res.status(200).send("Action reussite");
+    } catch (error) {
+        res.status(500).send({ message: error.message });
+    }
+};
+
+export const theme_definitif = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data_stage = req.body;
+        const stage = await prisma.stages.update({
+            where: { id: Number(id) },
+            data: {
+                ...data_stage,
+                isNew: true,
+            },
             include: {
                 stagiaire: true,
                 unite: {
@@ -47,63 +193,76 @@ export const createStageFromInterview = async (req, res) => {
                 },
                 attestation: true,
                 performance: true,
-                taches: {include:{
-                    stage:true
-                }},
-                offre: true,
+                taches: {
+                    include: {
+                        stage: true,
+                    },
+                },
             },
         });
 
         if (stage) {
-            req.io.emit("new_stage", stage);
-            const entretiens = await prisma.entretients.delete({
-                where: { id: Number(interview_id) },
+            const taches_to_delete = await prisma.taches.findMany({
+                where: { stage_id: stage.id },
+                select: {
+                    id: true,
+                },
             });
 
-            if (entretiens) {
-                req.io.emit("deleted_entretient", Number(interview_id));
-                const stagiaire = await prisma.stagiaires.update({
-                    where: { id: Number(stages_data.stagiaire_id) },
-                    data: { observation: stagiaire_status.en_stage },
-                    include: {
-                        entretiens: true,
-                        stages: true,
-                    },
+            if (taches_to_delete.length > 0) {
+                const taches = await prisma.taches.deleteMany({
+                    where: { stage_id: stage.id },
                 });
-                if (stagiaire) {
-                    req.io.emit("update_stagiaire", stagiaire);
+
+                if (taches.count) {
+                    const delete_tache_id = taches_to_delete.map((item) =>
+                        Number(item.id)
+                    );
+                    req.io.emit("deleted_tache", delete_tache_id);
                 }
             }
-            return res.status(200).send({ message: "Action reussite !!" });
+
+            const updated_stage = await prisma.stages.findUnique({
+                where: { id: Number(id) },
+                include: {
+                    stagiaire: true,
+                    unite: {
+                        include: {
+                            users: true,
+                        },
+                    },
+                    attestation: true,
+                    performance: true,
+                    taches: {
+                        include: {
+                            stage: true,
+                        },
+                    },
+                },
+            });
+
+            req.io.emit("updated_stage", updated_stage);
+            res.status(200).send("Action reussite");
         }
-
-        return res
-            .status(400)
-            .send({ message: "Erreur au niveau du resrveur !!" });
     } catch (error) {
-        return res.status(500).send({ message: error });
+        res.status(500).send({ message: error.message });
     }
 };
 
-export const newStage = async (req, res) => {
-    const stages_data = req.body;
+export const fin_stage = async (req, res) => {
     try {
-        const stage = await prisma.stages.create({
-            data: stages_data,
-        });
-        res.status(200).send({ data: stage });
-    } catch (error) {
-        res.status(400).send({ message: error.message });
-    }
-};
+        const { id } = req.params;
+        const preformance_data = req.body;
+        const today = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.000'Z");
 
-export const partialUpdateStage = async (req, res) => {
-    const { id } = req.params;
-    const updated_stage_data = req.body;
-    try {
-        const stage = await prisma.stages.update({
+        const finished_stage = await prisma.stages.update({
             where: { id: Number(id) },
-            data: updated_stage_data,
+            data: {
+                isNew: true,
+                observation: stage_observations.acheve,
+                status: false,
+                date_fin: today,
+            },
             include: {
                 stagiaire: true,
                 unite: {
@@ -113,28 +272,82 @@ export const partialUpdateStage = async (req, res) => {
                 },
                 attestation: true,
                 performance: true,
-                taches: {include:{
-                    stage:true
-                }},
-                offre: true,
+                taches: {
+                    include: {
+                        stage: true,
+                    },
+                },
             },
         });
 
-        res.status(200).send({ data: stage });
-    } catch (error) {
-        res.status(400).send({ message: error.message });
-    }
-};
+        let updated_stage;
+        let performance;
 
-export const deleteStage = async (req, res) => {
-    const { id } = req.params;
-    try {
-        await prisma.stages.delete({
-            where: { id: Number(id) },
-        });
-        res.status(200).send({ message: "Element supprimé avec succes" });
+        if (finished_stage) {
+            if (finished_stage.performance) {
+                performance = await prisma.performances.update({
+                    where: { id: Number(finished_stage.performance.id) },
+                    data: {
+                        ...preformance_data,
+                    },
+                    include: { stage: true },
+                });
+
+                updated_stage = await prisma.stages.findUnique({
+                    where: { id: Number(id) },
+                    include: {
+                        stagiaire: true,
+                        unite: {
+                            include: {
+                                users: true,
+                            },
+                        },
+                        attestation: true,
+                        performance: true,
+                        taches: {
+                            include: {
+                                stage: true,
+                            },
+                        },
+                    },
+                });
+                req.io.emit("updated_performance", performance);
+            } else {
+                performance = await prisma.performances.create({
+                    data: {
+                        stage_id: Number(finished_stage.id),
+                        ...preformance_data,
+                    },
+                    include: { stage: true },
+                });
+
+                updated_stage = await prisma.stages.findUnique({
+                    where: { id: Number(id) },
+                    include: {
+                        stagiaire: true,
+                        unite: {
+                            include: {
+                                users: true,
+                            },
+                        },
+                        attestation: true,
+                        performance: true,
+                        taches: {
+                            include: {
+                                stage: true,
+                            },
+                        },
+                    },
+                });
+
+                req.io.emit("new_perf", performance);
+            }
+
+            req.io.emit("updated_stage", updated_stage);
+            res.status(200).send("Action reussite");
+        }
     } catch (error) {
-        res.status(400).send({ message: error.message });
+        res.status(500).send({ message: error.message });
     }
 };
 
@@ -158,44 +371,21 @@ export const abandon = async (req, res) => {
                 },
                 attestation: true,
                 performance: true,
-                taches: {include:{
-                    stage:true
-                }},
-                offre: true,
+                taches: {
+                    include: {
+                        stage: true,
+                    },
+                },
             },
         });
 
         if (stage) {
             req.io.emit("updated_stage", stage);
 
-            const offre = await prisma.offres.update({
-                where: { id: Number(stage.offre_id) },
-                data: {
-                    isDispo: true,
-                    nombre_stagiaire:{increment:1}
-                },
-                include: {
-                    entretiens: {
-                        include: {
-                            stagiaire: true,
-                        },
-                    },
-                    unite: {
-                        include: {
-                            users: true,
-                        },
-                    },
-                },
-            });
-
-            if (offre) {
-                req.io.emit("updated_offre", offre);
-            }
-
             const stagiaire = await prisma.stagiaires.update({
                 where: { id: Number(stage.stagiaire_id) },
                 data: {
-                    observation: stagiaire_status.postulant,
+                    observation: stagiaire_status.arret,
                 },
                 include: {
                     entretiens: true,
@@ -203,47 +393,37 @@ export const abandon = async (req, res) => {
                 },
             });
 
-            if(stagiaire){
-                req.io.emit("update_stagiaire" , stagiaire)
+            if (stagiaire) {
+                req.io.emit("update_stagiaire", stagiaire);
             }
 
-            res.status(200).send({message:"Action reussite !!!"})
+            res.status(200).send({ message: "Action reussite !!!" });
         }
     } catch (error) {
         res.status(500).send(error);
     }
 };
 
-export const finished = async (req,res) =>{
-    const { id } = req.params;
-    
+export const booking = async (req, res) => {
     try {
-        const performanceData = JSON.parse(req.body.performance);
-
-        const existingStage = await prisma.stages.findUnique({
-            where: { id: Number(id) },
-        });
-
-        if (!existingStage) {
-            return res.status(404).send({ message: "Stage non existant" });
+        const { id } = req.params;
+        const numero = req.body.numero
+        const bookfile = req.files?.book?.[0];
+        if (!bookfile) {
+            return res.status(404).send("Veuillez inserer un fichier !");
         }
 
-        const bookFile = req.files?.book?.[0];
-        if (!bookFile) {
-            return res.status(400).send({ message: "Veuillez insérer le fichier" });
-        }
-
-        let book_link = null;
+        let booklink = null;
         try {
             const response = await drive.files.create({
                 requestBody: {
-                    name: bookFile.originalname,
-                    mimeType: bookFile.mimetype,
+                    name: bookfile.originalname,
+                    mimeType: bookfile.mimetype,
                     parents: [FOLDER_ID],
                 },
                 media: {
-                    mimeType: bookFile.mimetype,
-                    body: fs.createReadStream(bookFile.path),
+                    mimeType: bookfile.mimetype,
+                    body: fs.createReadStream(bookfile.path),
                 },
             });
 
@@ -255,328 +435,181 @@ export const finished = async (req,res) =>{
                 },
             });
 
-            book_link = `https://drive.google.com/file/d/${response.data.id}/view`;
+            booklink = `https://drive.google.com/file/d/${response.data.id}/view`;
 
-            fs.unlink(bookFile.path, (err) => {
+            fs.unlink(bookfile.path, (err) => {
                 if (err) console.error(`Error deleting file: ${err}`);
             });
-
-        } catch (driveError) {
-            console.error('Google Drive upload error:', driveError);
-            return res.status(500).send({ 
-                message: "Erreur lors de l'upload vers Google Drive",
-                error: driveError.message 
-            });
+        } catch (error) {
+            return res.status(500).send("Errur lors de l'upload du fichier");
         }
 
-        if (!book_link) {
-            return res.status(500).send({ 
-                message: "Échec de la génération du lien du fichier" 
-            });
+        if (!booklink) {
+            return res.status(404).send("Veuillez inserer le livre numerique");
         }
 
-        const result = await prisma.$transaction(async (prisma) => {
-            // Update stage
-            const finishedStage = await prisma.stages.update({
-                where: { id: Number(id) },
-                data: {
-                    status: false,
-                    observation: stage_observations.en_validation,
-                    book_link: book_link,  // We know this exists now
-                    isNew: true,
-                },
-                include: {
-                    stagiaire: true,
-                    unite: {
-                        include: {
-                            users: true,
-                        },
-                    },
-                    attestation: true,
-                    performance: true,
-                    taches: {include:{
-                        stage:true
-                    }},
-                    offre: true,
-                },
-            });
-
-            const performance = await prisma.performances.create({
-                data: { stage_id:Number(finishedStage.id) , ...performanceData },
-                include:{stage:true}
-            });
-
-            const updatedStage = await prisma.stages.findUnique({
-                where: { id: Number(id) },
-                include: {
-                    stagiaire: true,
-                    unite: {
-                        include: {
-                            users: true,
-                        },
-                    },
-                    attestation: true,
-                    performance: true,
-                    taches: {include:{
-                        stage:true
-                    }},
-                    offre: true,
-                },
-            });
-
-            return { updatedStage, performance };
-        });
-
-        // Emit socket event after successful transaction
-        req.io.emit('updated_stage', result.updatedStage);
-        req.io.emit('new_perf' , result.performance)
-
-        return res.status(200).send({ 
-            message: "Stage terminé avec succès",
-            stage: result.finishedStage,
-            performance: result.performance
-        });
-
-    } catch (error) {
-        console.error('Error in finished stage:', error);
-        return res.status(500).send({ 
-            message: "Une erreur est survenue", 
-            error: error.message 
-        });
-    }
-};
-
-
-export const revalid = async (req,res) =>{
-    const { id } = req.params;
-    
-    try {
-        const performanceData = JSON.parse(req.body.performance);
-        const existingStage = await prisma.stages.findUnique({
+        const finished_stage = await prisma.stages.update({
             where: { id: Number(id) },
-        });
-
-        if (!existingStage) {
-            return res.status(404).send({ message: "Stage non existant" });
-        }
-
-        const bookFile = req.files?.book?.[0];
-        if (!bookFile) {
-            return res.status(400).send({ message: "Veuillez insérer le fichier" });
-        }
-
-        let book_link = null;
-        try {
-            const response = await drive.files.create({
-                requestBody: {
-                    name: bookFile.originalname,
-                    mimeType: bookFile.mimetype,
-                    parents: [FOLDER_ID],
-                },
-                media: {
-                    mimeType: bookFile.mimetype,
-                    body: fs.createReadStream(bookFile.path),
-                },
-            });
-
-            await drive.permissions.create({
-                fileId: response.data.id,
-                requestBody: {
-                    role: "reader",
-                    type: "anyone",
-                },
-            });
-
-            book_link = `https://drive.google.com/file/d/${response.data.id}/view`;
-
-            fs.unlink(bookFile.path, (err) => {
-                if (err) console.error(`Error deleting file: ${err}`);
-            });
-
-        } catch (driveError) {
-            console.error('Google Drive upload error:', driveError);
-            return res.status(500).send({ 
-                message: "Erreur lors de l'upload vers Google Drive",
-                error: driveError.message 
-            });
-        }
-
-        if (!book_link) {
-            return res.status(500).send({ 
-                message: "Échec de la génération du lien du fichier" 
-            });
-        }
-
-        const result = await prisma.$transaction(async (prisma) => {
-            const finishedStage = await prisma.stages.update({
-                where: { id: Number(id) },
-                data: {
-                    observation: stage_observations.en_validation,
-                    book_link: book_link,  
-                    isNew: true,
-                },
-                include: {
-                    stagiaire: true,
-                    unite: {
-                        include: {
-                            users: true,
-                        },
+            data: {
+                isNew: false,
+                status: false,
+                observation: stage_observations.cloturation,
+            },
+            include: {
+                stagiaire: true,
+                unite: {
+                    include: {
+                        users: true,
                     },
-                    attestation: true,
-                    performance: true,
-                    taches: {include:{
-                        stage:true
-                    }},
-                    offre: true,
                 },
-            });
-
-
-            const performance = await prisma.performances.update({
-                where: {id: Number(finishedStage.performance.id)},
-                data: { ...performanceData },
-                include:{stage:true}
-            });
-
-            const updatedStage = await prisma.stages.findUnique({
-                where: { id: Number(id) },
-                include: {
-                    stagiaire: true,
-                    unite: {
-                        include: {
-                            users: true,
-                        },
+                attestation: true,
+                performance: true,
+                taches: {
+                    include: {
+                        stage: true,
                     },
-                    attestation: true,
-                    performance: true,
-                    taches: {include:{
-                        stage:true
-                    }},
-                    offre: true,
                 },
-            });
-
-            return { updatedStage  ,performance};
+            },
         });
 
-        req.io.emit('updated_stage', result.updatedStage);
-        req.io.emit('updated_performance' , result.performance)
 
-        return res.status(200).send({ 
-            message: "Stage terminé avec succès",
-            stage: result.finishedStage,
-            performance: result.performance
-        });
-
-    } catch (error) {
-        console.error('Error in finished stage:', error);
-        return res.status(500).send({ 
-            message: "Une erreur est survenue", 
-            error: error.message 
-        });
-    }
-};
-
-
-export const invalid = async (req,res) =>{
-    const {id} = req.params
-    const data = req.body
-    try {
-        const stage = await prisma.stages.findUnique({
-            where:{id:Number(id)},
-        })
-
-        if(!stage){
-            res.status(404).send({message:"Stage non trouvé !"})
-        }
-
-        const book_link = stage.book_link || null
-        if(book_link){
-           try {
-                const fileId = book_link.split('/d/')[1]?.split('/')[0]
-                if(fileId){
-                    await drive.files.delete({fileId})
+        if(finished_stage) {
+            const stagiaire_updated = await prisma.stagiaires.update({
+                where:{id: Number(finished_stage.stagiaire_id)},
+                data:{
+                    observation: stagiaire_status.ancien,
+                },
+                include:{
+                    entretiens:true,
+                    stages:true
                 }
-           } catch (error) {
-                res.status(500).send(error)
-           } 
-        }
-
-        const invalidstage = await prisma.stages.update({
-            where:{id:Number(id)},
-            data:{
-                status:false,
-                observation:stage_observations.re_valide,
-                isNew:true,
-                motif_revalidation:data.motif,
-                book_link:null,
-            },
-            include: {
-                stagiaire: true,
-                unite: {
-                    include: {
-                        users: true,
-                    },
-                },
-                attestation: true,
-                performance: true,
-                taches: {include:{
-                    stage:true
-                }},
-                offre: true,
-            },
-
-        })
-
-        if(invalidstage){
-            req.io.emit('updated_stage' , invalidstage)
-            return res.status(200).send({message:"Action reussite !"})
-        }
-    } catch (error) {
-        res.status(500).send({message:error.message})
-    }
-}
-
-
-export const valid = async (req,res) =>{
-    const {id}=req.params
-    const numero = req.body.numero
-    try {
-        const validated = await prisma.stages.update({
-            where: {id:Number(id)},
-            data:{isNew:true , status:true , observation:stage_observations.acheve},
-            include: {
-                stagiaire: true,
-                unite: {
-                    include: {
-                        users: true,
-                    },
-                },
-                attestation: true,
-                performance: true,
-                taches: {include:{
-                    stage:true
-                }},
-                offre: true,
-            },
-        })
-        if(validated){
-
-            const stagiaire = await prisma.stagiaires.update({
-                where:{id: Number(validated.stagiaire_id)},
-                data:{observation: stagiaire_status.ancien},
-                include: {
-                    entretiens: true,
-                    stages: true ,
-                },
             })
 
+            req.io.emit('update_stagiaire' , stagiaire_updated)
+            let stage = finished_stage;
+            if(!finished_stage.attestation){
+                const attestation = await prisma.attestation.create({
+                    data:{
+                        isNew: true,
+                        status: false,
+                        stage_id: finished_stage.id,
+                        numero: numero,
+                    },
+                    include: {
+                        stage: {
+                            include: {
+                                stagiaire: true,
+                                unite: {
+                                    include: {
+                                        users: true,
+                                    },
+                                },
+                                attestation: true,
+                                performance: true,
+                                taches: true,
+                            },
+                        },
+                    },
+                })
+
+                stage = attestation.stage,
+                req.io.emit('new_attestation' , attestation)
+            }else{
+                const attestation = await prisma.attestation.update({
+                    where:{id: finished_stage.attestation.id},
+                    data:{
+                        status: false,
+                        isNew: true,
+                        isInforme: false,
+                        isCollected: false,
+                        numero: numero,
+                    },
+                    include: {
+                        stage: {
+                            include: {
+                                stagiaire: true,
+                                unite: {
+                                    include: {
+                                        users: true,
+                                    },
+                                },
+                                attestation: true,
+                                performance: true,
+                                taches: true,
+                            },
+                        },
+                    },
+                })
+
+                stage = attestation.stage
+                req.io.emit("updated_attestation", attestation);
+            }
+            req.io.emit('updated_stage' , stage)
+        }
+
+        res.status(200).send("Action reussite !");
+    } catch (error) {
+        res.status(500).send({ message: error.message });
+    }
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+export const deleteStage = async (req, res) => {
+    const { id } = req.params;
+    try {
+        await prisma.stages.delete({
+            where: { id: Number(id) },
+        });
+        res.status(200).send({ message: "Element supprimé avec succes" });
+    } catch (error) {
+        res.status(400).send({ message: error.message });
+    }
+};
+
+export const valid = async (req, res) => {
+    const { id } = req.params;
+    const numero = req.body.numero;
+    try {
+        const validated = await prisma.stages.update({
+            where: { id: Number(id) },
+            data: {
+                isNew: true,
+                status: true,
+                observation: stage_observations.acheve,
+            },
+            include: {
+                stagiaire: true,
+                unite: {
+                    include: {
+                        users: true,
+                    },
+                },
+                attestation: true,
+                performance: true,
+                taches: {
+                    include: {
+                        stage: true,
+                    },
+                },
+            },
+        });
+        if (validated) {
+            const stagiaire = await prisma.stagiaires.update({
+                where: { id: Number(validated.stagiaire_id) },
+                data: { observation: stagiaire_status.ancien },
+                include: {
+                    entretiens: true,
+                    stages: true,
+                },
+            });
+
             const attestation = await prisma.attestation.create({
-                data:{
-                    isNew:true,
-                    status:true,
+                data: {
+                    isNew: true,
+                    status: true,
                     stage_id: Number(validated.id),
-                    numero: numero ,
+                    numero: numero,
                 },
                 include: {
                     stage: {
@@ -590,23 +623,22 @@ export const valid = async (req,res) =>{
                             attestation: true,
                             performance: true,
                             taches: true,
-                            offre: true,
                         },
                     },
                 },
-            })
-            
-            if(attestation){
-                if(attestation.stage){
-                    req.io.emit("updated_stage" , attestation.stage)
+            });
+
+            if (attestation) {
+                if (attestation.stage) {
+                    req.io.emit("updated_stage", attestation.stage);
                 }
-                req.io.emit("new_attestation" , attestation)
+                req.io.emit("new_attestation", attestation);
             }
 
-            req.io.emit('update_stagiaire' , stagiaire)
-            return res.status(200).send({message:"Action reussite!"})
+            req.io.emit("update_stagiaire", stagiaire);
+            return res.status(200).send({ message: "Action reussite!" });
         }
     } catch (error) {
-        res.status(500).send({message:error})
+        res.status(500).send({ message: error });
     }
-}
+};

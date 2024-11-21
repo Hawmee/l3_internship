@@ -4,9 +4,9 @@ import { date_d_m_y } from "../../../../functions/Functions";
 function Details({ data }) {
     return (
         <>
-            <div className="flex flex-col min-h-[12vh] bg-gray-100 rounded-[12px]  p-4 text-gray-700">
-                <div className="text-lg px-4 text-center ">
-                    <div className="border-b-[2px] border-gray-300 pb-2">
+            <div className="flex flex-col min-h-[12vh] bg-gray-100 rounded-[12px]  py-3 px-6 text-gray-700 drop-shadow-lg border-gray-300">
+                <div className="text-lg text-center px-12">
+                    <div className="border-b-[2px] border-gray-300 pb-2 " >
                         Details
                     </div>
                 </div>
@@ -14,25 +14,25 @@ function Details({ data }) {
                     <>
                         <div className="flex flex-col text-base mt-6  pb-2 ">
                             <div className="mb-4">
-                                <p className="inline">-Theme:</p>
-                                <p className="inline ml-2">
-                                    {data.theme}
+                                <p className="inline">Theme:</p>
+                                <p className="inline ml-2 text-blue-400">
+                                    {data.theme_definitif? data.theme_definitif : data.theme_provisoir}
                                 </p>
                             </div>
                             <div className="mb-4">
-                                <p className="inline">-Date debut:</p>
+                                <p className="inline">Date debut:</p>
                                 <p className="inline ml-2">
                                     {date_d_m_y(data.date_debut)}
                                 </p>
                             </div>
                             <div className="mb-4">
-                                <p className="inline">-Date fin:</p>
+                                <p className="inline">Date fin:</p>
                                 <p className="inline ml-2">
                                     {date_d_m_y(data.date_fin)}
                                 </p>
                             </div>
                             <div className="mb-3">
-                                <p className="inline">-Status:</p>
+                                <p className="inline">Status:</p>
                                 <p className={`inline ml-4 
                                     ${data.observation==("Annulé"||"Revalidation")&&"bg-red-400 text-white"}
                                     ${data.observation=="Achevé"&&"bg-blue-500 text-white"}
@@ -44,13 +44,13 @@ function Details({ data }) {
                             {data.observation == "Revalidation" && (
                                 <div className="mb-4">
                                     <p className="inline">
-                                        -Motif de revalidation:
+                                        Motif de revalidation:
                                     </p>
                                     <p className="inline ml-2">{data.motif_revalidation}</p>
                                 </div>
                             )}
                             <div className=" whitespace-normal ">
-                                <p className="inline">-Rapport de Stage :</p>
+                                <p className="inline">Rapport de Stage :</p>
                                 {data.book_link && (
                                     <a
                                         href={data.book_link}

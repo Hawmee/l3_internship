@@ -1,19 +1,29 @@
-import express from 'express'
-import { abandon, createStageFromInterview, deleteStage, finished, getAllStages, invalid, newStage, partialUpdateStage, revalid, valid } from '../controller/stagesController.js'
-import upload from '../config/multerConfig.js'
+import express from "express";
+import {
+    abandon,
+    affirmStage,
+    booking,
+    deleteStage,
+    fin_stage,
+    getAllStages,
+    markviewed_affirmed,
+    stage_en_cours,
+    theme_definitif,
+    valid,
+} from "../controller/stagesController.js";
+import upload from "../config/multerConfig.js";
 
+const router = express.Router();
 
-const router = express.Router()
+router.get("/stage", getAllStages);
+router.patch("/stage/viewed", markviewed_affirmed);
+router.patch("/stage/en_cours", stage_en_cours);
+router.patch("/stage/affirm/:id", affirmStage);
+router.patch("/stage/abandon/:id", abandon);
+router.patch("/stage/theme_defintif/:id", theme_definitif);
+router.patch("/stage/fin/:id", fin_stage);
+router.patch("/stage/valid/:id", valid);
+router.patch("/stage/book/:id", upload.fields([{ name: "book" }]), booking);
+router.delete("/stage/:id", deleteStage);
 
-router.get('/stage' , getAllStages )
-router.post('/stage' , newStage),
-router.patch('/stage/abandon/:id' , abandon)
-router.patch('/stage/invalid/:id' , invalid)
-router.patch('/stage/valid/:id' , valid)
-router.patch('/stage/finish/:id' , upload.fields([{name:'book'}]) , finished)
-router.patch('/stage/revalid/:id' , upload.fields([{name:'book'}]) , revalid)
-router.post('/newStage' , createStageFromInterview)
-router.patch('/stage/:id' , partialUpdateStage)
-router.delete('/stage/:id' , deleteStage)
-
-export default router   
+export default router;

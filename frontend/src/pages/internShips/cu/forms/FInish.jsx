@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import FileInput from "../../../../components/forms/FileInput";
 import Input from "../../../../components/forms/Input";
-import { toast } from "react-toastify";
-import { differenceInMonths } from "date-fns";
-import { pdf } from "@react-pdf/renderer";
-import AttestationPDF from "../../../../components/Files/AttesationPDF";
 import { useSelector } from "react-redux";
-import axios from "axios";
+import { calcluNote, isArrayNotNull } from "../../../../functions/Functions";
+import { notifyError, notifySuccess } from "../../../../layouts/MereLayout";
+import { Stage } from "../../../../services/stage";
 
 const Finish = ({ data, onFinish }) => {
-    const url = useSelector(state=>state.backendUrl.value)
     const methods = useForm({
         mode: "onChange", // This enables real-time validation
         defaultValues: {
@@ -23,89 +19,33 @@ const Finish = ({ data, onFinish }) => {
 
     const { watch, reset, formState: { isSubmitting, errors } } = methods;
 
+    const stage = data
     const comp_pro = watch('pertinance_pro');
     const pert_tech = watch('pertinance_tech');
     const pert_pedago = watch('pertinance_pedago');
     const [obs, setObs] = useState('Bien');
 
-    const stage = data;
-    const stagiaire = stage.stagiaire;
-    const unite = stage.unite;
-    const encadreur = unite.users.find(user => user.status);
 
-    const generate = async () => {
-        const formValue = methods.getValues();
-        
-        const people = {
-            stagiaire: {
-                nom: `${stagiaire.nom} ${stagiaire.prenom}`,
-                origine: stagiaire.etablissement,
-                niveau: stagiaire.niveau,
-                periode: differenceInMonths(stage.date_fin, stage.date_debut)
-            },
-            encadreur: {
-                nom: `${encadreur.nom} ${encadreur.prenom}`,
-                fonction: "Chef de division",
-                serv: unite.nom
-            }
-        };
-
-        const evaluation = {
-            pro: formValue.pertinance_pro,
-            tech: formValue.pertinance_tech,
-            pedago: formValue.pertinance_pedago,
-            total: Number(formValue.pertinance_pro) +
-                  Number(formValue.pertinance_tech) +
-                  Number(formValue.pertinance_pedago),
-            observ: formValue.observation.toUpperCase(),
-            actor: people,
-        };
-
+    const submit = async(data)=>{
         try {
-            const pdfBlob = await pdf(<AttestationPDF isEvaluation={true} evaluation={evaluation} />).toBlob();
-            const url_pdf = URL.createObjectURL(pdfBlob);
-            
-            const printWindow = window.open(url_pdf);
-            if (printWindow) {
-                printWindow.onload = () => {
-                    printWindow.onafterprint = () => printWindow.close();
-                };
+            const body = {
+                ...data,
+                pertinance_pro: `${data.pertinance_pro}`,
+            }
+            const stage_id = stage.id
+            const finished_stage = await Stage.fin(stage_id , body)
+            if(finished_stage){
+                notifySuccess()
+                onFinish()
             }
         } catch (error) {
-            toast.error("Error generating PDF");
+            console.log(error)
+            notifyError()
         }
-    };
+    }
 
-    const onSubmit = async (formData) => {
-        try {
-            const { book, ...performance } = formData;
-            const formDataToSend = new FormData();
-            
-            if (book?.[0]) {
-                formDataToSend.append("book", book[0]);
-            }
-            
-            formDataToSend.append("stage", JSON.stringify(stage));
-            formDataToSend.append("performance", JSON.stringify(performance));
-
-            // Uncomment and modify the axios calls as needed
-            const endpoint = !stage.performance 
-                ? `${url}/stage/finish/${data.id}`
-                : `${url}/stage/revalid/${data.id}`;
-            
-            const validate = await axios.patch(endpoint, formDataToSend, {
-                headers: { "Content-Type": "multipart/form-data" }
-            });
-
-            if(validate){
-                toast.success("Action réussie !");
-                onFinish();
-                generate()
-            }
-        } catch (error) {
-            toast.error("Une erreur s'est produite");
-            console.error(error);
-        }
+    const onSubmit = async (data) => {
+        submit(data)
     };
 
     useEffect(() => {
@@ -121,32 +61,45 @@ const Finish = ({ data, onFinish }) => {
         reset({ ...methods.getValues(), observation: newObs });
     }, [comp_pro, pert_tech, pert_pedago]);
 
+    useEffect(()=>{
+        if(data){
+            const tasks = data.taches
+            const note =  isArrayNotNull(tasks) ? calcluNote(tasks) : null
+
+            reset({
+                pertinance_pro: note ? note : 10,
+            })
+        }
+    } , [data])
+
+    useEffect(()=>{
+        if(data){
+            const performance = data.performance ? data.performance : null
+            if(performance){
+                reset({
+                    pertinance_pro: performance.pertinance_pro,
+                    pertinance_tech: performance.pertinance_tech,
+                    pertinance_pedago: performance.pertinance_pedago,
+                })
+            }
+        }
+    } , [data])
+
     return (
         <div className="w-full max-w-2xl mx-auto p-4">
-            <h2 className="text-lg font-semibold text-center mb-6">
-                Validation du Stage
+            <h2 className="text-lg font-semibold text-center mb-6 px-12">
+                <div className=" border-b-2 border-gray-300 pb-2">
+                    Finition et Notation du Stage
+                </div>
             </h2>
             
             <FormProvider {...methods}>
-                <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">
-                    <div className="pb-4 border-b border-gray-200">
-                        <FileInput
-                            label="Rapport de stage"
-                            name="book"
-                            validation={{
-                                required: 'Le rapport de stage est requis'
-                            }}
-                            className="border-2 border-gray-300 p-2 rounded-lg w-full"
-                        />
-                    </div>
+                <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6 min-w-[20vw]">
 
                     <div className="space-y-4">
-                        <h3 className="text-lg font-medium text-center">
-                            Performance du stage (/20)
-                        </h3>
                         
                         {[
-                            { name: 'pertinance_pro', label: 'Comportement professionnel' },
+                            { name: 'pertinance_pro', label: 'Comportement professionnel        ' },
                             { name: 'pertinance_tech', label: 'Pertinence technique' },
                             { name: 'pertinance_pedago', label: 'Pertinence pédagogique' }
                         ].map((field) => (
@@ -173,16 +126,6 @@ const Finish = ({ data, onFinish }) => {
                             readOnly
                             className="w-full"
                         />
-
-                        <div className="text-right">
-                            <button
-                                type="button"
-                                onClick={generate}
-                                className="text-blue-500 underline hover:text-blue-600"
-                            >
-                                Voir aperçu
-                            </button>
-                        </div>
                     </div>
 
                     <div className="flex justify-end space-x-4">

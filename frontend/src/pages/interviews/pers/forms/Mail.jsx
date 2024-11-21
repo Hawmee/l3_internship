@@ -56,7 +56,7 @@ function Mail({ handleMail, method, data }) {
             const NomStagiaire = `${data.stagiaire.nom} ${data.stagiaire.prenom}`;
             const receiver = data.stagiaire.email;
             const date = format(
-                formatDate(data.date_interview),
+                formatDate(data.date_entretien),
                 "dd/MM/yyyy à HH:mm"
             );
 

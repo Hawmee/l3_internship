@@ -15,24 +15,39 @@ const tacheSlice = createSlice({
 
         editTache: (state, action) => {
             if (Array.isArray(action.payload)) {
-                action.payload.forEach(entretient => {
-                    const index = state.value.findIndex((data) => data.id === entretient.id);
+                action.payload.forEach((entretient) => {
+                    const index = state.value.findIndex(
+                        (data) => data.id === entretient.id
+                    );
                     if (index !== -1) {
-                        state.value[index] = { ...state.value[index], ...entretient };
+                        state.value[index] = {
+                            ...state.value[index],
+                            ...entretient,
+                        };
                     }
                 });
             } else {
                 const { id, ...updatedData } = action.payload;
                 const index = state.value.findIndex((data) => data.id === id);
                 if (index !== -1) {
-                    state.value[index] = { ...state.value[index], ...updatedData };
+                    state.value[index] = {
+                        ...state.value[index],
+                        ...updatedData,
+                    };
                 }
             }
         },
 
         deleteTache: (state, action) => {
-            const id = action.payload;
-            state.value = state.value.filter((data) => data.id !== id);
+            if (Array.isArray(action.payload)) {
+                state.value = state.value.filter(
+                    (task) => !action.payload.includes(task.id)
+                );
+            } else {
+                state.value = state.value.filter(
+                    (task) => task.id !== action.payload
+                );
+            }
         },
     },
 });

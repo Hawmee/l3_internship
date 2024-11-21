@@ -64,7 +64,6 @@ export const partialUpdateOffre = async (req, res) => {
                 entretiens: {
                     include: {
                         stagiaire: true,
-                        offre: true,
                     },
                 },
                 unite: {

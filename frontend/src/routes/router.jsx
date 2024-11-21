@@ -19,6 +19,7 @@ import Register from '../pages/auth/Register'
 import ChefUnitLayout from "../layouts/users/ChefUnitLayout";
 import PersCelluleLayout from "../layouts/users/PersCelluleLayout";
 import Profile from "../pages/profile/Profile";
+import Demande from "../pages/Demandes/Demande";
 
 
 const router = createBrowserRouter([
@@ -30,21 +31,21 @@ const router = createBrowserRouter([
                 path: "chefService",
                 element: <ProtectedRoute element={<ChefServiceLayout />} />,
                 children: [
-                    // {
-                    //     path: "",
-                    //     element: <Dashboard />,
-                    // },
                     {
                         path: "",
                         element: <InterViews />,
                     },
                     {
-                        path: "offers",
-                        element: <Offers />,
+                        path: "interns",
+                        element: <Interns />,
                     },
                     {
                         path: "internships",
                         element: <InternShips />,
+                    },
+                    {
+                        path: "interns",
+                        element: <Interns />,
                     },
                     {
                         path: "attestations",
@@ -74,14 +75,6 @@ const router = createBrowserRouter([
                     // },
                     {
                         path: "",
-                        element: <Offers />,
-                    },
-                    {
-                        path: "interviews",
-                        element: <InterViews />,
-                    },
-                    {
-                        path: "interns",
                         element: <InternShips />,
                     },
                     {
@@ -100,7 +93,7 @@ const router = createBrowserRouter([
                 children: [
                     {
                         path: "",
-                        element: <Offers />,
+                        element: <Demande />,
                     },
                     {
                         path: "interns",
@@ -111,8 +104,7 @@ const router = createBrowserRouter([
                         element: <InternShips />,
                     },
                     {
-                        path: "interview" +
-                            "s",
+                        path: "interviews",
                         element: <InterViews />,
                     },
                     {
@@ -131,15 +123,7 @@ const router = createBrowserRouter([
                 children: [
                     {
                         path: "",
-                        element: <Offers />,
-                    },
-                    {
-                        path: "interns",
-                        element: <Interns />,
-                    },
-                    {
-                        path: "interviews",
-                        element: <InterViews />,
+                        element: <Demande />,
                     },
                     {
                         path: 'profile',

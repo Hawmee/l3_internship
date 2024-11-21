@@ -53,6 +53,8 @@ function App({ children }) {
             theme: "light",
         };
 
+        
+
         getAllUnits();
         cookieHandling();
         dispatch(setBackendUrl(backUrl));

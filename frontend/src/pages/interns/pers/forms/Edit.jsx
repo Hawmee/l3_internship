@@ -1,16 +1,15 @@
-import React, { useState } from "react";
-import { FormProvider } from "react-hook-form";
-import Input from "../../../../components/forms/Input";
-import FileInput from "../../../../components/forms/FileInput";
+import axios from "axios";
 import {
     ChevronDown,
     ChevronUp,
-    Loader2,
-    X,
+    Loader2
 } from "lucide-react";
-import axios from "axios";
+import React, { useState } from "react";
+import { FormProvider } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import FileInput from "../../../../components/forms/FileInput";
+import Input from "../../../../components/forms/Input";
 
 function Edit({ method, handle_edit, data }) {
     const [docs, setDocs] = useState(false);
@@ -32,10 +31,10 @@ function Edit({ method, handle_edit, data }) {
         });
 
         if (datas.cv_link && datas.cv_link[0]) {
-            formData.append("cv_link", datas.cv_link[0]);
+            formData.append("cv_lien", datas.cv_link[0]);
         }
         if (datas.lm_link && datas.lm_link[0]) {
-            formData.append("lm_link", datas.lm_link[0]);
+            formData.append("lm_lien", datas.lm_link[0]);
         }
 
         try {
@@ -123,15 +122,6 @@ function Edit({ method, handle_edit, data }) {
                         <div className="flex flex-row mb-3 justify-between">
                             <div className="">
                                 <Input
-                                    label={"Niveau"}
-                                    name={"niveau"}
-                                    validation={{
-                                        required: "Valeur requise",
-                                    }}
-                                />
-                            </div>
-                            <div className="">
-                                <Input
                                     label={"Filiere "}
                                     name={"filiere"}
                                     validation={{
@@ -139,8 +129,7 @@ function Edit({ method, handle_edit, data }) {
                                     }}
                                 />
                             </div>
-                        </div>
-                        <div className="mb-3">
+                            <div className="">
                             <Input
                                 label={"Etablissement"}
                                 name="etablissement"
@@ -149,8 +138,8 @@ function Edit({ method, handle_edit, data }) {
                                 }}
                             />
                         </div>
-
-                        {(data.cv_link || data.lm_link) && (
+                        </div>
+                        {(data.cv_lien || data.lm_lien) && (
                             <div
                                 className="mt-2 flex flex-row justify-end items-center text-blue-400 hover:text-blue-500 text-[18px]x cursor-pointer"
                                 onClick={() => {
@@ -169,12 +158,12 @@ function Edit({ method, handle_edit, data }) {
                             </div>
                         )}
 
-                        {(!data.cv_link || !data.lm_link || docs) && (
+                        {(!data.cv_lien || !data.lm_lien || docs) && (
                             <>
                                 <div className="mb-3">
                                     <FileInput
                                         label={"CV Numerique"}
-                                        name="cv_link"
+                                        name="cv_lien"
                                         validation={
                                             !data.cv_link && {
                                                 required: "Valeur requise",
@@ -186,7 +175,7 @@ function Edit({ method, handle_edit, data }) {
                                 <div className="mb-3">
                                     <FileInput
                                         label={"LM Numerique"}
-                                        name="lm_link"
+                                        name="lm_lien"
                                         validation={
                                             !data.lm_link && {
                                                 required: "Valeur requise",

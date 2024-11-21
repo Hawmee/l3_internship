@@ -38,15 +38,16 @@ export const newTache = async (req, res) => {
                     stagiaire: true,
                     attestation: true,
                     performance: true,
-                    taches: {include:{
-                        stage:true
-                    }},
-                    offre: true,
+                    taches: {
+                        include: {
+                            stage: true,
+                        },
+                    },
                 },
             });
 
             req.io.emit("updated_stage", updatedStage);
-            req.io.emit('new_tache' , tache)
+            req.io.emit("new_tache", tache);
         }
         res.status(200).send({ message: "Action reussite !" });
     } catch (error) {
@@ -62,7 +63,7 @@ export const partialUpdateTache = async (req, res) => {
             where: { id: Number(id) },
             data: updated_tache_data,
         });
-        
+
         if (tache) {
             const updatedStage = await prisma.stages.findUnique({
                 where: { id: tache.stage_id },
@@ -75,17 +76,18 @@ export const partialUpdateTache = async (req, res) => {
                     stagiaire: true,
                     attestation: true,
                     performance: true,
-                    taches: {include:{
-                        stage:true
-                    }},
-                    offre: true,
+                    taches: {
+                        include: {
+                            stage: true,
+                        },
+                    },
                 },
             });
 
             req.io.emit("updated_stage", updatedStage);
-            req.io.emit('updated_tache' , tache)
+            req.io.emit("updated_tache", tache);
         }
-        res.status(200).send({ message: "Action reussite !" })
+        res.status(200).send({ message: "Action reussite !" });
     } catch (error) {
         res.status(400).send({ message: error.message });
     }
@@ -94,28 +96,25 @@ export const partialUpdateTache = async (req, res) => {
 export const finished = async (req, res) => {
     const { id } = req.params;
     try {
-
         const current_tache = await prisma.taches.findUnique({
-            where:{id:Number(id)}
+            where: { id: Number(id) },
         });
 
-        let newObservaition
-        if(current_tache.observation == task_observations.en_cours){
-            newObservaition = task_observations.acheve
-        }else if(current_tache.observation == task_observations.inacheve){
-            newObservaition = task_observations.retard
+        let newObservaition;
+        if (current_tache.observation == task_observations.en_cours) {
+            newObservaition = task_observations.acheve;
+        } else if (current_tache.observation == task_observations.inacheve) {
+            newObservaition = task_observations.retard;
         }
 
+        const tache = await prisma.taches.update({
+            where: { id: Number(id) },
+            data: {
+                status: true,
+                observation: newObservaition,
+            },
+        });
 
-        const tache= await prisma.taches.update({
-            where:{id:Number(id)},
-            data:{
-                status:true,
-                observation:newObservaition,
-            }
-
-        })
-        
         if (tache) {
             const updatedStage = await prisma.stages.findUnique({
                 where: { id: tache.stage_id },
@@ -128,54 +127,40 @@ export const finished = async (req, res) => {
                     stagiaire: true,
                     attestation: true,
                     performance: true,
-                    taches: {include:{
-                        stage:true
-                    }},
-                    offre: true,
+                    taches: {
+                        include: {
+                            stage: true,
+                        },
+                    },
                 },
             });
 
             req.io.emit("updated_stage", updatedStage);
-            req.io.emit('updated_tache' , tache)
+            req.io.emit("updated_tache", tache);
         }
         res.status(200).send({ message: "Action reussite !" });
-
     } catch (error) {
         res.status(400).send({ message: error.message });
     }
 };
 
-
-
-export const unfinished_tasks = async(req,res)=>{
+export const undone_tasks = async (req, res) => {
     try {
-        const updated_tasks = await prisma.taches.updateMany({
-            where:{
-                status: false,
-                date_fin:{lt:new Date()}
-            },
-            data:{
-                status:true,
-                observation: task_observations.inacheve
-            },
-        })
-
-
-        const unfinished_tasks = await prisma.taches.findMany({
-            where:{
+        const { id } = req.params;
+        const task = await prisma.taches.update({
+            where: { id: Number(id) },
+            data: {
                 status: true,
                 observation: task_observations.inacheve,
             },
-            select:{
-                stage_id:true
+            include: {
+                stage: true,
             },
-            distinct:['stage_id']
-        })
+        });
 
-
-        for(const task of unfinished_tasks){
-            const updated_stage = await prisma.stages.findUnique({
-                where:{id: Number(task.stage_id)},
+        if (task) {
+            const updatedStage = await prisma.stages.findUnique({
+                where: { id: task.stage_id },
                 include: {
                     unite: {
                         include: {
@@ -185,21 +170,73 @@ export const unfinished_tasks = async(req,res)=>{
                     stagiaire: true,
                     attestation: true,
                     performance: true,
-                    taches: {include:{
-                        stage:true
-                    }},
-                    offre: true,
+                    taches: {
+                        include: {
+                            stage: true,
+                        },
+                    },
                 },
-            })
+            });
 
-            req.io.emit('updated_stage' , updated_stage)
-            req.io.emit('updated_tache' , updated_tasks)
+            req.io.emit("updated_stage", updatedStage);
+            req.io.emit("updated_tache", task);
         }
-        res.status(200).send({message: 'Taches a jours'})
+        res.status(200).send({ message: "Action reussite !" });
+    } catch (error) {}
+};
+
+export const unfinished_tasks = async (req, res) => {
+    try {
+        const updated_tasks = await prisma.taches.updateMany({
+            where: {
+                status: false,
+                date_fin: { lt: new Date() },
+            },
+            data: {
+                status: false,
+                observation: task_observations.inacheve,
+            },
+        });
+
+        const unfinished_tasks = await prisma.taches.findMany({
+            where: {
+                status: false,
+                observation: task_observations.inacheve,
+            },
+            select: {
+                stage_id: true,
+            },
+            distinct: ["stage_id"],
+        });
+
+        for (const task of unfinished_tasks) {
+            const updated_stage = await prisma.stages.findUnique({
+                where: { id: Number(task.stage_id) },
+                include: {
+                    unite: {
+                        include: {
+                            users: true,
+                        },
+                    },
+                    stagiaire: true,
+                    attestation: true,
+                    performance: true,
+                    taches: {
+                        include: {
+                            stage: true,
+                        },
+                    },
+                },
+            });
+
+            req.io.emit("updated_stage", updated_stage);
+            req.io.emit("updated_tache", updated_tasks);
+        }
+        res.status(200).send({ message: "Taches a jours" });
     } catch (error) {
-        res.status(500).send({message:error})
+        res.status(500).send({ message: error });
     }
-}
+};
 
 export const deleteTache = async (req, res) => {
     const { id } = req.params;

@@ -1,6 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import PersIntern from './pers/PersIntern'
+import CS_interns from './CS/CS_interns'
 
 function Interns() {
 
@@ -12,7 +13,8 @@ function Interns() {
 
   return (
     <>
-      {(current_user&&(current_user.isPersCellule||current_user.isPersSecretariat))&& <PersIntern interns={interns} /> }
+      {(current_user&&(current_user.isPersCellule))&& <PersIntern interns={interns} /> }
+      {(current_user&&(current_user.isChefService))&& <CS_interns interns={interns} /> }
     </>
   )
 }

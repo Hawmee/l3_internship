@@ -4,24 +4,36 @@ import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useNavigate } from "react-router-dom";
 import PopUpContainer from "../components/containers/PopUpContainer";
 import { setCurrentUser } from "../features/currentUser";
-import { deleteEntretient, editEntretient, newEntretient, setEntretient } from "../features/entretient";
+import {
+    deleteEntretient,
+    editEntretient,
+    newEntretient,
+    setEntretient,
+} from "../features/entretient";
 import { deleteOffre, editOffre, newOffre, setOffre } from "../features/offres";
 import Socket from "../features/Socket";
 import { editStage, newStage, setStage } from "../features/stage";
-import { deleteStagiaire, editStagiaire, newStagiaire, setStagiaire } from "../features/stagiaire";
+import {
+    deleteStagiaire,
+    editStagiaire,
+    newStagiaire,
+    setStagiaire,
+} from "../features/stagiaire";
 import { isArrayNotNull } from "../functions/Functions";
 import { newPerf, setPerf } from "../features/perf";
 import { editAttestation, newAttestation } from "../features/attestation";
-import { editTache, newTache } from "../features/tache";
+import { deleteTache, editTache, newTache } from "../features/tache";
+import { demande } from "../services/demande";
+import { editDemande, newDemande, setDemande } from "../features/demande";
 
 function Authenticated() {
     const navigate = useNavigate();
     const user = useSelector((state) => state.currentUser.value);
     const url = useSelector((state) => state.backendUrl.value);
-    const socket = Socket
+    const socket = Socket;
     const dispatch = useDispatch();
-    const [message, setMessage] = useState(false);    
-    
+    const [message, setMessage] = useState(false);
+
     const logout = async () => {
         try {
             const logged_out = await axios.post(`${url}/logout`, "logged_out", {
@@ -35,56 +47,50 @@ function Authenticated() {
         }
     };
 
-
-    const getAllInternShips = async()=>{
+    const getAllInternShips = async () => {
         try {
-            const stages_data = await axios.get(`${url}/stage`)
-            const stages = stages_data.data
-            if(isArrayNotNull(stages)){
-                dispatch(setStage(stages))
+            const stages_data = await axios.get(`${url}/stage`);
+            const stages = stages_data.data;
+            if (isArrayNotNull(stages)) {
+                dispatch(setStage(stages));
             }
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
-    }
+    };
 
-    const getAllInterviews = async()=>{
+    const getAllInterviews = async () => {
         try {
-            const interviews_data = await axios.get(`${url}/entretient`)
-            const interviews = interviews_data.data
-            if(isArrayNotNull(interviews)){
-                dispatch(setEntretient(interviews))
+            const interviews_data = await axios.get(`${url}/entretient`);
+            const interviews = interviews_data.data;
+            if (isArrayNotNull(interviews)) {
+                dispatch(setEntretient(interviews));
             }
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
-    }
+    };
 
-    const getAllInterns = async()=>{
+    const getAllInterns = async () => {
         try {
-            const interns_data = await axios.get(`${url}/stagiaire`)
-            const interns = interns_data.data
-            if(isArrayNotNull(interns)){
-                dispatch(setStagiaire(interns))
+            const interns_data = await axios.get(`${url}/stagiaire`);
+            const interns = interns_data.data;
+            if (isArrayNotNull(interns)) {
+                dispatch(setStagiaire(interns));
             }
         } catch (error) {
             console.log(erreur);
         }
-    }
+    };
 
-    const getAllOffres = async()=>{
+    const getAllDemande = async () => {
         try {
-            const offres_data = await axios.get(`${url}/offre`)
-            const offres = offres_data.data
-            if(isArrayNotNull(offres)){
-                dispatch(setOffre(offres))
-            }
+            const demand = await demande.get();
+            dispatch(setDemande(demand));
         } catch (error) {
             console.log(error);
-            
         }
-    }
-
+    };
 
     useEffect(() => {
         if (!user) {
@@ -104,128 +110,128 @@ function Authenticated() {
         console.log(user);
     }, [user]);
 
-    useEffect(() => {        
-
+    useEffect(() => {
         socket.on("new_offre", (offre) => {
             dispatch(newOffre(offre));
             // console.log("lol lsi");
         });
 
-        if(user){
+        if (user) {
             socket.on(`user_validated/${user.matricule}`, (data) => {
                 if (data) {
                     setMessage(true);
                 }
-            });    
+            });
         }
 
-        socket.on('new_entretient' , interview=>{
-            dispatch(newEntretient(interview))
+        socket.on("new_entretient", (interview) => {
+            dispatch(newEntretient(interview));
+        });
+
+        socket.on("new_stagiaire", (intern) => {
+            dispatch(newStagiaire(intern));
+        });
+
+        socket.on("new_stage", (stage) => {
+            dispatch(newStage(stage));
+        });
+
+        socket.on("new_perf", (perf) => {
+            dispatch(newPerf(perf));
+        });
+
+        socket.on("new_attestation", (attestation) => {
+            dispatch(newAttestation(attestation));
+        });
+
+        socket.on("new_tache", (tache) => {
+            dispatch(newTache(tache));
+        });
+
+        socket.on("new_demande", (demande) => {
+            dispatch(newDemande(demande));
+        });
+
+        socket.on("updated_offre", (offre) => {
+            dispatch(editOffre(offre));
+        });
+
+        socket.on("updated_performance", (performance) => {
+            dispatch(setPerf(performance));
+        });
+
+        socket.on("updated_entretient", (entretient) => {
+            dispatch(editEntretient(entretient));
+        });
+
+        socket.on("update_stagiaire", (stagiaire) => {
+            dispatch(editStagiaire(stagiaire));
+        });
+
+        socket.on("updated_stage", (stage) => {
+            dispatch(editStage(stage));
+        });
+
+        socket.on("updated_attestation", (attestation) => {
+            dispatch(editAttestation(attestation));
+        });
+
+        socket.on("updated_tache", (tache) => {
+            dispatch(editTache(tache));
+        });
+
+        socket.on('updated_demande' , viewed=>{
+            dispatch(editDemande(viewed))
         })
 
-        socket.on('new_stagiaire' , intern=>{
-            dispatch(newStagiaire(intern))
-        })
 
-        socket.on('new_stage' , stage=>{
-            dispatch(newStage(stage))
-        })
-
-
-        socket.on('new_perf' , perf=>{
-            dispatch(newPerf(perf))
-        })
-
-        socket.on('new_attestation' , attestation=>{
-            dispatch(newAttestation(attestation))
-        })
-
-        socket.on('new_tache' , tache=>{
-            dispatch(newTache(tache))
-        })
-
-
-        
-        socket.on('updated_offre' , offre=>{
-            dispatch(editOffre(offre))
-        })
-
-
-        socket.on('updated_performance' , performance =>{
-            dispatch(setPerf(performance))
-        })
-
-        socket.on('updated_entretient' , entretient=>{
-            dispatch(editEntretient(entretient))            
-        })
-
-        socket.on('update_stagiaire', stagiaire=>{
-            dispatch(editStagiaire(stagiaire))
-        })
-
-        socket.on('updated_stage', stage=>{
-            dispatch(editStage(stage))
-        })
-
-        socket.on('updated_attestation' , attestation=>{
-            dispatch(editAttestation(attestation))
-        })
-
-        socket.on('updated_tache', tache=>{
-            dispatch(editTache(tache))
-        })
-
-
-
-
-
-
-        socket.on('deleted_stagiaire', (id) =>{
-            dispatch(deleteStagiaire(Number(id)))
+        socket.on("deleted_stagiaire", (id) => {
+            dispatch(deleteStagiaire(Number(id)));
             // console.log(id)
-        })
-        socket.on('deleted_offre' ,id =>{
-            dispatch(deleteOffre(Number(id)))
-        })
-        socket.on('deleted_entretient' ,id =>{
-            dispatch(deleteEntretient(Number(id)))
-        })
+        });
+        socket.on("deleted_tache", (id) => {
+            dispatch(deleteTache(id));
+        });
+        socket.on("deleted_entretient", (id) => {
+            dispatch(deleteEntretient(Number(id)));
+        });
+
 
         return () => {
             socket.off("new_offre");
-            if(user){
+            if (user) {
                 socket.off(`user_validated/${user.matricule}`);
             }
 
-            socket.off('new_entretient')
-            socket.off('new_stagiaire')
-            socket.off('new_stage')
-            socket.off('new_perf')
-            socket.off('new_attestation')
-            socket.off('new_tache')
-            socket.off('updated_offre')
-            socket.off('updated_performance')
-            socket.off('updated_entretient')
-            socket.off('update_stagiaire')
-            socket.off('updated_stage')
-            socket.off('updated_attestation')
-            socket.off('updated_tache')
-            socket.off('deleted_stagiaire')
-            socket.off('deleted_offre')
-            socket.off('deleted_entretient')
+            socket.off("new_entretient");
+            socket.off("new_stagiaire");
+            socket.off("new_stage");
+            socket.off("new_perf");
+            socket.off("new_attestation");
+            socket.off("new_tache");
+            socket.off("new_demande");
 
+            socket.off("updated_offre");
+            socket.off("updated_performance");
+            socket.off("updated_entretient");
+            socket.off("update_stagiaire");
+            socket.off("updated_stage");
+            socket.off("updated_attestation");
+            socket.off("updated_tache");
+            socket.off('updated_demande')
 
-    
+            socket.off("deleted_stagiaire");
+            socket.off("deleted_tache");
+            socket.off("deleted_entretient");
         };
     }, [dispatch, socket]);
 
-
-    useEffect(()=>{
-        getAllInterns()
-        getAllInternShips()
-        getAllInterviews()
-        getAllOffres()
-    }, [dispatch])
+    useEffect(() => {
+        getAllInterns();
+        getAllInternShips();
+        getAllInterviews();
+        getAllDemande();
+    }, [dispatch]);
 
     return (
         <>

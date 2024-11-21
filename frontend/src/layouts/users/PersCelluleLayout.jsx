@@ -5,6 +5,7 @@ import {
     FileText,
     GraduationCap,
     Handshake,
+    MailOpen,
     NotebookText,
 } from "lucide-react";
 import MereLayout from "../MereLayout";
@@ -14,13 +15,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { isArray, isArrayNotNull } from "../../functions/Functions";
 import axios from "axios";
 import { setAttestation } from "../../features/attestation";
+import { observation_stage } from "../../utils/Observations";
 
 function PersCelluleLayout() {
     const url = useSelector((state) => state.backendUrl.value);
     const dispatch = useDispatch();
     const user = useSelector((state) => state.currentUser.value);
     const attestation = useSelector((state) => state.attestation.value);
-    const interns = useSelector((state) => state.stagiaire.value);
+    const demands = useSelector((state) => state.demande.value);
+    const internships = useSelector((state) => state.stage.value);
     const interviews = useSelector((state) => state.entretient.value);
     const navigate = useNavigate();
 
@@ -37,18 +40,33 @@ function PersCelluleLayout() {
     };
 
     const isNewInterviews =
-        isArray(interviews) &&
-        interviews.some(
-            (interview) => (interview.isNew && interview.date_interview)
-        );
+        isArray(interviews) && interviews.some((interview) => interview.isNew);
 
+    const isNewStage = isArrayNotNull(internships)
+        ? internships.some((item) => {
+              return (item.observation == observation_stage.non_affirme && item.isNew);
+          })
+        : false;
 
-    const attestations = isArrayNotNull(attestation) ? attestation.filter(item=> item.stage.stagiaire && item.stage.offre) : []
+    const isNewStageFinis = isArrayNotNull(internships) ? internships.some(item =>{ 
+        const isNew = item.isNew
+        const observations = (item.observation == observation_stage.acheve || item.observation == observation_stage.cloture )
+        return (isNew && observations)
+    }) : false
+
+    const attestations = isArrayNotNull(attestation)
+        ? attestation.filter((item) => item.stage.stagiaire && item.stage.offre)
+        : [];
     const isNewAttestation =
         isArray(attestations) &&
         attestations.some(
             (attestation) => attestation.isNew && attestation.status
         );
+
+    const isNewDemande = isArrayNotNull(demands)
+        ? demands.some((item) => item.isNew)
+        : false;
+
     useEffect(() => {
         if (user && !user.isPersCellule) {
             navigate("/guest/login");
@@ -58,16 +76,16 @@ function PersCelluleLayout() {
     useEffect(() => {
         getAllAttestations();
     }, [dispatch]);
-    
 
     return (
         <>
             <MereLayout>
                 <SidebarContents>
                     <SideBarLinks
-                        icon={<NotebookText size={22} />}
-                        text={"Offres"}
+                        icon={<MailOpen size={22} />}
+                        text={"Demandes"}
                         href={"/persCellule/"}
+                        alert={isNewDemande}
                     />
                     <SideBarLinks
                         icon={<BookUser size={22} />}
@@ -77,8 +95,14 @@ function PersCelluleLayout() {
                     <SideBarLinks
                         icon={<Handshake size={22} />}
                         text={"Entretients"}
-                        href={"/persCellule/interviews"}
+                        href={"interviews"}
                         alert={isNewInterviews}
+                    />
+                    <SideBarLinks
+                        icon={<GraduationCap size={22} />}
+                        text={"Stages"}
+                        href={"internships"}
+                        alert={isNewStage || isNewStageFinis}
                     />
                     <SideBarLinks
                         icon={<FileText size={22} />}

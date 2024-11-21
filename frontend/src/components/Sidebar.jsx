@@ -34,6 +34,8 @@ export default function Sidebar({ children }) {
         }
     };
 
+    console.log(user)
+
     return (
         <>
             <aside className="h-full">

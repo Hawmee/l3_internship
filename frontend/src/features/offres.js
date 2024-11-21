@@ -23,8 +23,15 @@ const offreSlice = createSlice({
         },
 
         deleteOffre: (state, action) => {
-            const id = action.payload;
-            state.value = state.value.filter((data) => data.id !== id);
+            if (Array.isArray(action.payload)) {
+                state.value = state.value.filter(
+                    (task) => !action.payload.includes(task.id)
+                );
+            } else {
+                state.value = state.value.filter(
+                    (task) => task.id !== action.payload
+                );
+            }
         },
     },
 });

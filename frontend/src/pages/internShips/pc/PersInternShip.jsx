@@ -1,14 +1,55 @@
-import React from 'react'
-import Table from './Table'
-import MainContainer from '../../../components/containers/MainContainer'
-import SearchContainer from '../../../components/containers/SearchContainer'
-import { Search } from 'lucide-react'
+import React, { useEffect, useState } from "react";
+import Table from "./Table";
+import MainContainer from "../../../components/containers/MainContainer";
+import SearchContainer from "../../../components/containers/SearchContainer";
+import { Search } from "lucide-react";
+import PopUpContainer from "../../../components/containers/PopUpContainer";
+import Stage from "./cards/Stage";
+import Stagiaire from "./cards/Stagiaire";
+import Taches from "./cards/Taches";
+import Performance from "./cards/Performance";
+import { isArrayNotNull } from "../../../functions/Functions";
+import Affirm from "./forms/Affirm";
+import DefTheme from "./forms/DefTheme";
 
-function PersInternShip({data}) {
-  return (
-    <>
-    <MainContainer>
-    <SearchContainer>
+function PersInternShip({ data }) {
+    const [selected, setSelected] = useState(null);
+    const [row, setRow] = useState(null);
+    const [affirm, setAffirm] = useState(false);
+    const [def_theme, setDef_theme] = useState(false);
+
+
+    const handleAffirm = (item) => {
+        setAffirm(!affirm);
+        if (item) {
+            setSelected(item);
+        }
+    };
+
+    const handleRow = (item) => {
+        if (item) {
+            setRow(item);
+        }
+    };
+
+    const handelDefTheme = (item) => {
+        setDef_theme(!def_theme);
+    };
+
+    useEffect(() => {
+        if (row) {
+            const row_id = row.id;
+            const matching_data = isArrayNotNull(data)
+                ? data.find((item) => Number(item.id) == Number(row_id))
+                : row;
+            setRow(matching_data)
+        }
+    }, [data, row]);
+
+    return (
+        <>
+            <MainContainer>
+                <SearchContainer>
                     <div className="flex flex-row w-full h-full items-center justify-between pb-2 mt-6 border-b-[2px] mb-4">
                         <div className="min-w-56 flex flex-row justify-center items-end h-full">
                             <select
@@ -42,12 +83,68 @@ function PersInternShip({data}) {
                         </div>
                     </div>
                 </SearchContainer>
-        <div>
-            <Table data={data} />
-        </div>
-    </MainContainer>
-</>
-  )
+                <div className="flex flex-row">
+                    <div className="w-[55vw] mr-2">
+                        <Table
+                            data={data}
+                            onAffirm={handleAffirm}
+                            onRow={handleRow}
+                            row={row}
+                        />
+                    </div>
+                    <div className="relative flex-1 flex flex-col h-[80vh] mt-4 mr-2  ">
+                        <div className="text-center px-12 py-4  text-lg text-gray-800">
+                            <div className="border-b-[2px] pb-2">Details :</div>
+                        </div>
+                        <div className=" card h-full overflow-auto px-4 py-1 pb-8 ">
+                            {row ? (
+                                <>
+                                    <div className="mb-4">
+                                        <Stage
+                                            stage={row}
+                                            onDefTheme={handelDefTheme}
+                                        />
+                                    </div>
+
+                                    {row.stagiaire && (
+                                        <div className="mb-4">
+                                            <Stagiaire data={row} />
+                                        </div>
+                                    )}
+                                    {row.performance && (
+                                        <div className="mb-4">
+                                            <Performance data={row.performance} />
+                                        </div>
+                                    )}
+                                    {isArrayNotNull(row.taches) && (
+                                        <div className="mb-4">
+                                            <Taches data={row} />
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
+                                <div className="h-full w-full flex flex-col justify-center items-center text-lg text-gray-600">
+                                    ( Veuillez Choisir un element du tableau)
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </MainContainer>
+
+            {affirm && (
+                <PopUpContainer>
+                    <Affirm data={selected} onAffirm={handleAffirm} />
+                </PopUpContainer>
+            )}
+
+            {def_theme && (
+                <PopUpContainer>
+                    <DefTheme data={row} onDefTheme={handelDefTheme} />
+                </PopUpContainer>
+            )}
+        </>
+    );
 }
 
-export default PersInternShip
+export default PersInternShip;

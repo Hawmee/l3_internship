@@ -9,7 +9,8 @@ export const getAllUnit = async(req,res)=>{
             include: {
                 sur_division:true,
                 stages: true,
-                offers:true
+                offers:true,
+                users:true,
             }
         })
         
@@ -25,8 +26,11 @@ export const newUnit = async(req,res)=>{
     try {
         const unite = await prisma.unites.create({
             data: unite_data,
-            include:{
-                sur_division:true
+            include: {
+                sur_division:true,
+                stages: true,
+                offers:true,
+                users:true,
             }
         })
         req.io.emit("new_unit" , unite)
@@ -43,7 +47,13 @@ export const partialUpdateUnit = async (req,res)=>{
     try {
         const unite = await prisma.unites.update({
             where:{id: Number(id)},
-            data: data
+            data: {...data},
+            include: {
+                sur_division:true,
+                stages: true,
+                offers:true,
+                users:true,
+            }
         })
 
         res.status(200).send({data:unite})

@@ -7,7 +7,6 @@ import TableEntretient from "./TableEntretient";
 import { filterObjdiff, filterObjSame, include } from "../../../functions/Functions";
 import { Filter, Search, Settings2 } from "lucide-react";
 import PopUpContainer from "../../../components/containers/PopUpContainer";
-import Affirm from "./forms/Affirm";
 import Confirm from "./forms/Confirm";
 import Cancel from "./forms/Cancel";
 import { useForm } from "react-hook-form";
@@ -20,13 +19,11 @@ function CSInterviews({interviews}) {
     const [searchTerm, setSearchTerm] = useState("");
     const [deny, setDeny] = useState(false);
     const [cancel, setCancel] = useState(false);
-    const [affirm, setAffirm] = useState(false);
     const [confirm, setConfirm] = useState(false);
     const [edit, setEdit] = useState(false);
     const [selected_interview , setSelected_interview] = useState(null)
 
 
-    const methodAffirm = useForm()
     const methodConfirm = useForm()
     const methodEdit=useForm()
 
@@ -37,17 +34,8 @@ function CSInterviews({interviews}) {
         demand_CS,
         "status"
     );
-    const affirmed_interv = filterObjSame(
-        interview_data,
-        "date_interview",
-    );
 
-    console.log(affirmed_interv)
 
-    const handleAffirm = (interview) => {
-        setAffirm(!affirm);
-        setSelected_interview(interview)
-    };
 
     const handleConfirm = (item) => {
         setConfirm(!confirm);
@@ -150,13 +138,12 @@ function CSInterviews({interviews}) {
                     {navigation == "Demande" && (
                         <Table
                             data={demands_interv}
-                            onAffirm={handleAffirm}
                             onDeny={handleDeny}
                         />
                     )}
                     {navigation == "Entretient" && (
                         <TableEntretient
-                            data={affirmed_interv}
+                            data={interviews}
                             onConfirm={handleConfirm}
                             onEdit={handleEdit}
                             onCancel={handleCancel}
@@ -164,12 +151,6 @@ function CSInterviews({interviews}) {
                     )}
                 </div>
             </MainContainer>
-            {affirm && (
-                <PopUpContainer popup={affirm} closePopUp={setAffirm}>
-                    {" "}
-                    <Affirm method={methodAffirm} interview={selected_interview} onAffirm={handleAffirm} />
-                </PopUpContainer>
-            )}
             {confirm && (
                 <PopUpContainer popup={confirm} closePopUp={setConfirm}>
                     <Confirm method={methodConfirm} data ={selected_interview} handleConfirm={handleConfirm}/>

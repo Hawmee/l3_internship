@@ -1,18 +1,13 @@
 import React, { useEffect } from 'react'
 import { FormProvider } from 'react-hook-form'
-import Input from '../../../../components/forms/Input'
 import DatePicker from '../../../../components/forms/DatePicker'
 import { addDays, format, startOfToday } from 'date-fns'
-import axios from 'axios'
-import { useSelector } from 'react-redux'
-import { toast } from 'react-toastify'
 import { formatDate } from '../../../../functions/Functions'
+import { entretiens } from '../../../../services/entretiens'
+import { notifyError, notifySuccess } from '../../../../layouts/MereLayout'
 
 function Edit({method , interview , handleEdit}) {
-
-  const url = useSelector(state=>state.backendUrl.value)
   const id = interview.id
-  const toastconfig = useSelector(state=>state.toastConfig.value)
   const {reset} = method
   const today_date = startOfToday()
   const today = format(today_date, "yyyy-MM-dd'T'HH:mm");
@@ -20,32 +15,30 @@ function Edit({method , interview , handleEdit}) {
 
   const submit = async(data)=>{
     try {
-      const submited = await axios.patch(`${url}/entretient/${interview.id}` , data)
+      const submited = await entretiens.update(Number(id) , data)
       if(submited){
-          const message = "Action reussite !"
-          toast.success(message , toastconfig)
+          notifySuccess()
           handleEdit()            
       }
     } catch (error) {
       console.log(error);
-      
+      notifyError()
     }
   }
 
   const onSubmit = (data)=>{
     const body = {
-      date_interview:format(data.date_interview , "yyyy-MM-dd'T'HH:mm:ss.000'Z")
+      date_entretien:format(data.date_entretien , "yyyy-MM-dd'T'HH:mm:ss.000'Z")
     }
     
     submit(body)
-    // console.log(body);
     
   }
 
   useEffect(()=>{
     if(interview){
       reset({
-        date_interview:format(formatDate(interview.date_interview) , "yyyy-MM-dd'T'HH:mm")
+        date_entretien:format(formatDate(interview.date_entretien) , "yyyy-MM-dd'T'HH:mm")
       })
     }
   } , [interview])
@@ -64,7 +57,7 @@ function Edit({method , interview , handleEdit}) {
                     <div className='mb-3'>
                         <DatePicker 
                             label={"Date d'entretient"}
-                            name={"date_interview"}
+                            name={"date_entretien"}
                             validation={{
                                 required: "Valeur requise",
                             }}

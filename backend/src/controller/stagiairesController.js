@@ -3,6 +3,7 @@ import { drive, FOLDER_ID } from "../config/GDrive.js";
 import prismaClient from "./prismaClient.js";
 import fs from "fs";
 import { stagiaire_status } from "../utils/Observations.js";
+import { message } from "../utils/message.js";
 
 const prisma = prismaClient;
 
@@ -19,6 +20,28 @@ export const getAllStagiaire = async (req, res) => {
         res.status(400).send({ message: error.message });
     }
 };
+
+export const createStagiaire = async (req , res) =>{
+    const data = req.body
+    try {
+        const stagiaire = await prisma.stagiaires.create({
+            data:{
+                observation: stagiaire_status.postulant,
+                ...data
+            },
+            include: {
+                entretiens: true,
+                stages: true ,
+            },
+        })
+        if(stagiaire){
+            req.io.emit('new_stagiaire', stagiaire )
+            return res.status(200).send({ message: "Ajouté avec succès !" });
+        }
+    } catch (error) {
+        res.status(400).send({message: error.message})
+    }
+}
 
 export const newStagiaire = async (req, res) => {
     const stagiaire_data = req.body;
@@ -96,7 +119,7 @@ export const partialUpdateStagiaire = async (req, res) => {
         }
 
         const fileUpdates = { cv_link: stagiaire.cv_link, lm_link: stagiaire.lm_link }; 
-        const expectedFiles = ["cv_link", "lm_link"];
+        const expectedFiles = ["cv_lien", "lm_lien"];
         const newLinks = [];
         let uploadErrorOccurred = false;
         let filesAdded = false; 

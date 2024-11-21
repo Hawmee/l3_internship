@@ -20,7 +20,7 @@ import {
     startOfDay,
 } from "date-fns";
 import { isArrayNotNull } from "../../functions/Functions";
-import { task_observations } from "../../utils/Observations";
+import { observation_stage, task_observations } from "../../utils/Observations";
 
 function ChefUnitLayout() {
     const user = useSelector((state) => state.currentUser.value);
@@ -30,6 +30,16 @@ function ChefUnitLayout() {
     const task = useSelector((state) => state.tache.value);
     const [almostDeadlineTasks, setAlmostDeadLine] = useState(false);
     const [unfinishedTasks, setUnfinishedTasks] = useState(false);
+    const unite_recent = user ? user.unite_id : null
+    const stages = useSelector(state=>state.stage.value)
+
+    const unite_stages = isArrayNotNull(stages) ? stages.filter(item=>{
+        const unite_matching = (Number(item.unite_id) == Number(unite_recent))
+        const isAffirmed = (item.observation == observation_stage.en_cours || item.observation == observation_stage.a_venir)
+        return (unite_matching && isAffirmed)
+    }) : null
+
+    const isNewStages = isArrayNotNull(unite_stages) ? unite_stages.some(item=>item.isNew) : false
 
     const getAlltasks = async () => {
         try {
@@ -101,19 +111,10 @@ function ChefUnitLayout() {
         <MereLayout>
             <SidebarContents>
                 <SideBarLinks
-                    icon={<NotebookText size={22} />}
-                    text="Offres"
-                    href="/chefUnits/"
-                />
-                <SideBarLinks
-                    icon={<Handshake size={22} />}
-                    text="Entretiens"
-                    href="/chefUnits/interviews"
-                />
-                <SideBarLinks
                     icon={<BookUser size={22} />}
                     text="Stagiaires"
-                    href="/chefUnits/interns"
+                    href="/chefUnits/"
+                    alert={isNewStages}
                 />
                 <SideBarLinks
                     icon={<ClipboardList size={22} />}

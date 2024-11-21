@@ -15,6 +15,7 @@ import {
 import Finish from "./forms/Finish";
 import Delete from "./forms/Delete";
 import Edit from "./forms/Edit";
+import Undone from "./forms/Undone";
 
 function CUTask({ data }) {
     const current_user = useSelector((state) => state.currentUser.value);
@@ -29,6 +30,7 @@ function CUTask({ data }) {
     const [edit, setEdit] = useState(false);
     const [del, setDel] = useState(false);
     const [finished, setFinised] = useState(false);
+    const [undone, setUndone] = useState(false);
 
     const handleAdd = () => {
         setAdd(!add);
@@ -55,11 +57,20 @@ function CUTask({ data }) {
         }
     };
 
+    const handleUndone = (item) => {
+        setUndone(!undone);
+        if (item) {
+            setSelectedTasks(item);
+        }
+    };
+
     const handleSelect = (item) => {
         if (item) {
             setSelected(item);
         }
     };
+
+    const totalTask = isArrayNotNull(tasks) ? tasks.length : 0;
 
     const unfinished =
         isArrayNotNull(tasks) &&
@@ -75,12 +86,14 @@ function CUTask({ data }) {
 
     const _finished =
         isArrayNotNull(tasks) &&
-        tasks.filter((task) => ( task.observation == task_observations.acheve || task.observation == task_observations.retard));
+        tasks.filter(
+            (task) =>
+                task.observation == task_observations.acheve ||
+                task.observation == task_observations.retard
+        );
     const finished_number = isArrayNotNull(_finished) ? _finished.length : 0;
 
-    const isEnded = selected
-        ? selected.status || selected.observation !== observation_stage.en_cours
-        : true;
+    const isEnded = selected ? (selected.status || selected.observation == observation_stage.acheve) : true;
 
     useEffect(() => {
         if (selected) {
@@ -100,21 +113,6 @@ function CUTask({ data }) {
             <MainContainer>
                 <SearchContainer>
                     <div className="flex flex-row w-full h-full items-center justify-between pb-2 mt-6 border-b-[2px] mb-4">
-                        <div className="min-w-56 flex flex-row justify-center items-end h-full">
-                            <select
-                                name=""
-                                id=""
-                                className="px-2 py-2 border-[2px] border-gray-400  rounded-[12px] cursor-pointer outline-none"
-                                // value={navigation}
-                                // onChange={(e) => setNavigation(e.target.value)}
-                            >
-                                <option value="Demande">
-                                    Demande d'entretient
-                                </option>
-                                <option value="Entretient">Entretient</option>
-                            </select>
-                        </div>
-
                         <div className=" flex flex-row flex-1 h-full justify-end items-end ">
                             <div className="flex flex-row  text-gray-600 py-2 rounded-[12px] bg-gray-200 px-2">
                                 <input
@@ -147,14 +145,17 @@ function CUTask({ data }) {
                         {isArrayNotNull(tasks) && (
                             <div className="px-6 mb-3">
                                 <div className="flex flex-row pb-2 justify-between border-b-2  ">
-                                    <div className="text-red-400">
-                                        Inachevé:({unfinished_number})
+                                    <div className="text-gray-700 border-r-2 pr-6 border-gray-400">
+                                        Total:({totalTask})
                                     </div>
-                                    <div className="text-gray-400">
+                                    <div className="text-gray-500">
                                         En cours:({en_cours_number})
                                     </div>
                                     <div className="text-blue-400">
                                         Achevée:({finished_number})
+                                    </div>
+                                    <div className="text-red-400">
+                                        Inachevé:({unfinished_number})
                                     </div>
                                 </div>
                             </div>
@@ -175,8 +176,10 @@ function CUTask({ data }) {
                                 tasks.map((task) => (
                                     <div className="mb-3" key={task.id}>
                                         <Tasks
+                                            stage={selected}
                                             data={task}
                                             onFinish={handleFinish}
+                                            onUndone={handleUndone}
                                             onEdit={handleEdit}
                                             onDelete={handleDelete}
                                         />
@@ -206,7 +209,7 @@ function CUTask({ data }) {
 
             {edit && (
                 <PopUpContainer>
-                    <Edit onEdit={handleEdit} data={selectedTask}/>
+                    <Edit onEdit={handleEdit} data={selectedTask} />
                 </PopUpContainer>
             )}
 
@@ -219,6 +222,12 @@ function CUTask({ data }) {
             {del && (
                 <PopUpContainer>
                     <Delete />
+                </PopUpContainer>
+            )}
+
+            {undone && (
+                <PopUpContainer>
+                    <Undone data={selectedTask} onUndone={handleUndone} />
                 </PopUpContainer>
             )}
         </>

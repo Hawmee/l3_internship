@@ -37,11 +37,10 @@ function PersIntern({ interns }) {
                 prenom: item.prenom,
                 email: item.email,
                 phone: item.phone,
-                niveau: item.niveau,
                 filiere: item.filiere,
                 etablissement: item.etablissement,
-                cv_link: null,
-                lm_link: null,
+                cv_lien: null,
+                lm_lien: null,
             });
         }
     };

@@ -31,100 +31,121 @@ function Table({ data, onMail, onInform }) {
                         <table className="table table-fixed text-left  w-full  p-[1rem] border-collapse">
                             <thead className="rounded-[20px] s">
                                 <tr className="sticky text-gray-700 bg-gray-200 z-12 top-0 left-0">
-                                    <th className="rounded-tl-[12px] rounded-bl-[12px]">
-                                        Offre
-                                    </th>
-                                    <th> Unité d'acceuil </th>
                                     <th> Stagiaire </th>
                                     <th>Dossiers du stagiaire</th>
                                     <th>Date d'entretient</th>
                                     <th>Etat</th>
-                                    <th className="rounded-tr-[12px] rounded-br-[12px]">
-                                        {/* {" "} */}
-                                    </th>
+                                    <th className="rounded-tr-[12px] rounded-br-[12px]"></th>
                                 </tr>
                             </thead>
 
                             <tbody>
                                 {data &&
-                                    data.map((item) => (
-                                        <tr key={item.id} className="h-1">
-                                            <td
-                                                className={
-                                                    item.isNew
-                                                        ? "border-l-[5px] border-blue-400"
-                                                        : ""
-                                                }
-                                            >
-                                                {item.offre.nom}
-                                            </td>
-                                            <td>{item.offre.unite.nom}</td>
-                                            <td>
-                                                {item.stagiaire.nom}{" "}
-                                                {item.stagiaire.prenom}
-                                            </td>
-                                            <td>
-                                                <div className="flex flex-row">
-                                                    <a
-                                                        href={
-                                                            item.stagiaire
-                                                                .cv_link
-                                                        }
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="mr-2 flex justify-center bg-gray-600 py-1 px-2 rounded-[15px] text-white text-xs"
-                                                    >
-                                                        CV (lien)
-                                                    </a>
-                                                    <a
-                                                        href={
-                                                            item.stagiaire
-                                                                .lm_link
-                                                        }
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className=" flex justify-center bg-gray-600 py-1 px-2 rounded-[15px] text-white text-xs"
-                                                    >
-                                                        LM (lien)
-                                                    </a>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                {item.date_interview ? (
-                                                    format(formated_date(item.date_interview) , "dd/MM/yyyy , HH:mm")
-                                                ) : (
-                                                    <p>(Choisir une date)</p>
-                                                )}
-                                            </td>                                            <td>
-                                                {item.isInforme ? (
-                                                    <p className="text-blue-500">Stagiaire informé </p>
-                                                ) : (
-                                                    <p className="text-red-500">Stagaire non informé</p>
-                                                )}
-                                            </td>
-                                            <td>
-                                                <div className="flex flex-row items-center justify-center text-white">
-                                                    <button
-                                                        className="text-blue-600 mr-2 px-3 py-1 hover:text-blue-700"
-                                                        onClick={() => {
-                                                            onMail(item);
-                                                        }}
-                                                    >
-                                                        <Mail size={25} />
-                                                    </button>
-                                                    <button
-                                                        className={!item.isInforme ?"text-blue-600 mr-2 px-3 py-1 hover:text-blue-700" :"text-blue-300  mr-2 px-3 py-1" }
-                                                        onClick={() => {
-                                                            onInform(item);
-                                                        }}
-                                                        disabled={item.isInforme}
-                                                    >
-                                                        <MailCheck size={25} />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
+                                    data.map((item) => {
+                                        const isDone = item.status
+                                        return (
+                                            <tr key={item.id} className="h-1">
+                                                <td
+                                                    className={
+                                                        item.isNew
+                                                            ? "border-l-[5px] border-blue-400"
+                                                            : ""
+                                                    }
+                                                >
+                                                    {item.stagiaire.nom}{" "}
+                                                    {item.stagiaire.prenom}
+                                                </td>
+                                                <td>
+                                                    <div className="flex flex-row">
+                                                        <a
+                                                            href={
+                                                                item.stagiaire
+                                                                    .cv_link
+                                                            }
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="mr-2 flex justify-center bg-gray-600 py-1 px-2 rounded-[15px] text-white text-xs"
+                                                        >
+                                                            CV (lien)
+                                                        </a>
+                                                        <a
+                                                            href={
+                                                                item.stagiaire
+                                                                    .lm_link
+                                                            }
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className=" flex justify-center bg-gray-600 py-1 px-2 rounded-[15px] text-white text-xs"
+                                                        >
+                                                            LM (lien)
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    {item.date_entretien ? (
+                                                        format(
+                                                            formated_date(
+                                                                item.date_entretien
+                                                            ),
+                                                            "dd/MM/yyyy , HH:mm"
+                                                        )
+                                                    ) : (
+                                                        <p>
+                                                            (Choisir une date)
+                                                        </p>
+                                                    )}
+                                                </td>{" "}
+                                                <td>
+                                                    <div className="flex flex-row text-white">
+                                                        {item.status ? (
+                                                            <p className="bg-blue-500 px-4 rounded-xl">
+                                                                Terminé
+                                                            </p>
+                                                        ) : item.isInforme ? (
+                                                            <p className="bg-gray-500 px-4 rounded-xl">
+                                                                En attente
+                                                            </p>
+                                                        ) : (
+                                                            <p className="bg-red-500 px-4 rounded-xl">
+                                                                Non communiqué
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div className="flex flex-row items-center justify-center text-white">
+                                                        <button
+                                                            className="text-blue-600 mr-2 px-3 py-1 hover:text-blue-700 disabled:text-blue-300"
+                                                            onClick={() => {
+                                                                onMail(item);
+                                                            }}
+
+                                                            disabled={isDone}
+                                                        >
+                                                            <Mail size={25} />
+                                                        </button>
+                                                        <button
+                                                            className={
+                                                                !item.isInforme
+                                                                    ? "text-blue-600 mr-2 px-3 py-1 hover:text-blue-700"
+                                                                    : "text-blue-300  mr-2 px-3 py-1"
+                                                            }
+                                                            onClick={() => {
+                                                                onInform(item);
+                                                            }}
+                                                            disabled={
+                                                                (item.isInforme || isDone)
+                                                            }
+                                                        >
+                                                            <MailCheck
+                                                                size={25}
+                                                            />
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
                                 <tr>
                                     <td></td>
                                 </tr>

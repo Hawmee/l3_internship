@@ -20,6 +20,7 @@ import stagiaireReducer from "./features/stagiaire.js";
 import tacheReducer from "./features/tache.js";
 import unitReducer from "./features/unit.js";
 import selectedReducer from "./features/selected.js"
+import demandeReducer from './features/demande.js'
 import "./global.css";
 import router from "./routes/router.jsx";
 import './components/styles/Table.css'
@@ -33,6 +34,7 @@ const store = configureStore({
         toastConfig: toastConfigReducer,
         account: accounReducer,
         attestation: attestationReducer,
+        demande: demandeReducer ,
         entretient: entretientReducer,
         offre: offreReducer,
         perf: perfReducer,
@@ -40,6 +42,7 @@ const store = configureStore({
         stagiaire: stagiaireReducer,
         tache: tacheReducer,
         unit: unitReducer,
+
     },
 });
 

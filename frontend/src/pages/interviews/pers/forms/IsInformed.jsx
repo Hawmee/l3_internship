@@ -1,24 +1,21 @@
-import axios from "axios";
 import React from "react";
-import { useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import { entretiens } from "../../../../services/entretiens";
+import { notifyError, notifySuccess } from "../../../../layouts/MereLayout";
 
 function IsInformed({ handleInform, data }) {
 
-    const url = useSelector(state=>state.backendUrl.value)
-    const toastconfig = useSelector(state=>state.toastConfig.value)
     const id = Number(data.id)
 
     const submit = async()=>{
         try {
-            const informed = await axios.patch(`${url}/informed/${id}`)
-            if(informed){
-                const message = "Action reussite!"
+            const isInformed = await entretiens.informed(id)
+            if(isInformed){
                 handleInform()
-                toast.success(message , toastconfig)
+                notifySuccess()               
             }        
         } catch (error) {
             console.log(error)
+            notifyError()
         }
     }
 

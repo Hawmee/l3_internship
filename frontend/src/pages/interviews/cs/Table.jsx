@@ -1,11 +1,8 @@
-import {
-    FileQuestion,
-    MessageSquareWarning,
-} from "lucide-react";
+import { FileQuestion, MessageSquareWarning } from "lucide-react";
 import React, { useEffect, useRef } from "react";
 import { isArrayNotNull } from "../../../functions/Functions";
 
-function Table({ data, onAffirm, onDeny }) {
+function Table({ data, onDeny }) {
     const tableContainerRef = useRef(null);
 
     useEffect(() => {
@@ -26,13 +23,11 @@ function Table({ data, onAffirm, onDeny }) {
                         <table className="table table-fixed text-left  w-full  p-[1rem] border-collapse">
                             <thead className="rounded-[20px] s">
                                 <tr className="sticky text-gray-700 bg-gray-200 z-12 top-0 left-0">
-                                    <th className="rounded-tl-[12px] rounded-bl-[12px]">
-                                        Offre
-                                    </th>
-                                    <th> Unité d'acceuil </th>
                                     <th> Stagiaire </th>
                                     <th>Dossiers du stagiaire</th>
-                                    <th className="rounded-tr-[12px] rounded-br-[12px]" >Date d'entretient</th>
+                                    <th className="rounded-tr-[12px] rounded-br-[12px]">
+                                        Date d'entretient
+                                    </th>
                                 </tr>
                             </thead>
 
@@ -47,12 +42,8 @@ function Table({ data, onAffirm, onDeny }) {
                                                         : ""
                                                 }
                                             >
-                                                {item.offre.nom}
-                                            </td>
-                                            <td>{item.offre.unite.nom}</td>
-                                            <td>
                                                 {item.stagiaire.nom}{" "}
-                                                {item.stagiaire.prenom}
+                                                {item.stagiaire.prenom}{" "}
                                             </td>
                                             <td>
                                                 <div className="flex flex-row">
@@ -79,15 +70,6 @@ function Table({ data, onAffirm, onDeny }) {
                                                         LM (lien)
                                                     </a>
                                                 </div>
-                                            </td>
-                                            <td>
-                                                {item.date_interview ? (
-                                                    item.date_interview
-                                                ) : (
-                                                    <button className=" text-blue-500 underline underline-offset-2" onClick={()=>{
-                                                        onAffirm(item)
-                                                    }}>Choisir une date</button>
-                                                )}
                                             </td>
                                         </tr>
                                     ))}

@@ -4,15 +4,20 @@ export const stagiaire_status = {
     a_entretenir:"A entretenir",
     en_stage:"En cours de stage",
     arret:"Abandonné",
-    ancien:"Ancien stagiaire"
+    ancien:"Ancien stagiaire" ,
+    refuse: 'Refusé' , 
 }
 
 export const stage_observations = {
+    non_affirme: "Non affirmé",
     re_valide:"Revalidation",
     en_validation:"Validation",
     en_cours :"En Cours",
     abandon : "Annulé",
-    acheve: "Achevé"
+    acheve: "Achevé",
+    cloturation: "Finalisation",
+    cloture : "Cloturé",
+    a_venir: 'A venir',
 }
 
 

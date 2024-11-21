@@ -7,7 +7,7 @@ function Tasks() {
 
   const intern = useSelector(state=>state.stage.value)
   const interns = isArrayNotNull(intern) ? intern.filter(item=>
-    item.offre && item.stagiaire && !item.status 
+    item.stagiaire && !item.status 
   ) : []
 
   console.log(interns)

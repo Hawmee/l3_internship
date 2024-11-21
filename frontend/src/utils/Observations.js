@@ -1,9 +1,13 @@
 export const observation_stage = {
+    non_affirme: "Non affirmé",
     re_valide:"Revalidation",
     en_validation:"Validation",
     en_cours :"En Cours",
     abandon : "Annulé",
-    acheve: "Achevé"
+    acheve: "Achevé",
+    a_venir: 'A venir',
+    cloturation: "Finalisation",
+    cloture : "Cloturé",
 }
 
 
@@ -19,5 +23,7 @@ export const observation_stagiaire = {
     a_entretenir:"A entretenir",
     en_stage:"En cours de stage",
     arret:"Abandonné",
-    ancien:"Ancien stagiaire"
+    ancien:"Ancien stagiaire",
+    refuse: 'Refusé' , 
 }
+

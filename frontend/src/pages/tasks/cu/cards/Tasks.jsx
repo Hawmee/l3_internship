@@ -1,10 +1,10 @@
-import { CheckSquare, PenSquare, Trash2 } from "lucide-react";
+import { CheckSquare, PenSquare, Trash2, XSquare } from "lucide-react";
 import React from "react";
 import { date_d_m_y } from "../../../../functions/Functions";
-import { task_observations } from "../../../../utils/Observations";
+import { observation_stage, task_observations } from "../../../../utils/Observations";
 import { addDays, isWithinInterval, parseISO, startOfDay } from "date-fns";
 
-function Tasks({ data, onDelete, onEdit, onFinish }) {
+function Tasks({ stage , data, onDelete, onEdit, onFinish , onUndone }) {
     const isDisabledEdit = data.status;
 
     const isNearDeadline = (task) => {
@@ -17,9 +17,10 @@ function Tasks({ data, onDelete, onEdit, onFinish }) {
       };
 
     const nearDeadline = isNearDeadline(data)
-    const finished = (data.observation == task_observations.acheve || data.observation == task_observations.retard)
+    const finished = (data.observation == task_observations.acheve || data.observation == task_observations.retard || (data.status))
+    const stage_non_accessible = (stage.observation !== observation_stage.en_cours || stage.status)
     const none_edit = data.status
-    console.log(data)
+    const isUnfinished = data.observation == task_observations.inacheve
 
     return (
         <>
@@ -76,24 +77,33 @@ function Tasks({ data, onDelete, onEdit, onFinish }) {
                     </div>
                     <div className="flex flex-row justify-end px-6">
                         <button
-                            className="text-red-500 mr-3"
-                            // disabled={isDisabledEdit}
+                            className="text-red-500 mr-3 disabled:text-red-300"
                             onClick={() => {
                                 onDelete();
                             }}
+                            disabled={stage_non_accessible || finished || isUnfinished}
                         >
                             <Trash2 size={20} />
                         </button>
                         <button
-                            className="mr-3 text-gray-700 hover:text-gray-600 disabled:text-gray-300"
-                            // disabled={isDisabledEdit}
+                            className="mr-3 text-gray-700 hover:text-gray-600 disabled:text-gray-300 border-r-2 border-gray-400 pr-2 "
                             onClick={() => {
                                 onEdit(data);
                             }}
 
-                            disabled={none_edit}
+                            disabled={none_edit || stage_non_accessible || isUnfinished}
                         >
                             <PenSquare size={20} />
+                        </button>
+
+                        <button
+                            className="text-red-500 hover:text-red-600 disabled:text-red-300 mr-2"
+                            onClick={() => {
+                                onUndone(data);
+                            }}
+                            disabled={finished || stage_non_accessible || isUnfinished}
+                        >
+                            <XSquare size={20} />
                         </button>
 
                         <button
@@ -101,7 +111,7 @@ function Tasks({ data, onDelete, onEdit, onFinish }) {
                             onClick={() => {
                                 onFinish(data);
                             }}
-                            disabled={finished}
+                            disabled={finished || stage_non_accessible }
                         >
                             <CheckSquare size={20} />
                         </button>

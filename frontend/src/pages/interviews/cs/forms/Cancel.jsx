@@ -1,24 +1,22 @@
 import axios from 'axios'
 import React from 'react'
-import { useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
+import { entretiens } from '../../../../services/entretiens'
+import { notifyError, notifySuccess } from '../../../../layouts/MereLayout'
 
 function Cancel({ interview , handleCancel }) {
-
-  const url = useSelector(state=>state.backendUrl.value)
-  const toastconfig = useSelector(state=>state.toastConfig.value)
   const id = interview.id
 
   const submit = async()=>{
     try {
-      const deleted = await axios.delete(`${url}//enretient/cancel/${id}`)
-      if(deleted){
-        const message = "Action reussite !"
+      const canceled = await entretiens.cancel(id)
+      if(canceled){
         handleCancel()
-        toast.success(message , toastconfig )
+        notifySuccess()
       }
     } catch (error) {
       console.log(error)
+      notifyError()
     }
   }
 

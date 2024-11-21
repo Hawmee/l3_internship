@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import React, { useEffect, useRef } from "react";
 import { isArrayNotNull } from "../../../functions/Functions";
+import { observation_stagiaire } from "../../../utils/Observations";
 
 function Table({ data, onAdd, onEdit, onDelete, onDocs }) {
     const tableContainerRef = useRef(null);
@@ -36,7 +37,6 @@ function Table({ data, onAdd, onEdit, onDelete, onDocs }) {
                                     <th className="rounded-tl-[12px] rounded-bl-[12px]">
                                         Nom & Prenom
                                     </th>
-                                    <th> niveau </th>
                                     <th> Filiere </th>
                                     <th> Observation </th>
                                     <th> Dossiers </th>
@@ -53,15 +53,44 @@ function Table({ data, onAdd, onEdit, onDelete, onDocs }) {
                                             <td>
                                                 {item.nom} {item.prenom}
                                             </td>
-                                            <td>{item.niveau}</td>
                                             <td>{item.filiere}</td>
-                                            <td>{item.observation}</td>
                                             <td>
-                                                {item.cv_link &&
-                                                item.lm_link ? (
+                                                <div className="flex flex-row justify-start">
+                                                    <p
+                                                        className={`px-4 text-white rounded-xl
+                                                                ${
+                                                                    (item.observation ==
+                                                                        observation_stagiaire.a_entretenir ||
+                                                                        item.observation ==
+                                                                            observation_stagiaire.ancien) &&
+                                                                    "bg-gray-500"
+                                                                }
+                                                                ${
+                                                                    (item.observation ==
+                                                                        observation_stagiaire.postulant ||
+                                                                        item.observation ==
+                                                                            observation_stagiaire.en_stage) &&
+                                                                    "bg-blue-500"
+                                                                }
+                                                                ${
+                                                                    (item.observation ==
+                                                                        observation_stagiaire.refuse ||
+                                                                        item.observation ==
+                                                                            observation_stagiaire.arret) &&
+                                                                    "bg-red-500"
+                                                                }
+                                                            `}
+                                                    >
+                                                        {item.observation}
+                                                    </p>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {item.cv_lien &&
+                                                item.lm_lien ? (
                                                     <div className="flex flex-row">
                                                         <a
-                                                            href={item.cv_link}
+                                                            href={item.cv_lien}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
                                                             className="mr-2 flex justify-center bg-gray-600 py-1 px-2 rounded-[15px] text-white text-xs"
@@ -69,7 +98,7 @@ function Table({ data, onAdd, onEdit, onDelete, onDocs }) {
                                                             CV (lien)
                                                         </a>
                                                         <a
-                                                            href={item.lm_link}
+                                                            href={item.lm_lien}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
                                                             className=" flex justify-center bg-gray-600 py-1 px-2 rounded-[15px] text-white text-xs"
@@ -145,17 +174,6 @@ function Table({ data, onAdd, onEdit, onDelete, onDocs }) {
                             </div>
                         )}
                     </div>
-                </div>
-                <div className="btn_place absolute bottom-0 right-0 pb-2 pr-[8px]">
-                    <button
-                        className="btn_style flex flex-row items-center justify-center bg-blue-500 px-4 py-1 w-full rounded-tl-[7px] rounded-br-[7px] text-gray-100 hover:bg-blue-600 "
-                        onClick={() => {
-                            onAdd();
-                        }}
-                    >
-                        <CopyPlus size={17} />
-                        <p className="ml-1">Ajouter</p>
-                    </button>
                 </div>
             </div>
         </>

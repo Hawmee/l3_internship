@@ -17,26 +17,13 @@ export const informIntern = async(req,res)=>{
         if(sent){
             const entretien = await prisma.entretients.update({
                 where:{id:Number(datas.interview_id)},
-                data:{isInforme:true},
-                include:{ offre:true}
-                
+                data:{isInforme:true},                
             })
 
             if(entretien){
                 const updatedEntretien = await prisma.entretients.findUnique({
                     where: { id: Number(datas.interview_id) },
                     include: {
-                        offre: {
-                            include: {
-                                unite:{
-                                    include:{
-                                        users:true
-                                    }
-                                },
-                                stages:true,
-                                entretiens:true,
-                            },
-                        },
                         stagiaire: {
                             include: {
                                 entretiens: true,

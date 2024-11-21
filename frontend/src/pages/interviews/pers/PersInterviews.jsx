@@ -16,7 +16,7 @@ function PersInterviews({ interviews }) {
     const isNewInterviews =
         isArray(interviews) &&
         interviews.some(
-            (interview) => interview.isNew == true && interview.date_interview
+            (interview) => interview.isNew == true
         );
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedStatus, setSelectedStatus] = useState("all");
@@ -41,7 +41,7 @@ function PersInterviews({ interviews }) {
     };
 
     const nonInformed_interv = interviews.filter(
-        (interview) => interview.date_interview
+        (interview) => interview.date_entretien
     );
 
     const mark_viewed = async () => {
@@ -64,12 +64,12 @@ function PersInterviews({ interviews }) {
     }, [isNewInterviews]);
 
     useEffect(() => {
-        if (!nonInformed_interv) {
+        if (!interviews) {
             setFilteredData([]);
             return;
         }
 
-        const filtered = nonInformed_interv.filter((item) => {
+        const filtered = interviews.filter((item) => {
             const statusMatch =
                 selectedStatus == "all" ||
                 (selectedStatus == "!informe"
@@ -94,7 +94,6 @@ function PersInterviews({ interviews }) {
             return statusMatch && (nameMatch || allNameMatch || offreMatch || division);
         });
 
-        console.log(nonInformed_interv);
 
         setFilteredData(filtered);
     }, [interviews, selectedStatus, searchTerm]);
@@ -102,7 +101,8 @@ function PersInterviews({ interviews }) {
 
     useEffect(()=>{
         if(interviews){
-            const non_informe = nonInformed_interv.some(item=>!item.isInforme)
+            const interv = interviews
+            const non_informe = interv.some(item=>!item.isInforme)
             if(non_informe){
                 setSelectedStatus('!informe')
             }else{

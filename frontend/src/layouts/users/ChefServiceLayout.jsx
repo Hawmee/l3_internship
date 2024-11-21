@@ -18,7 +18,7 @@ import axios from "axios";
 import { editAccount, setAccounts } from "../../features/accounts";
 import { setAttestation } from "../../features/attestation";
 import Socket from "../../features/Socket";
-import { isArray } from "../../functions/Functions";
+import { isArray, isArrayNotNull } from "../../functions/Functions";
 
 function ChefServiceLayout() {
     const url = useSelector((state) => state.backendUrl.value);
@@ -53,6 +53,7 @@ function ChefServiceLayout() {
     const accounts = useSelector((state) => state.account.value);
     const interviews = useSelector((state) => state.entretient.value);
     const attestations = useSelector((state) => state.attestation.value);
+    const interns = useSelector((state) => state.stagiaire.value);
     const user = useSelector((state) => state.currentUser.value);
     const navigate = useNavigate();
 
@@ -61,11 +62,9 @@ function ChefServiceLayout() {
 
     const isNewInterviews =
         isArray(interviews) &&
-        interviews.some((interv) => interv.isNew && !interv.date_interview && interv.status);
-
-    // const isNewInternShip = isArray(attestations)
-    //     ? attestations.some((attestation) => attestation.isNew)
-    //     : false;
+        interviews.some(
+            (interv) => interv.isNew && !interv.date_interview && interv.status
+        );
 
     const isNewAttestation =
         isArray(attestations) &&
@@ -74,6 +73,9 @@ function ChefServiceLayout() {
                 attestation.isNew === true && attestation.status === false
         );
 
+    const isNewStagiaire = isArrayNotNull(interns)
+        ? interns.some((item) => item.isNew)
+        : false;
 
     useEffect(() => {
         getAllAccounts();
@@ -108,21 +110,22 @@ function ChefServiceLayout() {
                                 href={"/chefService/"}
                             /> */}
                             <SideBarLinks
+                                icon={<BookUser size={22} />}
+                                text="Stagiaires"
+                                href={"interns"}
+                                alert={isNewStagiaire}
+                            />
+                            <SideBarLinks
                                 icon={<Handshake size={22} />}
                                 text="Entretiens"
                                 href={"/chefService/"}
                                 alert={isNewInterviews}
                             />
                             {/* <SideBarLinks
-                        icon={<NotebookText size={22} />}
-                        text="Offres"
-                        href={"/chefService/offers"}
-                    /> */}
-                            <SideBarLinks
                                 icon={<GraduationCap size={22} />}
                                 text="Stages"
                                 href={"/chefService/Internships"}
-                            />
+                            /> */}
                             <SideBarLinks
                                 icon={<FileText size={22} />}
                                 text="Attestations"

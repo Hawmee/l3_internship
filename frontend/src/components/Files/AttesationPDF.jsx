@@ -9,7 +9,14 @@ import {
 import mref from "./Logos/mef.jpg";
 import rpbk from "./Logos/rpbm.jpg";
 
-function AttestationPDF({ attestation , reponse , evaluation , isAttestation, isReponse, isEvaluation }) {
+function AttestationPDF({
+    attestation,
+    reponse,
+    evaluation,
+    isAttestation,
+    isReponse,
+    isEvaluation,
+}) {
     const styles = StyleSheet.create({
         page: {
             paddingHorizontal: 24,
@@ -177,7 +184,7 @@ function AttestationPDF({ attestation , reponse , evaluation , isAttestation, is
                             ATTESTATION DE STAGE
                         </Text>
                         <Text style={styles.certificateNumber}>
-                            ---  {attestation.numero}  ---
+                            --- {attestation.numero} ---
                         </Text>
 
                         {/* Main Content */}
@@ -191,9 +198,10 @@ function AttestationPDF({ attestation , reponse , evaluation , isAttestation, is
                                 <Text style={styles.boldText}>
                                     {attestation.stagiaire}
                                 </Text>{" "}
-                                a effectué un stage de {attestation.lettre_duree} ({attestation.duree}) mois auprès de
-                                mon établissement dans le cadre d'une initiation
-                                professionnelle.
+                                a effectué un stage de{" "}
+                                {attestation.lettre_duree} ({attestation.duree})
+                                mois auprès de mon établissement dans le cadre
+                                d'une initiation professionnelle.
                             </Text>
                             <Text style={{ marginTop: 12 }}>
                                 Cette attestation lui est délivrée suite à la
@@ -303,20 +311,17 @@ function AttestationPDF({ attestation , reponse , evaluation , isAttestation, is
                             }}
                         >
                             <Text style={{ borderBottom: "1px solid #000" }}>
-                                NOMBRE DE STAGIAIRES A ACCEUILLIR
+                                STAGIAIRES A ACCEUILLIR
                             </Text>
                         </View>
                         <Text style={{ fontSize: 14, marginTop: 12 }}>
-                            Mention : {reponse.offre.mention}
+                            Mention : {reponse.stagiaire.mention}
                         </Text>
                         <Text style={{ fontSize: 14, marginTop: 12 }}>
-                            Option : {reponse.offre.option}
+                            Nombre: {reponse.stagiaire.nombre}
                         </Text>
                         <Text style={{ fontSize: 14, marginTop: 12 }}>
-                            Nombre: {reponse.offre.nombre}
-                        </Text>
-                        <Text style={{ fontSize: 14, marginTop: 12 }}>
-                            Periode de Stage: {reponse.offre.periode} Mois
+                            Periode de Stage: {reponse.stagiaire.periode}
                         </Text>
                     </View>
                     <View
@@ -397,13 +402,16 @@ function AttestationPDF({ attestation , reponse , evaluation , isAttestation, is
                             </Text>
                         </View>
                         <Text style={{ fontSize: 12, marginTop: 10 }}>
-                            Nom et Prenoms:{''}{evaluation.actor.encadreur.nom}
+                            Nom et Prenoms:{""}
+                            {evaluation.actor.encadreur.nom}
                         </Text>
                         <Text style={{ fontSize: 12, marginTop: 10 }}>
-                            Fonction:{''}{evaluation.actor.encadreur.fonction}
+                            Fonction:{""}
+                            {evaluation.actor.encadreur.fonction}
                         </Text>
                         <Text style={{ fontSize: 12, marginTop: 10 }}>
-                            Departement/Service:{''}{evaluation.actor.encadreur.serv}
+                            Departement/Service:{""}
+                            {evaluation.actor.encadreur.serv}
                         </Text>
 
                         <View
@@ -419,16 +427,19 @@ function AttestationPDF({ attestation , reponse , evaluation , isAttestation, is
                             </Text>
                         </View>
                         <Text style={{ fontSize: 12, marginTop: 10 }}>
-                            Nom et Prenoms:{""}{evaluation.actor.stagiaire.nom}
+                            Nom et Prenoms:{""}
+                            {evaluation.actor.stagiaire.nom}
                         </Text>
                         <Text style={{ fontSize: 12, marginTop: 10 }}>
-                            Etablissement d'Origine: {evaluation.actor.stagiaire.origine}
+                            Etablissement d'Origine:{" "}
+                            {evaluation.actor.stagiaire.origine}
                         </Text>
                         <Text style={{ fontSize: 12, marginTop: 10 }}>
                             Niveau d'Etude: {evaluation.actor.stagiaire.niveau}
                         </Text>
                         <Text style={{ fontSize: 12, marginTop: 10 }}>
-                            Periode de Stage: {evaluation.actor.stagiaire.periode} mois
+                            Periode de Stage:{" "}
+                            {evaluation.actor.stagiaire.periode} mois
                         </Text>
 
                         <View
@@ -467,7 +478,10 @@ function AttestationPDF({ attestation , reponse , evaluation , isAttestation, is
                                     respect dest hierarchies existantes)
                                 </Text>
                             </View>
-                            <Text style={{ fontSize: 12 }}> {evaluation.pro}{" "}/20</Text>
+                            <Text style={{ fontSize: 12 }}>
+                                {" "}
+                                {evaluation.pro} /20
+                            </Text>
                         </View>
                         <View
                             style={{
@@ -481,7 +495,9 @@ function AttestationPDF({ attestation , reponse , evaluation , isAttestation, is
                             <Text style={{ fontSize: 12 }}>
                                 Pertinence Technique :
                             </Text>
-                            <Text style={{ fontSize: 12 }}>{evaluation.tech}{" "}/20</Text>
+                            <Text style={{ fontSize: 12 }}>
+                                {evaluation.tech} /20
+                            </Text>
                         </View>
                         <View
                             style={{
@@ -495,7 +511,10 @@ function AttestationPDF({ attestation , reponse , evaluation , isAttestation, is
                             <Text style={{ fontSize: 12 }}>
                                 Pertinence Pédagogique :
                             </Text>
-                            <Text style={{ fontSize: 12 }}> {evaluation.pedago}{" "}/20</Text>
+                            <Text style={{ fontSize: 12 }}>
+                                {" "}
+                                {evaluation.pedago} /20
+                            </Text>
                         </View>
                         <View
                             style={{
@@ -507,7 +526,10 @@ function AttestationPDF({ attestation , reponse , evaluation , isAttestation, is
                             }}
                         >
                             <Text style={{ fontSize: 12 }}>TOTAL :</Text>
-                            <Text style={{ fontSize: 12 }}> {evaluation.total}{" "}/60</Text>
+                            <Text style={{ fontSize: 12 }}>
+                                {" "}
+                                {evaluation.total} /60
+                            </Text>
                         </View>
                         <View
                             style={{
@@ -519,7 +541,10 @@ function AttestationPDF({ attestation , reponse , evaluation , isAttestation, is
                             }}
                         >
                             <Text style={{ fontSize: 12 }}>OBSERVATION :</Text>
-                            <Text style={{ fontSize: 12 }}>{" "}{evaluation.observ}</Text>
+                            <Text style={{ fontSize: 12 }}>
+                                {" "}
+                                {evaluation.observ}
+                            </Text>
                         </View>
                     </View>
                     <View
