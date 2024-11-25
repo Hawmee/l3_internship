@@ -20,7 +20,7 @@ model Users{
   prenom String
   email String
   status Boolean @default(false)
-  password String
+  password String?
   isChefService Boolean @default(false)
   isChefUnit Boolean @default(false)
   isPersCellule Boolean @default(false)
@@ -42,7 +42,6 @@ model Unites {
   
   
   users Users[] @relation("UserToUnit")
-  offers Offres[] @relation("OffersToUnit")
   bureaux Unites[] @relation("UnitToDivision")
   stages Stages[] @relation("StageToUnite")
 }
@@ -50,27 +49,12 @@ model Unites {
 
 model Demande{
   id Int @id @default(autoincrement())
-  numero String
+  numero String @unique
   date_arrive DateTime
   cv_lien String?
   lm_lien String?
   isRegistred Boolean @default(false)
   isNew Boolean @default(true)
-}
-
-
-
-model Offres {
-  id Int @id @default(autoincrement())
-  nom String
-  mention_requise String
-  option_requise String
-  nombre_stagiaire Int @default(1)
-  duree Int @default(1)
-  isDispo Boolean @default(true)
-  unite_id Int?
-  unite Unites? @relation("OffersToUnit" , fields: [unite_id] , references: [id] , onDelete: Cascade , onUpdate: Cascade)
-
 }
 
 model Stagiaires {

@@ -34,15 +34,30 @@ export const informIntern = async(req,res)=>{
                 });
 
                 req.io.emit("updated_entretient" , updatedEntretien)
-                
-                if(updatedEntretien.offre){
-                    req.io.emit("updated_offre", updatedEntretien.offre)
-                }        
+                    
             }
 
             return res.status(200).send({message:"Mail envoyé qvec succes"})
         }
         return res.status(400).send({message:"Mail non envoyé"})
+
+    } catch (error) {
+        res.status(500).send({message: error})
+    }
+}
+
+
+export const informFinalisation = async(req,res)=>{
+    const datas = req.body
+    try {
+
+        const mail_option ={
+            to: datas.receiver_mail,
+            subject: " Finalisation de Stage ,",
+            text:datas.content
+        }
+        const sent = await transporter.sendMail(mail_option)
+        return res.status(200).send({message: sent})
 
     } catch (error) {
         res.status(500).send({message: error})

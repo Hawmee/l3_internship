@@ -403,15 +403,15 @@ function AttestationPDF({
                         </View>
                         <Text style={{ fontSize: 12, marginTop: 10 }}>
                             Nom et Prenoms:{""}
-                            {evaluation.actor.encadreur.nom}
+                            {evaluation.encadreur.nom}
                         </Text>
                         <Text style={{ fontSize: 12, marginTop: 10 }}>
                             Fonction:{""}
-                            {evaluation.actor.encadreur.fonction}
+                            {evaluation.encadreur.fonction}
                         </Text>
                         <Text style={{ fontSize: 12, marginTop: 10 }}>
                             Departement/Service:{""}
-                            {evaluation.actor.encadreur.serv}
+                            {evaluation.encadreur.serv}
                         </Text>
 
                         <View
@@ -428,18 +428,18 @@ function AttestationPDF({
                         </View>
                         <Text style={{ fontSize: 12, marginTop: 10 }}>
                             Nom et Prenoms:{""}
-                            {evaluation.actor.stagiaire.nom}
+                            {evaluation.stagiaire.nom}
                         </Text>
                         <Text style={{ fontSize: 12, marginTop: 10 }}>
                             Etablissement d'Origine:{" "}
-                            {evaluation.actor.stagiaire.origine}
+                            {evaluation.stagiaire.origine}
                         </Text>
                         <Text style={{ fontSize: 12, marginTop: 10 }}>
-                            Niveau d'Etude: {evaluation.actor.stagiaire.niveau}
+                            Mention: {evaluation.stagiaire.filiere}
                         </Text>
                         <Text style={{ fontSize: 12, marginTop: 10 }}>
                             Periode de Stage:{" "}
-                            {evaluation.actor.stagiaire.periode} mois
+                            {evaluation.stagiaire.periode}
                         </Text>
 
                         <View
@@ -480,7 +480,7 @@ function AttestationPDF({
                             </View>
                             <Text style={{ fontSize: 12 }}>
                                 {" "}
-                                {evaluation.pro} /20
+                                {evaluation.perf.pro} /20
                             </Text>
                         </View>
                         <View
@@ -496,7 +496,7 @@ function AttestationPDF({
                                 Pertinence Technique :
                             </Text>
                             <Text style={{ fontSize: 12 }}>
-                                {evaluation.tech} /20
+                                {evaluation.perf.tech} /20
                             </Text>
                         </View>
                         <View
@@ -513,7 +513,7 @@ function AttestationPDF({
                             </Text>
                             <Text style={{ fontSize: 12 }}>
                                 {" "}
-                                {evaluation.pedago} /20
+                                {evaluation.perf.pedago} /20
                             </Text>
                         </View>
                         <View
@@ -528,7 +528,7 @@ function AttestationPDF({
                             <Text style={{ fontSize: 12 }}>TOTAL :</Text>
                             <Text style={{ fontSize: 12 }}>
                                 {" "}
-                                {evaluation.total} /60
+                                {evaluation.perf.total} /60
                             </Text>
                         </View>
                         <View
@@ -543,7 +543,7 @@ function AttestationPDF({
                             <Text style={{ fontSize: 12 }}>OBSERVATION :</Text>
                             <Text style={{ fontSize: 12 }}>
                                 {" "}
-                                {evaluation.observ}
+                                {evaluation.perf.observ}
                             </Text>
                         </View>
                     </View>

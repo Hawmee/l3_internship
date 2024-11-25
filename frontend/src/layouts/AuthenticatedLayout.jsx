@@ -10,7 +10,6 @@ import {
     newEntretient,
     setEntretient,
 } from "../features/entretient";
-import { deleteOffre, editOffre, newOffre, setOffre } from "../features/offres";
 import Socket from "../features/Socket";
 import { editStage, newStage, setStage } from "../features/stage";
 import {
@@ -24,7 +23,14 @@ import { newPerf, setPerf } from "../features/perf";
 import { editAttestation, newAttestation } from "../features/attestation";
 import { deleteTache, editTache, newTache } from "../features/tache";
 import { demande } from "../services/demande";
-import { editDemande, newDemande, setDemande } from "../features/demande";
+import {
+    deleteDemande,
+    editDemande,
+    newDemande,
+    setDemande,
+} from "../features/demande";
+import { editAccount, setAccounts } from "../features/accounts";
+import { editUnit } from "../features/unit";
 
 function Authenticated() {
     const navigate = useNavigate();
@@ -111,10 +117,7 @@ function Authenticated() {
     }, [user]);
 
     useEffect(() => {
-        socket.on("new_offre", (offre) => {
-            dispatch(newOffre(offre));
-            // console.log("lol lsi");
-        });
+
 
         if (user) {
             socket.on(`user_validated/${user.matricule}`, (data) => {
@@ -152,10 +155,6 @@ function Authenticated() {
             dispatch(newDemande(demande));
         });
 
-        socket.on("updated_offre", (offre) => {
-            dispatch(editOffre(offre));
-        });
-
         socket.on("updated_performance", (performance) => {
             dispatch(setPerf(performance));
         });
@@ -180,10 +179,17 @@ function Authenticated() {
             dispatch(editTache(tache));
         });
 
-        socket.on('updated_demande' , viewed=>{
-            dispatch(editDemande(viewed))
-        })
+        socket.on("updated_demande", (viewed) => {
+            dispatch(editDemande(viewed));
+        });
 
+        socket.on("updated_user", (user) => {
+            dispatch(editAccount(user));
+        });
+
+        socket.on('updated_unit' , unit=>{
+            dispatch(editUnit(unit))
+        } )
 
         socket.on("deleted_stagiaire", (id) => {
             dispatch(deleteStagiaire(Number(id)));
@@ -195,14 +201,12 @@ function Authenticated() {
         socket.on("deleted_entretient", (id) => {
             dispatch(deleteEntretient(Number(id)));
         });
-
+        socket.on("del_demande", (id) => {
+            dispatch(deleteDemande(Number(id)));
+            // console.log(id)
+        });
 
         return () => {
-            socket.off("new_offre");
-            if (user) {
-                socket.off(`user_validated/${user.matricule}`);
-            }
-
             socket.off("new_entretient");
             socket.off("new_stagiaire");
             socket.off("new_stage");
@@ -211,18 +215,20 @@ function Authenticated() {
             socket.off("new_tache");
             socket.off("new_demande");
 
-            socket.off("updated_offre");
             socket.off("updated_performance");
             socket.off("updated_entretient");
             socket.off("update_stagiaire");
             socket.off("updated_stage");
             socket.off("updated_attestation");
             socket.off("updated_tache");
-            socket.off('updated_demande')
+            socket.off("updated_demande");
+            socket.off(`updated_user`);
+            socket.off('updated_unit')
 
             socket.off("deleted_stagiaire");
             socket.off("deleted_tache");
             socket.off("deleted_entretient");
+            socket.off("del_demande");
         };
     }, [dispatch, socket]);
 

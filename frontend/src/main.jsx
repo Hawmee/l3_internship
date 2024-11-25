@@ -13,7 +13,6 @@ import toastConfigReducer from "./features/toastConfig.js";
 import accounReducer from "./features/accounts.js";
 import attestationReducer from "./features/attestation.js";
 import entretientReducer from "./features/entretient.js";
-import offreReducer from "./features/offres.js";
 import perfReducer from "./features/perf.js";
 import stageReducer from "./features/stage.js";
 import stagiaireReducer from "./features/stagiaire.js";
@@ -36,7 +35,6 @@ const store = configureStore({
         attestation: attestationReducer,
         demande: demandeReducer ,
         entretient: entretientReducer,
-        offre: offreReducer,
         perf: perfReducer,
         stage: stageReducer,
         stagiaire: stagiaireReducer,

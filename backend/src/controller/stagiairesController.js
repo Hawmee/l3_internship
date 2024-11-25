@@ -118,7 +118,7 @@ export const partialUpdateStagiaire = async (req, res) => {
             return res.status(404).send({ message: "Stagiaire not found" });
         }
 
-        const fileUpdates = { cv_link: stagiaire.cv_link, lm_link: stagiaire.lm_link }; 
+        const fileUpdates = { cv_lien: stagiaire.cv_lien, lm_lien: stagiaire.lm_lien }; 
         const expectedFiles = ["cv_lien", "lm_lien"];
         const newLinks = [];
         let uploadErrorOccurred = false;

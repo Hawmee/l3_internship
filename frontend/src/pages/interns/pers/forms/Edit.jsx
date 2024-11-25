@@ -25,16 +25,20 @@ function Edit({ method, handle_edit, data }) {
 
     const submit = async (datas) => {
         setIsLoading(true);
+        const body = {
+            ...datas,
+            nom: (datas.nom).toUpperCase()
+        }
         const formData = new FormData();
-        Object.entries(datas).forEach(([key, value]) => {
+        Object.entries(body).forEach(([key, value]) => {
             formData.append(key, value);
         });
 
-        if (datas.cv_link && datas.cv_link[0]) {
-            formData.append("cv_lien", datas.cv_link[0]);
+        if (datas.cv_lien && datas.cv_lien[0]) {
+            formData.append("cv_lien", datas.cv_lien[0]);
         }
-        if (datas.lm_link && datas.lm_link[0]) {
-            formData.append("lm_lien", datas.lm_link[0]);
+        if (datas.lm_lien && datas.lm_lien[0]) {
+            formData.append("lm_lien", datas.cv_lien[0]);
         }
 
         try {

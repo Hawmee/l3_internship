@@ -3,9 +3,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import Authenticated from "../layouts/AuthenticatedLayout";
 import Guest from '../layouts/GuestLayout'
 import ChefServiceLayout from "../layouts/users/ChefServiceLayout";
-import Dashboard from "../pages/dashboard/Dashboard";
 import InterViews from "../pages/interviews/InterViews";
-import Offers from "../pages/Offers/Offers";
 import Interns from "../pages/interns/Interns"
 import InternShips from "../pages/internShips/InternShips"
 import Accounts from "../pages/accounts/Accounts"

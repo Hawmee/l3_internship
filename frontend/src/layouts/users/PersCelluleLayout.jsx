@@ -55,7 +55,7 @@ function PersCelluleLayout() {
     }) : false
 
     const attestations = isArrayNotNull(attestation)
-        ? attestation.filter((item) => item.stage.stagiaire && item.stage.offre)
+        ? attestation.filter((item) => item.stage.stagiaire)
         : [];
     const isNewAttestation =
         isArray(attestations) &&

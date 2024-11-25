@@ -117,7 +117,7 @@ function CUTask({ data }) {
                             <div className="flex flex-row  text-gray-600 py-2 rounded-[12px] bg-gray-200 px-2">
                                 <input
                                     type="text"
-                                    placeholder="Rechercher(offre , stagiaire , date)"
+                                    placeholder="Rechercher(stagiaire , date , ..)"
                                     className="w-64 bg-transparent outline-none placeholder:text-gray-500 px-1"
                                     // onChange={(e) => {
                                     //     setSearchTerm(e.target.value);

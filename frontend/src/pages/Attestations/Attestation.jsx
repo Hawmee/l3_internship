@@ -10,8 +10,8 @@ function Attestation() {
     const attestations = useSelector(state=>state.attestation.value)
     const internships = useSelector(state=>state.stage.value)
 
-    const attestation  = isArrayNotNull(attestations) ? attestations.filter(item=>item.stage.stagiaire && item.stage.offre) : []
-    const internship = isArrayNotNull(internships) ? internships.filter(item=> item.stagiaire && item.offre) : []
+    const attestation  = isArrayNotNull(attestations) ? attestations.filter(item=>item.stage.stagiaire ) : []
+    const internship = isArrayNotNull(internships) ? internships.filter(item=> item.stagiaire) : []
 
     console.log(attestations)
 

@@ -1,8 +1,12 @@
 import React from "react";
-import { date_d_m_y } from "../../../../functions/Functions";
+import { date_d_m_y, getDomain } from "../../../../functions/Functions";
 import { observation_stage } from "../../../../utils/Observations";
+import { DatabaseIcon } from "lucide-react";
 
 function InternShip({ data }) {
+
+    const stage = data
+
     return (
         <>
             <>
@@ -17,8 +21,10 @@ function InternShip({ data }) {
                             <div className="flex flex-col text-base mt-6  pb-2 ">
                                 <div className="mb-4">
                                     <p className="inline">-Theme:</p>
-                                    <p className="inline ml-2">
-                                        {data.theme}
+                                    <p className="inline ml-2 text-blue-400">
+                                        {data.theme_definitif
+                                            ? data.theme_definitif
+                                            : data.theme_provisoir}
                                     </p>
                                 </div>
                                 <div className="mb-4">
@@ -39,38 +45,67 @@ function InternShip({ data }) {
                                         {date_d_m_y(data.date_fin)}
                                     </p>
                                 </div>
-                                <div className="mb-4">
-                                    <p className="inline">-Observation:</p>
-                                    <p className={`
-                                        inline ml-2 text-white px-2 py-1 rounded-[20px]
-                                        ${(data.observation == observation_stage.acheve) && "bg-blue-500" }
-                                        ${(data.observation == observation_stage.abandon || data.observation== observation_stage.re_valide)&& "bg-red-500"}
-                                        ${(data.observation == observation_stage.en_cours || data.observation == observation_stage.en_validation)&& "bg-gray-600"}
-                                    `}
+                                <div className="mb-3 flex flex-row">
+                                    <p className="mr-2">Observation :</p>
+                                    <p
+                                        className={`px-4 text-white rounded-2xl 
+                                                ${
+                                                    (stage.observation ==
+                                                        observation_stage.non_affirme ||
+                                                        stage.observation ==
+                                                            observation_stage.en_validation ||
+                                                        stage.observation ==
+                                                            observation_stage.a_venir ||
+                                                        stage.observation ==
+                                                            observation_stage.cloturation) &&
+                                                    "bg-gray-500"
+                                                }
+                                                ${
+                                                    (stage.observation ==
+                                                        observation_stage.en_cours ||
+                                                        stage.observation ==
+                                                            observation_stage.acheve ||
+                                                        stage.observation ==
+                                                            observation_stage.cloture) &&
+                                                    "bg-blue-500"
+                                                }
+                                                ${
+                                                    (stage.observation ==
+                                                        observation_stage.re_valide ||
+                                                        stage.observation ==
+                                                            observation_stage.abandon) &&
+                                                    "bg-red-500"
+                                                }
+                                            `}
                                     >
-                                        {data.observation}
+                                        {!stage.unite
+                                            ? "A assigner"
+                                            : stage.observation}
                                     </p>
                                 </div>
-                                <div className=" whitespace-normal ">
-                                    <p className="inline">
-                                        -Rapport de Stage :
+                                <div className="mb-3 flex flex-row">
+                                    <p className="mr-2 whitespace-nowrap">
+                                        Rapport de stage :
                                     </p>
-                                    {data.book_link && (
-                                        <a
-                                            href={data.book_link}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="inline text-blue-400 ml-2"
-                                        >
-                                            Voir le Rapport de Stage sur DRIVE
-                                        </a>
+                                    {data.book_link ? (
+                                        <div className="flex flex-row items-center">
+                                            <div className="mr-2">
+                                                <a
+                                                    href={data.book_link}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-blue-500 underline underline-offset-2"
+                                                >
+                                                    {getDomain(data.book_link)}
+                                                    /RPS_
+                                                    {data.id}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <p>- - -</p>
                                     )}
-                                    {!data.book_link && (
-                                        <p className=" inline ml-2 text-red-400">
-                                            (Stage non affrimé )
-                                        </p>
-                                    )}
-                                </div>{" "}
+                                </div>
                             </div>
                         </>
                     )}

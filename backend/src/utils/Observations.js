@@ -4,8 +4,10 @@ export const stagiaire_status = {
     a_entretenir:"A entretenir",
     en_stage:"En cours de stage",
     arret:"Abandonné",
-    ancien:"Ancien stagiaire" ,
     refuse: 'Refusé' , 
+    accompli: "Stage Accompli",
+    finalisation: "Finalisation",
+    cloture:"Stage Cloturé" ,
 }
 
 export const stage_observations = {

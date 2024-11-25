@@ -7,6 +7,7 @@ import { format, startOfDay } from 'date-fns'
 import { notifyError, notifySuccess } from '../../../../layouts/MereLayout'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
+import { dateType } from '../../../../functions/Functions'
 
 function Add({onAddTasks , data}) {
 
@@ -16,7 +17,8 @@ function Add({onAddTasks , data}) {
   const url = useSelector(state=>state.backendUrl.value)
   const fin = format(new Date(stage.date_fin) , "yyyy-MM-dd" )
 
-
+  const minDate = dateType(stage.date_debut)
+  const maxDate = dateType(stage.date_fin)
 
 
   const submit = async(data)=>{
@@ -68,9 +70,9 @@ function Add({onAddTasks , data}) {
                       label='Date limite'
                       name='date_fin'
                       type="date"
-                      min={today}
+                      min={minDate ? minDate : today}
                       defaultValue={today}
-                      max={fin}
+                      max={maxDate}
                     />
                   </div>
                     <div className='text-white flex flex-row justify-end mt-6'>

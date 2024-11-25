@@ -9,7 +9,6 @@ export const getAllUnit = async(req,res)=>{
             include: {
                 sur_division:true,
                 stages: true,
-                offers:true,
                 users:true,
             }
         })
@@ -29,7 +28,6 @@ export const newUnit = async(req,res)=>{
             include: {
                 sur_division:true,
                 stages: true,
-                offers:true,
                 users:true,
             }
         })
@@ -51,7 +49,6 @@ export const partialUpdateUnit = async (req,res)=>{
             include: {
                 sur_division:true,
                 stages: true,
-                offers:true,
                 users:true,
             }
         })

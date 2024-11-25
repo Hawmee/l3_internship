@@ -123,7 +123,7 @@ function Table({ data, onAdd, onEdit, onDelete }) {
                                     Aucune donnée disponible
                                 </div>
                                 <p className="text-sm text-gray-400">
-                                    Les données d'offres apparaîtront ici une
+                                    Les données de demande apparaîtront ici une
                                     fois disponible
                                 </p>
                             </div>
@@ -138,7 +138,7 @@ function Table({ data, onAdd, onEdit, onDelete }) {
                         }}
                     >
                         <CopyPlus size={17} />
-                        <p className="ml-1">Nouvel offre</p>
+                        <p className="ml-1">Nouvel Demande</p>
                     </button>
                 </div>
             </div>

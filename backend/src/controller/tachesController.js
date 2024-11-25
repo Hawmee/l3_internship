@@ -25,6 +25,9 @@ export const newTache = async (req, res) => {
                 observation: task_observations.en_cours,
                 ...tache_data,
             },
+            include: {
+                stage: true,
+            },
         });
         if (tache) {
             const updatedStage = await prisma.stages.findUnique({
@@ -62,6 +65,9 @@ export const partialUpdateTache = async (req, res) => {
         const tache = await prisma.taches.update({
             where: { id: Number(id) },
             data: updated_tache_data,
+            include: {
+                stage: true,
+            },
         });
 
         if (tache) {
@@ -112,6 +118,9 @@ export const finished = async (req, res) => {
             data: {
                 status: true,
                 observation: newObservaition,
+            },
+            include: {
+                stage: true,
             },
         });
 
@@ -207,6 +216,9 @@ export const unfinished_tasks = async (req, res) => {
                 stage_id: true,
             },
             distinct: ["stage_id"],
+            include: {
+                stage: true,
+            },
         });
 
         for (const task of unfinished_tasks) {
@@ -230,7 +242,7 @@ export const unfinished_tasks = async (req, res) => {
             });
 
             req.io.emit("updated_stage", updated_stage);
-            req.io.emit("updated_tache", updated_tasks);
+            req.io.emit("updated_tache", unfinished_tasks);
         }
         res.status(200).send({ message: "Taches a jours" });
     } catch (error) {

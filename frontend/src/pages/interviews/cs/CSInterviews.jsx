@@ -67,8 +67,6 @@ function CSInterviews({interviews}) {
             searchTerm == ""
                 ? interviews
                 : interviews.filter((interview) => {
-                      const offreName = interview.offre.nom.toLowerCase();
-                      const uniteName = interview.offre.unite.nom.toLowerCase();
                       const stagiairePrenom =
                           interview.stagiaire.prenom.toLowerCase();
                       const stagiaireNomPrenom = `${interview.stagiaire.nom.toLowerCase()} ${stagiairePrenom}`;
@@ -77,7 +75,6 @@ function CSInterviews({interviews}) {
                           : "";
 
                       return (
-                          include(offreName, searchTerm.toLocaleLowerCase()) ||
                           include(uniteName, searchTerm.toLowerCase()) ||
                           include(
                               stagiaireNomPrenom,
@@ -121,7 +118,7 @@ function CSInterviews({interviews}) {
                             <div className="flex flex-row  text-gray-600 py-1 rounded-[12px] bg-gray-200 px-2">
                                 <input
                                     type="text"
-                                    placeholder="Rechercher(offre , stagiaire , date)"
+                                    placeholder="Rechercher(stagiaire , date , ...)"
                                     className="w-64 bg-transparent outline-none placeholder:text-gray-500 px-1"
                                     onChange={(e) => {
                                         setSearchTerm(e.target.value);

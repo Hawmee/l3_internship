@@ -14,7 +14,7 @@ import React, { useEffect, useRef } from "react";
 import { isArrayNotNull } from "../../../functions/Functions";
 import { observation_stagiaire } from "../../../utils/Observations";
 
-function Table({ data, onInterview }) {
+function Table({ data, onInterview, onRow, row }) {
     const tableContainerRef = useRef(null);
 
     useEffect(() => {
@@ -38,9 +38,7 @@ function Table({ data, onInterview }) {
                                     <th className="rounded-tl-[12px] rounded-bl-[12px]">
                                         Nom & Prenom
                                     </th>
-                                    <td className=" w-32 "> 
-
-                                    </td>
+                                    <td className=" w-32 "></td>
                                     <th className=""> Observation </th>
                                     <th className="rounded-tr-[12px] rounded-br-[12px]">
                                         {" "}
@@ -49,35 +47,74 @@ function Table({ data, onInterview }) {
                             </thead>
 
                             <tbody>
+                                <tr className="h-4"></tr>
                                 {data &&
                                     data.map((item) => {
-                                        const isEntretenir = (item.observation == observation_stagiaire.postulant) 
+                                        const isEntretenir =
+                                            item.observation ==
+                                            observation_stagiaire.postulant;
+                                            const selected = row? (row.id == item.id) : false
                                         return (
-                                            <tr key={item.id} className="h-1">
-                                                <td>
+                                            <tr
+                                                key={item.id}
+                                                className={`h-1 cursor-pointer hover:bg-gray-200 ${selected && "bg-gray-200"} `}
+                                                onClick={() => {
+                                                    onRow(item);
+                                                }}
+                                            >
+                                                <td className="rounded-l-xl">
                                                     {item.nom} {item.prenom}
                                                 </td>
                                                 <td></td>
                                                 <td>
                                                     <div className="flex flex-row justify-start">
-                                                        <p className={`px-4 text-white rounded-xl
-                                                                ${(item.observation == observation_stagiaire.a_entretenir || item.observation == observation_stagiaire.ancien) && "bg-gray-500"}
-                                                                ${(item.observation == observation_stagiaire.postulant || item.observation == observation_stagiaire.en_stage) && "bg-blue-500"}
-                                                                ${(item.observation == observation_stagiaire.refuse || item.observation == observation_stagiaire.arret) && "bg-red-500"}
-                                                            `}>
+                                                        <p
+                                                            className={`px-4 text-white rounded-xl
+                                                                ${
+                                                                    (item.observation ==
+                                                                        observation_stagiaire.a_entretenir ||
+                                                                        item.observation ==
+                                                                            observation_stagiaire.finalisation 
+                                                                    ) &&
+                                                                    "bg-gray-600"
+                                                                }
+                                                                ${
+                                                                    (item.observation ==
+                                                                        observation_stagiaire.postulant ||
+                                                                        item.observation ==
+                                                                            observation_stagiaire.en_stage ||
+                                                                        item.observation == observation_stagiaire.cloture    
+                                                                    ) &&
+                                                                    "bg-blue-500"
+                                                                }
+                                                                ${
+                                                                    (item.observation ==
+                                                                        observation_stagiaire.refuse ||
+                                                                        item.observation ==
+                                                                            observation_stagiaire.arret) &&
+                                                                    "bg-red-500"
+                                                                }
+                                                            `}
+                                                        >
                                                             {item.observation}
                                                         </p>
                                                     </div>
                                                 </td>
 
-                                                <td>
+                                                <td className="rounded-r-xl">
                                                     <div className="flex flex-row  justify-center text-white">
                                                         <button
                                                             className={
                                                                 "flex flex-row bg-blue-500 px-4 py-1 rounded-xl hover:bg-blue-600 disabled:bg-blue-300 "
                                                             }
-                                                            onClick={() => {onInterview(item)}}
-                                                            disabled={!isEntretenir}
+                                                            onClick={() => {
+                                                                onInterview(
+                                                                    item
+                                                                );
+                                                            }}
+                                                            disabled={
+                                                                !isEntretenir
+                                                            }
                                                         >
                                                             <CalendarPlus2
                                                                 size={22}

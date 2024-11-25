@@ -6,7 +6,7 @@ import { Pen, PenLine } from "lucide-react";
 function Stage({ stage, onDefTheme }) {
     const isDefinitif = stage.theme_definitif ? true : false;
     const isEnded = stage
-        ? stage.status || stage.observation == observation_stage.acheve
+        ? stage.status || stage.observation !== observation_stage.en_cours || stage.observation !== observation_stage.a_venir
         : true;
 
     return (
@@ -46,17 +46,21 @@ function Stage({ stage, onDefTheme }) {
                             ${
                                 (stage.observation ==
                                     observation_stage.non_affirme ||
-                                    (stage.observation ==
-                                        observation_stage.en_validation) |
-                                        (stage.observation ==
-                                            observation_stage.a_venir)) &&
+                                    stage.observation ==
+                                        observation_stage.en_validation ||
+                                    stage.observation ==
+                                        observation_stage.a_venir ||
+                                    stage.observation ==
+                                        observation_stage.cloturation) &&
                                 "bg-gray-500"
                             }
                             ${
                                 (stage.observation ==
                                     observation_stage.en_cours ||
                                     stage.observation ==
-                                        observation_stage.acheve) &&
+                                        observation_stage.acheve ||
+                                    stage.observation ==
+                                        observation_stage.cloture) &&
                                 "bg-blue-500"
                             }
                             ${
@@ -85,22 +89,17 @@ function Stage({ stage, onDefTheme }) {
                         <div className="flex flex-row items-center">
                             <div className="mr-2">
                                 <a
-                                    href={""}
+                                    href={stage.book_link}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-blue-500 underline underline-offset-2"
                                 >
-                                    {123}/RapportDeStage_
+                                    {getDomain(stage.book_link)}/RPS_
                                     {stage.id}
                                 </a>
                             </div>
-                            {!stage.status && (
-                                <div className="text-blue-400 ml-2 pl-2 border-l-2 border-gray-400">
-                                    <PenLine size={18} />
-                                </div>
-                            )}
                         </div>
-                    ):(
+                    ) : (
                         <p>- - -</p>
                     )}
                 </div>

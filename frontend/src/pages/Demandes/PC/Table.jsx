@@ -142,7 +142,7 @@ function Table({ data, onStagiaire }) {
                                     Aucune donnée disponible
                                 </div>
                                 <p className="text-sm text-gray-400">
-                                    Les données d'offres apparaîtront ici une
+                                    Les données de demandes apparaîtront ici une
                                     fois disponible
                                 </p>
                             </div>

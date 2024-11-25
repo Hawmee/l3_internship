@@ -51,6 +51,7 @@ function Table({ data, onRow, onInform, onAttestation, onCollected }) {
                             </thead>
 
                             <tbody>
+                                <tr className="h-4"></tr>
                                 {isArrayNotNull(data) &&
                                     data.map((item) => {
                                         const stagiaire = item.stagiaire;
@@ -73,7 +74,7 @@ function Table({ data, onRow, onInform, onAttestation, onCollected }) {
                                                 key={item.id}
                                                 className={`h-1 cursor-pointer ${
                                                     isSelect &&
-                                                    "bg-gray-100 border-r-[4px] border-blue-400"
+                                                    "bg-gray-200"
                                                 }`}
                                                 onClick={() => {
                                                     setSelected(item);

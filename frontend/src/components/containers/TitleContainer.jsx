@@ -3,8 +3,8 @@ import React from "react";
 function TitleContainer({ children }) {
     return (
         <>
-            <div className=" text-lg text-gray-700  flex flex-row justify-center font-extrabold py-1 ">
-                <div className="cursor-pointer mt-2 underline decoration-2 underline-offset-4">
+            <div className="px-12 mb-4 text-center text-lg">
+                <div className=" under-line pb-2">
                     {children}
                 </div>
             </div>

@@ -5,10 +5,7 @@ import MainContainer from "../../../components/containers/MainContainer";
 // import PopUpContainer from "../../../components/containers/PopUpContainer";
 import SearchContainer from "../../../components/containers/SearchContainer";
 import { filterObjSame, isArray, isArrayNotNull } from "../../../functions/Functions";
-// import AddOffre from "./form/AddOffre";
 import Table from "./Table";
-// import Edit from "./form/Edit";
-// import Delete from "./form/Delete";
 import { Search } from "lucide-react";
 import { demande } from "../../../services/demande";
 import PopUpContainer from "../../../components/containers/PopUpContainer";
@@ -16,9 +13,6 @@ import NewStagiaire from "./forms/NewStagiaire";
 
 function PC_demande({ data }) {
     const current_user = useSelector((state) => state.currentUser.value);
-    // const unite_id = current_user.unite.id;
-    // const methodAdd = useForm();
-    // const methodEdit = useForm();
     const [add, setAdd] = useState(false);
     const [edit, setEdit] = useState(false);
     const [del, setDel] = useState(false);

@@ -6,10 +6,14 @@ import { Slide, toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentUser } from "../features/currentUser";
 import PopUpContainer from "./containers/PopUpContainer.jsx";
+import { isArrayNotNull } from "../functions/Functions.js";
 
 // eslint-disable-next-line react/prop-types
 export default function Sidebar({ children }) {
-    const user = useSelector((state) => state.currentUser.value);
+
+    const current_user = useSelector((state) => state.currentUser.value);
+    const accounts = useSelector((state)=> state.account.value)
+    const user = isArrayNotNull(accounts) ? current_user&& (accounts.find((item)=> Number(item.id) == Number(current_user.id)) ): current_user
     const toastConfig = useSelector((state) => state.toastConfig.value);
     const url = useSelector((state) => state.backendUrl.value);
 

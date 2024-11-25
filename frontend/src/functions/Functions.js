@@ -51,6 +51,13 @@ export const date_d_m_y = (date)=>{
     return d_m_y
 }
 
+
+export const dateType = (date)=>{
+    const formated_date = formatDate(date)
+    const dateType = format(formated_date , 'yyyy-MM-dd')
+    return dateType
+}
+
 export const today_d_m_y = ()=>{
     const today = new Date()
     const d_m_y = format(today ,"dd/MM/yyyy" )

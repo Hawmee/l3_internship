@@ -23,7 +23,7 @@ function Table({ data, onDeny }) {
                         <table className="table table-fixed text-left  w-full  p-[1rem] border-collapse">
                             <thead className="rounded-[20px] s">
                                 <tr className="sticky text-gray-700 bg-gray-200 z-12 top-0 left-0">
-                                    <th> Stagiaire </th>
+                                    <th className="rounded-l-[12px]"> Stagiaire </th>
                                     <th>Dossiers du stagiaire</th>
                                     <th className="rounded-tr-[12px] rounded-br-[12px]">
                                         Date d'entretient

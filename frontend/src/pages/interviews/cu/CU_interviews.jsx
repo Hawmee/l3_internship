@@ -43,17 +43,14 @@ function CU_interviews({ interviews }) {
           )
         : [];
 
-    const interv = interv_CU.filter(item=>
-        item.offre.unite_id == currentUser.unite_id
-    )
 
         useEffect(() => {
-            if (!interv) {
+            if (!interv_CU) {
                 setFilteredData([]);
                 return;
             }
     
-            const filtered = interv.filter((item) => {
+            const filtered = interv_CU.filter((item) => {
                 const statusMatch =
                     selectedStatus == "all" ||
                     (selectedStatus == "demande"
@@ -64,7 +61,6 @@ function CU_interviews({ interviews }) {
     
                 const searchLower = searchTerm.toLowerCase();
                 const stagiaire = item.stagiaire
-                const offre = item.offre
                 const nameMatch =
                     stagiaire.nom?.toLowerCase().includes(searchLower) ||
                     stagiaire.prenom?.toLowerCase().includes(searchLower);
@@ -75,13 +71,10 @@ function CU_interviews({ interviews }) {
                 )
                     .toLowerCase()
                     .includes(searchLower);
-                const offreMatch = offre.nom
-                    ?.toLowerCase()
-                    .includes(searchLower);
     
                 return (
                     statusMatch &&
-                    (nameMatch || allNameMatch || offreMatch)
+                    (nameMatch || allNameMatch)
                 );
             });
         
@@ -124,7 +117,7 @@ function CU_interviews({ interviews }) {
                             <div className="flex flex-row  text-gray-600 py-1 rounded-[12px] bg-gray-200 px-2">
                                 <input
                                     type="text"
-                                    placeholder="Rechercher(offre , stagiaire , date)"
+                                    placeholder="Rechercher(stagiaire , date, ...)"
                                     className="w-64 bg-transparent outline-none placeholder:text-gray-500 px-1"
                                     onChange={(e) => {
                                         setSearchTerm(e.target.value);

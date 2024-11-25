@@ -62,14 +62,16 @@ function Table({ data, onAdd, onEdit, onDelete, onDocs }) {
                                                                     (item.observation ==
                                                                         observation_stagiaire.a_entretenir ||
                                                                         item.observation ==
-                                                                            observation_stagiaire.ancien) &&
-                                                                    "bg-gray-500"
+                                                                            observation_stagiaire.finalisation) &&
+                                                                    "bg-gray-600"
                                                                 }
                                                                 ${
                                                                     (item.observation ==
                                                                         observation_stagiaire.postulant ||
                                                                         item.observation ==
-                                                                            observation_stagiaire.en_stage) &&
+                                                                            observation_stagiaire.en_stage ||
+                                                                        item.observation ==
+                                                                            observation_stagiaire.cloture) &&
                                                                     "bg-blue-500"
                                                                 }
                                                                 ${

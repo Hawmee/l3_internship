@@ -62,11 +62,15 @@ function ChefUnitLayout() {
             // Check for almost deadline tasks
             const almostDeadline = tasks.some(item => {
                 if (!item.date_fin) return false;
+                const finished = (item.observation !== task_observations.en_cours || item.status)
                 const dateFin = parseISO(item.date_fin);
                 const interval = { start: today, end: addDays(today, 3) };
                 const isNearDeadline = isWithinInterval(dateFin, interval) && !item.status;
+                const stage = item.stage
+                const unite_matching = Number(user.unite_id) == Number(stage.unite_id)
+                const isCurrent = (stage.observation == observation_stage.a_venir || stage.observation == observation_stage.en_cours)
                 
-                return isNearDeadline;
+                return (isNearDeadline && isCurrent && !finished && unite_matching);
             });
 
             // Check for unfinished tasks

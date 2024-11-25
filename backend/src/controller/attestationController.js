@@ -1,4 +1,5 @@
 import { transporter } from "../config/mailConfig.js";
+import { stage_observations, stagiaire_status } from "../utils/Observations.js";
 import prismaClient from "./prismaClient.js";
 
 const prisma = prismaClient;
@@ -56,21 +57,6 @@ export const newAttestation = async (req, res) => {
         });
 
         if (attestation) {
-            // const stage = await prisma.stages.update({
-            //     where: { id: Number(attestation.stage_id) },
-            //     include: {
-            //         stagiaire: true,
-            //         unite: {
-            //             include: {
-            //                 users: true,
-            //             },
-            //         },
-            //         attestation: true,
-            //         performance: true,
-            //         taches: true,
-            //         offre: true,
-            //     },
-            // });
 
             if (attestation.stage) {
                 req.io.emit("updated_stage", attestation.stage);
@@ -153,8 +139,39 @@ export const validate = async (req, res) => {
         });
 
         if (attestation) {
-            if (attestation.stage) {
-                req.io.emit("updated_stage", attestation.stage);
+            const stagiaire = await prisma.stagiaires.update({
+                where: { id: Number(attestation.stage.stagiaire_id) },
+                data: { observation: stagiaire_status.cloture },
+                include: {
+                    entretiens: true,
+                    stages: true,
+                },
+            });
+            req.io.emit("update_stagiaire", stagiaire);
+
+            const stage = await prisma.stages.update({
+                where: { id: Number(attestation.stage_id) },
+                data: {
+                    observation: stage_observations.cloture,
+                },
+                include: {
+                    stagiaire: true,
+                    unite: {
+                        include: {
+                            users: true,
+                        },
+                    },
+                    attestation: true,
+                    performance: true,
+                    taches: {
+                        include: {
+                            stage: true,
+                        },
+                    },
+                },
+            });
+            if (stage) {
+                req.io.emit("updated_stage", stage);
             }
             req.io.emit("updated_attestation", attestation);
             res.status(200).send({ data: attestation });

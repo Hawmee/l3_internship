@@ -3,7 +3,7 @@ import Table from "./Table";
 import SearchContainer from "../../../components/containers/SearchContainer";
 import MainContainer from "../../../components/containers/MainContainer";
 import { Search } from "lucide-react";
-import { filterObjSame } from "../../../functions/Functions";
+import { filterObjSame, isArrayNotNull } from "../../../functions/Functions";
 import InternShip from "./cards/InternShip";
 import Interns from "./cards/Interns";
 import PopUpContainer from "../../../components/containers/PopUpContainer";
@@ -12,8 +12,8 @@ import Inform from "./forms/Inform";
 import Collected from "./forms/Collected";
 
 function PersAttestations({ data }) {
-    const filterStage = filterObjSame(data, "status");
-    const validatedStage = filterObjSame(filterStage, "book_link");
+    const validatedStage = isArrayNotNull(data) ? data.filter(item=> item.attestation) : null;
+    console.log(validatedStage)
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedStatus, setSelectedStatus] = useState("all");
     const [filteredData, setFilteredData] = useState([]);
@@ -58,7 +58,7 @@ function PersAttestations({ data }) {
     }, [row]);
 
     useEffect(() => {
-        if (!validatedStage) {
+        if (!data) {
             setFilteredData([]);
             return;
         }

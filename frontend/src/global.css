@@ -20,6 +20,29 @@
 }
 
 
+.fl-row{
+    @apply flex flex-row
+}
+
+.fl-col{
+    @apply flex flex-col
+}
+
+.btn-primary{
+    @apply px-4 py-1 rounded-lg text-white bg-blue-500 hover:bg-blue-600
+}
+
+.btn-cancel{
+    @apply px-4 py-1 rounded-lg text-white bg-gray-500 hover:bg-gray-600
+}
+
+.under-line{
+    @apply pb-2 border-b-2 border-gray-300
+}
+
+
+
+
 
 
 

@@ -7,20 +7,28 @@ import { Search } from "lucide-react";
 import { observation_stagiaire } from "../../../utils/Observations";
 import PopUpContainer from "../../../components/containers/PopUpContainer";
 import Interview from "./forms/Interview";
+import Stagiaire from "./cards/Stagiaire";
+import Stage_demande from "./cards/Stage_demande ";
 function CS_interns({ interns }) {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedStatus, setSelectedStatus] = useState("all");
     const [filteredData, setFilteredData] = useState([]);
     const [interview, setInterview] = useState(false);
-    const [selected , setSelected] = useState(null)
-    
+    const [selected, setSelected] = useState(null);
+    const [row, setRow] = useState(null);
 
-    const handleInterview = (item)=>{
-        setInterview(!interview)
-        if(item){
-            setSelected(item)
+    const handleInterview = (item) => {
+        setInterview(!interview);
+        if (item) {
+            setSelected(item);
         }
-    }
+    };
+
+    const handleRow = (item) => {
+        if (item) {
+            setRow(item);
+        }
+    };
 
     useEffect(() => {
         if (!interns) {
@@ -37,7 +45,7 @@ function CS_interns({ interns }) {
                     ? item.observation == observation_stagiaire.en_stage
                     : selectedStatus == "A entretenir"
                     ? item.observation == observation_stagiaire.a_entretenir
-                    : item.observation == observation_stagiaire.ancien);
+                    : item.observation == observation_stagiaire.finalisation);
 
             if (!searchTerm) return statusMatch;
 
@@ -73,7 +81,8 @@ function CS_interns({ interns }) {
                 setSelectedStatus("all");
             }
         }
-    }, [interns]);'z'
+    }, [interns]);
+    ("z");
 
     return (
         <>
@@ -98,7 +107,7 @@ function CS_interns({ interns }) {
                                 <option value="En cours de stage">
                                     En cours de stage
                                 </option>
-                                <option value="Anciens">Anciens</option>
+                                <option value="Fin">Anciens</option>
                             </select>
                         </div>
 
@@ -124,17 +133,38 @@ function CS_interns({ interns }) {
                         <Table
                             data={filteredData}
                             onInterview={handleInterview}
+                            onRow={handleRow}
+                            row={row}
                         />
                     </div>
                     <div className="relative flex-1 flex flex-col h-[80vh] mt-4 mr-2 rounded-[12px]">
                         <div className="text-center py-6 px-12">
-                            <div className="border-b-2 border-gray-300 text-lg pb-2">Details</div>
+                            <div className="border-b-2 border-gray-300 text-lg pb-2">
+                                Details
+                            </div>
                         </div>
-                        <div className=" card h-full overflow-auto px-2"></div>
+                        <div className=" card h-full overflow-auto px-2">
+                            {row ? (
+                                <>
+                                    <div className="mb-4">
+                                        <Stage_demande data={row} />
+                                    </div>
+                                    <div className="">
+                                        <Stagiaire data={row} />
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="fl-col justify-center items-center">
+                                    <div>
+                                        (Veuillez Selectionner un Stagiaire)
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </MainContainer>
-            { interview && (
+            {interview && (
                 <PopUpContainer>
                     <Interview data={selected} onInterview={handleInterview} />
                 </PopUpContainer>

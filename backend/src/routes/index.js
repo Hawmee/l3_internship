@@ -3,7 +3,6 @@ import userRouter from './userRouter.js'
 import authRouter from './Auth/authRouter.js'
 import attestationRouter from './attestationRouter.js'
 import entretientRouter from './entretientRouter.js'
-import offresRouter from './offresRouter.js'
 import perfRouter from './performanceRouter.js'
 import stagesRouter from './stagesRouter.js'
 import stagiaireRouter from './stagiaires.Router.js'
@@ -19,7 +18,6 @@ router.use('/api' , userRouter)
 router.use('/api' , authRouter)
 router.use('/api' , attestationRouter)
 router.use('/api' , entretientRouter)
-router.use('/api' , offresRouter)
 router.use('/api' , perfRouter)
 router.use('/api' , stagesRouter)
 router.use('/api' , stagiaireRouter)

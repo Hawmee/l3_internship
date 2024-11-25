@@ -1,4 +1,5 @@
 import React from "react";
+import { getDomain } from "../../../../functions/Functions";
 
 function Interns({ data }) {
     return (
@@ -13,40 +14,39 @@ function Interns({ data }) {
                             <div className="mb-3">
                                 -Nom & Prenoms: {data.nom + " " + data.prenom}
                             </div>
-                            <div className="mb-3">-Email: {data.email}</div>
-                            <div className="mb-3">-Phone: {data.phone}</div>
-                            <div className="mb-3">-Niveau: {data.niveau}</div>
-                            <div className="mb-3">-Filiere: {data.filiere}</div>
+                            <div className="mb-3">Email: {data.email}</div>
+                            <div className="mb-3">Phone: {data.phone}</div>
+                            <div className="mb-3">Filiere: {data.filiere.toUpperCase()}</div>
                             <div className="mb-4">
-                                -Etablissement: {data.etablissement}
+                                Etablissement: {data.etablissement.toUpperCase()}
                             </div>
-                            <div className="mb-4">
-                                -CV Numerique:{" "}
-                                {data.cv_link && (
-                                    <a
-                                        href={data.cv_link}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-blue-400"
-                                    >
-                                        Voir le CV sur DRIVE
-                                    </a>
-                                )}
-                                {!data.cv_link && ""}
-                            </div>{" "}
-                            <div className="mb-3">
-                                -LM Numerique:{" "}
-                                {data.lm_link && (
-                                    <a
-                                        href={data.lm_link}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-blue-400"
-                                    >
-                                        Voir la LM sur DRIVE
-                                    </a>
-                                )}
-                                {!data.lm_link && ""}
+                            <div className="mb-3 flex flex-row">
+                                <p className="mr-2 whitespace-nowrap">
+                                    CV numerique :
+                                </p>
+                                <a
+                                    href={data.cv_lien}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-blue-500 underline underline-offset-2"
+                                >
+                                    {getDomain(data.cv_lien)}/CV_
+                                    {data.id}
+                                </a>
+                            </div>
+                            <div className="mb-3 flex flex-row">
+                                <p className="mr-2 whitespace-nowrap">
+                                    LM numerique :
+                                </p>
+                                <a
+                                    href={data.lm_lien}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-blue-500 underline underline-offset-2"
+                                >
+                                    {getDomain(data.lm_lien)}/LM_
+                                    {data.id}
+                                </a>
                             </div>
                         </div>
                     </>

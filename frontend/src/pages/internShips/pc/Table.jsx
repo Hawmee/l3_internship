@@ -21,7 +21,7 @@ import {
 import { differenceInMonths } from "date-fns";
 import { observation_stage } from "../../../utils/Observations";
 
-function Table({ data, row, onRow, onEdit, onAffirm }) {
+function Table({ data, row, onRow, onBook , onPrirnt, onAffirm , onMail }) {
     const tableContainerRef = useRef(null);
 
     useEffect(() => {
@@ -100,16 +100,18 @@ function Table({ data, row, onRow, onEdit, onAffirm }) {
                                                                     item.observation ==
                                                                         observation_stage.en_validation ||
                                                                     item.observation ==
-                                                                        observation_stage.cloture ||
-                                                                    item.observation ==
-                                                                        observation_stage.a_venir) &&
-                                                                "bg-gray-500"
+                                                                        observation_stage.a_venir ||
+                                                                    item.observation == observation_stage.cloturation
+                                                                    ) &&
+                                                                "bg-gray-600"
                                                             }
                                                             ${
                                                                 (item.observation ==
                                                                     observation_stage.en_cours ||
                                                                     item.observation ==
-                                                                        observation_stage.acheve) &&
+                                                                        observation_stage.acheve ||
+                                                                        item.observation ==
+                                                                        observation_stage.cloture) &&
                                                                 "bg-blue-500"
                                                             }
                                                             ${
@@ -152,7 +154,7 @@ function Table({ data, row, onRow, onEdit, onAffirm }) {
                                                             </button>
                                                         </div>
                                                     ) : (
-                                                        <div className="flex flex-row items-center justify-center text-white">
+                                                        <div className="flex flex-row items-center justify-sart text-white">
                                                             <button
                                                                 className={`
                                                                         mr-2 px-3 py-1 border-r-2 border-gray-400 text-gray-500 hover:text-gray-700 disabled:text-gray-300
@@ -161,6 +163,9 @@ function Table({ data, row, onRow, onEdit, onAffirm }) {
                                                                     !isEnded ||
                                                                     isAbandon
                                                                 }
+                                                                onClick={()=>{
+                                                                    onMail(item)
+                                                                }}
                                                             >
                                                                 <Mail
                                                                     size={22}
@@ -171,7 +176,7 @@ function Table({ data, row, onRow, onEdit, onAffirm }) {
                                                                         text-gray-500 mr-2 px-2 py-1 hover:text-gray-700 disabled:text-gray-300
                                                                  `}
                                                                 onClick={() => {
-                                                                    onEdit(
+                                                                    onPrirnt(
                                                                         item
                                                                     );
                                                                 }}
@@ -190,7 +195,7 @@ function Table({ data, row, onRow, onEdit, onAffirm }) {
                                                                     text-blue-500 px-2 py-1 hover:text-blue-600 disabled:text-blue-300
                                                                 `}
                                                                 onClick={() => {
-                                                                    onEdit(
+                                                                    onBook(
                                                                         item
                                                                     );
                                                                 }}

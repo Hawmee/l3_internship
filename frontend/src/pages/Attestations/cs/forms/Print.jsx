@@ -12,7 +12,6 @@ function Print({data , onPrint}) {
     const [stage , setStage] = useState(null)
     const [stagiaire ,setStagiaire]= useState(null)
     const [division , setDivision] = useState(null)
-    const [offre , setOffre] = useState(null)
 
     const generate = async (data)=>{
 
@@ -47,11 +46,9 @@ function Print({data , onPrint}) {
             const stage = data.stage
             const stagiaire = stage.stagiaire
             const division = stage.unite
-            const offre = stage.offre
             setStage(stage)
             setStagiaire(stagiaire)
             setDivision(division)
-            setOffre(offre)
             reset({
                 nom:`${stagiaire.nom} ${stagiaire.prenom}`,
                 theme: stage.theme,

@@ -132,6 +132,39 @@ export const markviewed_affirmed = async (req, res) => {
     }
 };
 
+export const printed = async (req,res)=>{
+    try {
+        const {id} = req.params
+        const printed = await prisma.stages.update({
+            where:{id: Number(id)},
+            data:{
+                isNew:false,
+            },
+            include: {
+                stagiaire: true,
+                unite: {
+                    include: {
+                        users: true,
+                    },
+                },
+                attestation: true,
+                performance: true,
+                taches: {
+                    include: {
+                        stage: true,
+                    },
+                },
+            },
+        })
+    
+        req.io.emit("updated_stage", printed);
+        res.status(200).send("Action reussite")
+    } catch (error) {
+        res.status(500).send({message: error.message})
+    }
+
+}
+
 export const stage_en_cours = async (req, res) => {
     try {
         const { ids } = req.body;
@@ -343,7 +376,17 @@ export const fin_stage = async (req, res) => {
                 req.io.emit("new_perf", performance);
             }
 
+            const stagiaire = await prisma.stagiaires.update({
+                where: { id: Number(updated_stage.stagiaire_id) },
+                data: { observation: stagiaire_status.accompli },
+                include: {
+                    entretiens: true,
+                    stages: true,
+                },
+            });
+
             req.io.emit("updated_stage", updated_stage);
+            req.io.emit("update_stagiaire", stagiaire);
             res.status(200).send("Action reussite");
         }
     } catch (error) {
@@ -441,7 +484,7 @@ export const booking = async (req, res) => {
                 if (err) console.error(`Error deleting file: ${err}`);
             });
         } catch (error) {
-            return res.status(500).send("Errur lors de l'upload du fichier");
+            return res.status(500).send({message: error.message});
         }
 
         if (!booklink) {
@@ -453,6 +496,7 @@ export const booking = async (req, res) => {
             data: {
                 isNew: false,
                 status: false,
+                book_link: booklink,
                 observation: stage_observations.cloturation,
             },
             include: {
@@ -477,7 +521,7 @@ export const booking = async (req, res) => {
             const stagiaire_updated = await prisma.stagiaires.update({
                 where:{id: Number(finished_stage.stagiaire_id)},
                 data:{
-                    observation: stagiaire_status.ancien,
+                    observation: stagiaire_status.finalisation,
                 },
                 include:{
                     entretiens:true,
@@ -567,78 +611,3 @@ export const deleteStage = async (req, res) => {
     }
 };
 
-export const valid = async (req, res) => {
-    const { id } = req.params;
-    const numero = req.body.numero;
-    try {
-        const validated = await prisma.stages.update({
-            where: { id: Number(id) },
-            data: {
-                isNew: true,
-                status: true,
-                observation: stage_observations.acheve,
-            },
-            include: {
-                stagiaire: true,
-                unite: {
-                    include: {
-                        users: true,
-                    },
-                },
-                attestation: true,
-                performance: true,
-                taches: {
-                    include: {
-                        stage: true,
-                    },
-                },
-            },
-        });
-        if (validated) {
-            const stagiaire = await prisma.stagiaires.update({
-                where: { id: Number(validated.stagiaire_id) },
-                data: { observation: stagiaire_status.ancien },
-                include: {
-                    entretiens: true,
-                    stages: true,
-                },
-            });
-
-            const attestation = await prisma.attestation.create({
-                data: {
-                    isNew: true,
-                    status: true,
-                    stage_id: Number(validated.id),
-                    numero: numero,
-                },
-                include: {
-                    stage: {
-                        include: {
-                            stagiaire: true,
-                            unite: {
-                                include: {
-                                    users: true,
-                                },
-                            },
-                            attestation: true,
-                            performance: true,
-                            taches: true,
-                        },
-                    },
-                },
-            });
-
-            if (attestation) {
-                if (attestation.stage) {
-                    req.io.emit("updated_stage", attestation.stage);
-                }
-                req.io.emit("new_attestation", attestation);
-            }
-
-            req.io.emit("update_stagiaire", stagiaire);
-            return res.status(200).send({ message: "Action reussite!" });
-        }
-    } catch (error) {
-        res.status(500).send({ message: error });
-    }
-};

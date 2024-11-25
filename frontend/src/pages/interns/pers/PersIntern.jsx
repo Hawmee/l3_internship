@@ -75,7 +75,7 @@ function PersIntern({ interns }) {
                     ? item.observation == observation_stagiaire.en_stage
                     : selectedStatus == "A entretenir"
                     ? item.observation == observation_stagiaire.a_entretenir
-                    : item.observation == observation_stagiaire.ancien);
+                    : item.observation == observation_stagiaire.finalisation);
 
             if (!searchTerm) return statusMatch;
 

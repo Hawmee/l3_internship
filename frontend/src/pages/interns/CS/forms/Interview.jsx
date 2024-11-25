@@ -9,7 +9,7 @@ function Interview({onInterview , data}) {
     const stagiaire = data
     const method = useForm()
     const today = format(new Date() , "yyyy-MM-dd'T'HH:mm")
-    const maxDay = data.debut_demande ? format(data.debut_demande , "yyyy-MM-dd'T'HH:mm") : null
+    const maxDay = stagiaire.debut_demande ? format(stagiaire.debut_demande , "yyyy-MM-dd'T'HH:mm") : null
 
     const submit = async(data)=>{
         try {
@@ -23,6 +23,8 @@ function Interview({onInterview , data}) {
             notifyError()
         }
     }
+
+    console.log(stagiaire)
     
     const onSubmit = (data)=>{
         const body = {
@@ -49,7 +51,6 @@ function Interview({onInterview , data}) {
                         label={"Date de l'entretient"}
                         name={"date_entretien"}
                         type="datetime-local"
-                        min={today}
                         max={maxDay}
                         defaultValue={today}
                     />

@@ -25,19 +25,6 @@ function ChefServiceLayout() {
     const dispatch = useDispatch();
     const socket = Socket;
 
-    const getAllAccounts = async () => {
-        try {
-            const accounts_response = await axios.get(`${url}/users`);
-            const accounts = accounts_response.data;
-
-            if (isArray(accounts)) {
-                dispatch(setAccounts(accounts));
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
     const getAllAttestations = async () => {
         try {
             const attestation_response = await axios.get(`${url}/attestation`);
@@ -78,7 +65,6 @@ function ChefServiceLayout() {
         : false;
 
     useEffect(() => {
-        getAllAccounts();
         getAllAttestations();
     }, [dispatch]);
 

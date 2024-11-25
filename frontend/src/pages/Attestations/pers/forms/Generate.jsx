@@ -16,7 +16,7 @@ function Generate({ data, handleAttestation }) {
     const stagiaire = data.stagiaire;
     const attestation = data.attestation
     const id = data.id
-    const date = format(new Date() , 'yyyy-MM')
+    const date = format(new Date(), "dddd-MM");
     const numero = `${date}${stagiaire.id}`
     const duree = differenceInMonths(stage.date_fin , stage.date_debut)
 
@@ -74,13 +74,13 @@ function Generate({ data, handleAttestation }) {
     return (
         <>
             <div className="flex flex-col w-[24vw]">
-                <div className="text-center text-lg  mb-3">
+                <div className="text-center text-lg  mb-3 px-12">
                     <div className="border-b-[2px] border-gray-300 pb-2 ">
                         Generer une Attestation
                     </div>
                 </div>
                 <div className="text-lg text-center">Voulez vous vraiment generer une Attestation ?</div>
-                <div className="text-sm text-blue-500 underline underline-offset-4 text-end mt-4 cursor-pointer" onClick={()=>{generate()}}> Voir l'apercu de l'attestation</div>
+                {/* <div className="text-sm text-blue-500 underline underline-offset-4 text-end mt-4 cursor-pointer" onClick={()=>{generate()}}> Voir l'apercu de l'attestation</div> */}
                 <div className="flex flex-row justify-end text-white mt-4">
                     <button
                         className="bg-gray-600 hover:bg-gray-700 rounded-[8px] px-4 py-1 mr-3"

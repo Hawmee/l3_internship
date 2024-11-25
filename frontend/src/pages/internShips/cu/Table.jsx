@@ -55,12 +55,12 @@ function Table({ data, onFinish, onAbanon, onRow }) {
                                               task_observations.en_cours
                                       )
                                     : true;
-                                const isEnded = (item.observation == observation_stage.acheve)
+                                const isEnded = (item.observation !== observation_stage.en_cours)
                                 const isdisabled =
                                     item.status ||
                                     some_tasks_en_cours || isEnded;
                                 const isdisabledAbandon =
-                                    item.book_link || item.status || isEnded;
+                                    item.book_link || item.status || item.observation !== observation_stage.en_cours;
                                 const isNew = (item.isNew && item.observation !== observation_stage.acheve && !item.status );
                                 const theme = item.theme_definitif
                                     ? item.theme_definitif

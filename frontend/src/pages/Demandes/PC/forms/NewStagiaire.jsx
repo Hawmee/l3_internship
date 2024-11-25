@@ -21,7 +21,7 @@ function NewStagiaire({ data, onStagiaire }) {
             ...data,
             nom: (data.nom).toUpperCase(),
             duree: Number(data.duree),
-            debut_demande: data.dbut_demande ? format(data.debut_demande , "yyyy-MM-dd'T'HH:mm:ss.000'Z") : null,
+            debut_demande: data.debut_demande ? format(data.debut_demande , "yyyy-MM-dd'T'HH:mm:ss.000'Z") : null,
             cv_lien: demand.cv_lien,
             lm_lien: demand.lm_lien,
         }

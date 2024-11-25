@@ -11,12 +11,18 @@ import Performance from "./cards/Performance";
 import { isArrayNotNull } from "../../../functions/Functions";
 import Affirm from "./forms/Affirm";
 import DefTheme from "./forms/DefTheme";
+import Book from "./forms/Book";
+import Mail from "./forms/Mail";
+import Print from "./forms/Print";
 
 function PersInternShip({ data }) {
     const [selected, setSelected] = useState(null);
     const [row, setRow] = useState(null);
     const [affirm, setAffirm] = useState(false);
     const [def_theme, setDef_theme] = useState(false);
+    const [book , setBook] = useState(false)
+    const [mail, setMail] = useState(false)
+    const [print , setPrint] = useState(false)
 
 
     const handleAffirm = (item) => {
@@ -35,6 +41,28 @@ function PersInternShip({ data }) {
     const handelDefTheme = (item) => {
         setDef_theme(!def_theme);
     };
+
+    const handleBook = (item)=>{
+        setBook(!book)
+        if(item){
+            setSelected(item)
+        }
+    }
+
+    const handleMail = (item)=>{
+        setMail(!mail)
+        if(item){
+            setSelected(item)
+        }
+    }
+
+
+    const hanldePrint = (item)=>{
+        setPrint(!print)
+        if(item){
+            setSelected(item)
+        }
+    }
 
     useEffect(() => {
         if (row) {
@@ -70,7 +98,7 @@ function PersInternShip({ data }) {
                             <div className="flex flex-row  text-gray-600 py-2 rounded-[12px] bg-gray-200 px-2">
                                 <input
                                     type="text"
-                                    placeholder="Rechercher(offre , stagiaire , date)"
+                                    placeholder="Rechercher(stagiaire , date ,...)"
                                     className="w-64 bg-transparent outline-none placeholder:text-gray-500 px-1"
                                     // onChange={(e) => {
                                     //     setSearchTerm(e.target.value);
@@ -88,7 +116,10 @@ function PersInternShip({ data }) {
                         <Table
                             data={data}
                             onAffirm={handleAffirm}
+                            onBook={ handleBook }
                             onRow={handleRow}
+                            onMail={handleMail}
+                            onPrirnt={hanldePrint}
                             row={row}
                         />
                     </div>
@@ -141,6 +172,24 @@ function PersInternShip({ data }) {
             {def_theme && (
                 <PopUpContainer>
                     <DefTheme data={row} onDefTheme={handelDefTheme} />
+                </PopUpContainer>
+            )}
+
+            {book && (
+                <PopUpContainer>
+                    <Book data={selected} onBook={handleBook} />
+                </PopUpContainer>
+            )}
+
+            {mail && (
+                <PopUpContainer>
+                    <Mail data={selected} handleMail={handleMail} />
+                </PopUpContainer>
+            )}
+
+            {print && (
+                <PopUpContainer>
+                    <Print data={selected} onPrint={hanldePrint} />
                 </PopUpContainer>
             )}
         </>

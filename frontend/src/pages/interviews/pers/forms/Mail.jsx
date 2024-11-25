@@ -12,7 +12,6 @@ import { notifyError, notifySuccess } from "../../../../layouts/MereLayout";
 function Mail({ handleMail, method, data }) {
     const url = useSelector((state) => state.backendUrl.value);
     const { reset } = method;
-    const offre_id = data.offre_id;
     const interview_id = data.id;
     const [isLoading, setIsLoading] = useState(false);
     const [footer] = useState(
@@ -28,7 +27,6 @@ function Mail({ handleMail, method, data }) {
         const body = {
             ...data,
             content: content(data.content),
-            offre_id: offre_id,
             interview_id: interview_id,
         };
 

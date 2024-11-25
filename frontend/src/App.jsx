@@ -8,18 +8,30 @@ import axios from "axios";
 import { setCurrentUser } from "./features/currentUser";
 import { newUnit, setUnit } from "./features/unit";
 import { io } from "socket.io-client";
-import { newAccount } from "./features/accounts";
+import { newAccount, setAccounts } from "./features/accounts";
 import Socket from "./features/Socket";
 import { isArray } from "./functions/Functions";
 import { PDFViewer } from "@react-pdf/renderer";
 import AttesationPDF from "./components/Files/AttesationPDF";
+import { account } from "./services/account";
 
 function App({ children }) {
     const backUrl = import.meta.env.VITE_BACKEND_URL;
     const socket = Socket;
     const dispatch = useDispatch();
+    const users = useSelector(state=>state.account.value)
 
-    window.global = window;
+
+    const getAllAccounts = async ()=>{
+        try {
+            const accounts = await account.get()
+            if(accounts){
+                dispatch(setAccounts(accounts))
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     const cookieHandling = async () => {
         const cookie = await axios.get(`${backUrl}/cookie`, {
@@ -53,8 +65,7 @@ function App({ children }) {
             theme: "light",
         };
 
-        
-
+        getAllAccounts()
         getAllUnits();
         cookieHandling();
         dispatch(setBackendUrl(backUrl));

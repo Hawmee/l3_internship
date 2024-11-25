@@ -64,18 +64,17 @@ function Table({ data, onValidate, onView }) {
                                     </th>
                                     <th>Stagiaire</th>
                                     <th>Division D'acceuil</th>
-                                    <th>Theme</th>
                                     <th>Status</th>
                                     <th className="rounded-tr-[12px] rounded-br-[12px]"></th>
                                 </tr>
                             </thead>
                             <tbody>
+                                <tr className="h-4"></tr>
                                 {isArrayNotNull(data) &&
                                     data.map((item) => {
                                         const stage = item.stage;
                                         const stagiaire = item.stage.stagiaire;
                                         const unite = item.stage.unite;
-                                        const offre = item.stage.offre;
                                         const isDisabled = item.status;
                                         return (
                                             <tr key={item.id} className="h-1">
@@ -85,7 +84,6 @@ function Table({ data, onValidate, onView }) {
                                                     {stagiaire.prenom}
                                                 </td>
                                                 <td>{unite.nom}</td>
-                                                <td>{stage.theme}</td>
                                                 <td>
                                                     <div className="flex flex-row justify-start">
                                                         {item.status ? (
