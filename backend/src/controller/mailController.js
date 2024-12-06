@@ -1,12 +1,38 @@
-import nodemailer from 'nodemailer'
-import prismaClient from './prismaClient.js'
 import { transporter } from '../config/mailConfig.js'
+import prismaClient from './prismaClient.js'
+import axios from 'axios'
 
 const prisma = prismaClient
+
+
+export const verifyMail = async(mail)=>{
+    try {
+        const response = await axios.get('https://api.hunter.io/v2/email-verifier' , {
+            params:{
+                email: mail,
+                api_key: process.env.HUNTER_API
+            }
+        })
+
+        const status = response.data.data.status
+
+        return status === 'valid'
+
+    } catch (error) {
+        console.log({message: error})
+        return false
+    }
+}
 
 export const informIntern = async(req,res)=>{
     const datas = req.body
     try {
+
+        const isMailValid = await verifyMail(datas.receiver_mail)
+
+        if(!isMailValid){
+            return res.status(401).send({message:"Veulliew verifier l'adresse email !!"})
+        }
 
         const mail_option ={
             to: datas.receiver_mail,
@@ -50,6 +76,12 @@ export const informIntern = async(req,res)=>{
 export const informFinalisation = async(req,res)=>{
     const datas = req.body
     try {
+
+        const isMailValid = await verifyMail(datas.receiver_mail)
+
+        if(!isMailValid){
+            return res.status(401).send({message:"Veulliez verifier l'adresse email !!"})
+        }
 
         const mail_option ={
             to: datas.receiver_mail,

@@ -1,5 +1,6 @@
 import { transporter } from "../config/mailConfig.js";
 import { stage_observations, stagiaire_status } from "../utils/Observations.js";
+import { verifyMail } from "./mailController.js";
 import prismaClient from "./prismaClient.js";
 
 const prisma = prismaClient;
@@ -185,6 +186,13 @@ export const inform = async (req, res) => {
     const datas = req.body;
     const { id } = req.params;
     try {
+
+        const isMailValid = await verifyMail(datas.receiver_mail)
+
+        if(!isMailValid){
+            return res.status(401).send({message:"Veulliez verifier l'adresse email !!"})
+        }
+
         const mail_option = {
             to: datas.receiver_mail,
             subject: "Attestation de Stage,",

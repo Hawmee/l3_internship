@@ -38,8 +38,9 @@ function Mail({ handleMail, method, data }) {
                 notifySuccess(message);
             }
         } catch (error) {   
+            const message = 'Verifiez votre connexion ou l\'adresse email du destinataire'
             console.log(error);
-            notifyError();
+            notifyError(message);
         } finally {
             setIsLoading(false);
         }

@@ -39,6 +39,7 @@ function Mail({ handleMail, data }) {
             }
         } catch (error) {
             console.log(error);
+            const message = ""
             notifyError();
         } finally {
             setIsLoading(false);

@@ -93,7 +93,7 @@ function CUTask({ data }) {
         );
     const finished_number = isArrayNotNull(_finished) ? _finished.length : 0;
 
-    const isEnded = selected ? (selected.status || selected.observation == observation_stage.acheve) : true;
+    const isEnded = selected ? (selected.status || selected.observation == observation_stage.acheve || selected.observation == observation_stage.cloture) : true;
 
     useEffect(() => {
         if (selected) {

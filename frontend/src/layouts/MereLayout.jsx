@@ -68,9 +68,9 @@ export const notifyError = (message) => {
     progress: undefined,
     theme: "light",
   }
-  if(!message){
-    const mess = "Erreur lors de l'operation"
+  const mess = "Erreur lors de l'operation !"
+  if(!message){ 
     return toast.error(mess)
   }
-  toast.error(message, conf);
+  toast.error(`${mess} ${message}`, conf);
 };

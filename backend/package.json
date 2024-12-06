@@ -6,6 +6,7 @@
   "dependencies": {
     "@google-cloud/storage": "^7.13.0",
     "@prisma/client": "^5.21.0",
+    "axios": "^1.7.8",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
     "cookie-parser": "^1.4.7",
@@ -18,6 +19,7 @@
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
+    "neverbounce": "^4.4.1",
     "node-cron": "^3.0.3",
     "nodemailer": "^6.9.16",
     "socket.io": "^4.8.0"
