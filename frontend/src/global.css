@@ -5,7 +5,7 @@
 
 @layer base{
     body{
-        @apply font-[Figtree];
+        @apply font-[Figtree] font-medium;
     }
 }
 
@@ -40,10 +40,13 @@
     @apply pb-2 border-b-2 border-gray-300
 }
 
+  
+:root{
+    --toastify-color-success: #2483fe;
 
-
-
-
+    --toastify-icon-color-success: var(--toastify-color-success);
+    --toastify-color-progress-success: var(--toastify-color-success);
+}
 
 
 /* ${

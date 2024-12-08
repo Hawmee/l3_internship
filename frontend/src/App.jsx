@@ -7,13 +7,11 @@ import { setToastConfig } from "./features/toastConfig";
 import axios from "axios";
 import { setCurrentUser } from "./features/currentUser";
 import { newUnit, setUnit } from "./features/unit";
-import { io } from "socket.io-client";
 import { newAccount, setAccounts } from "./features/accounts";
 import Socket from "./features/Socket";
 import { isArray } from "./functions/Functions";
-import { PDFViewer } from "@react-pdf/renderer";
-import AttesationPDF from "./components/Files/AttesationPDF";
 import { account } from "./services/account";
+// import '@fontsource/figtree'
 
 function App({ children }) {
     const backUrl = import.meta.env.VITE_BACKEND_URL;
@@ -105,11 +103,6 @@ function App({ children }) {
                     theme="light"
                     transition={Slide}
                 />
-                {/* <div className=" absolute top-0 h-full w-full ">
-                    <PDFViewer className="h-full w-full">
-                        <AttesationPDF />
-                    </PDFViewer>
-                </div> */}
             </div>
         </>
     );

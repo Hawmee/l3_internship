@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import MainContainer from "../../../components/containers/MainContainer";
 import SearchContainer from "../../../components/containers/SearchContainer";
-import Table from "./Table";
-import { useSelector } from "react-redux";
 import TableEntretient from "./TableEntretient";
-import { filterObjdiff, filterObjSame, include } from "../../../functions/Functions";
+import {
+    filterObjdiff,
+    filterObjSame,
+    include,
+} from "../../../functions/Functions";
 import { Filter, Search, Settings2 } from "lucide-react";
 import PopUpContainer from "../../../components/containers/PopUpContainer";
 import Confirm from "./forms/Confirm";
@@ -12,53 +14,49 @@ import Cancel from "./forms/Cancel";
 import { useForm } from "react-hook-form";
 import { format } from "date-fns";
 import Edit from "./forms/Edit";
+import { useDisclosure } from "@nextui-org/react";
 
-function CSInterviews({interviews}) {
+function CSInterviews({ interviews }) {
     const [navigation, setNavigation] = useState("Demande");
     const [interview_data, setInterview_data] = useState(interviews);
     const [searchTerm, setSearchTerm] = useState("");
-    const [deny, setDeny] = useState(false);
-    const [cancel, setCancel] = useState(false);
-    const [confirm, setConfirm] = useState(false);
-    const [edit, setEdit] = useState(false);
-    const [selected_interview , setSelected_interview] = useState(null)
+    const [selected_interview, setSelected_interview] = useState(null);
 
+    const editModal = useDisclosure();
+    const confirmModal = useDisclosure();
+    const cancelModal = useDisclosure();
 
-    const methodConfirm = useForm()
-    const methodEdit=useForm()
+    const methodConfirm = useForm();
+    const methodEdit = useForm();
 
+    const demand_CS = filterObjdiff(interview_data, "date_interview");
 
-    const demand_CS = filterObjdiff(interview_data , 'date_interview')
-
-    const demands_interv = filterObjSame(
-        demand_CS,
-        "status"
-    );
-
-
+    const demands_interv = filterObjSame(demand_CS, "status");
 
     const handleConfirm = (item) => {
-        setConfirm(!confirm);
-        if(item){
-            setSelected_interview(item)
+        if (item) {
+            setSelected_interview(item);
+            confirmModal.onOpen();
+        } else {
+            confirmModal.onClose();
         }
     };
 
     const handleEdit = (item) => {
-        setEdit(!edit);
-        if(item){
-            setSelected_interview(item)
+        if (item) {
+            setSelected_interview(item);
+            editModal.onOpen();
+        } else {
+            editModal.onClose();
         }
     };
 
-    const handleDeny = () => {
-        setDeny(!deny);
-    };
-
-    const handleCancel = (item ) => {
-        setCancel(!cancel);
-        if(item){
-            setSelected_interview(item)
+    const handleCancel = (item) => {
+        if (item) {
+            setSelected_interview(item);
+            cancelModal.onOpen();
+        } else {
+            cancelModal.onClose();
         }
     };
 
@@ -71,7 +69,10 @@ function CSInterviews({interviews}) {
                           interview.stagiaire.prenom.toLowerCase();
                       const stagiaireNomPrenom = `${interview.stagiaire.nom.toLowerCase()} ${stagiairePrenom}`;
                       const dateInterview = interview.date_interview
-                          ? format(interview.date_interview.toLowerCase(),"dd/MM/yyyy")
+                          ? format(
+                                interview.date_interview.toLowerCase(),
+                                "dd/MM/yyyy"
+                            )
                           : "";
 
                       return (
@@ -88,11 +89,11 @@ function CSInterviews({interviews}) {
         setInterview_data(searched_data);
     }, [searchTerm, interviews]);
 
-    useEffect(()=>{
-        if(demands_interv.length == 0 && !searchTerm){
-            setNavigation("Entretient")
+    useEffect(() => {
+        if (demands_interv.length == 0 && !searchTerm) {
+            setNavigation("Entretient");
         }
-    } , [demands_interv , searchTerm])
+    }, [demands_interv, searchTerm]);
 
     return (
         <>
@@ -132,37 +133,43 @@ function CSInterviews({interviews}) {
                     </div>
                 </SearchContainer>
                 <div className="h-full">
-                    {navigation == "Demande" && (
-                        <Table
-                            data={demands_interv}
-                            onDeny={handleDeny}
-                        />
-                    )}
-                    {navigation == "Entretient" && (
-                        <TableEntretient
-                            data={interviews}
-                            onConfirm={handleConfirm}
-                            onEdit={handleEdit}
-                            onCancel={handleCancel}
-                        />
-                    )}
+                    <TableEntretient
+                        data={interviews}
+                        onConfirm={handleConfirm}
+                        onEdit={handleEdit}
+                        onCancel={handleCancel}
+                    />
                 </div>
             </MainContainer>
-            {confirm && (
-                <PopUpContainer popup={confirm} closePopUp={setConfirm}>
-                    <Confirm method={methodConfirm} data ={selected_interview} handleConfirm={handleConfirm}/>
-                </PopUpContainer>
-            )}
-            {edit && (
-                <PopUpContainer popup={edit} closePopUp={setEdit}>
-                    <Edit method={methodEdit} interview={selected_interview} handleEdit={handleEdit} />
-                </PopUpContainer>
-            )}
-            {cancel && (
-                <PopUpContainer popup={cancel} closePopUp={setCancel}>
-                    <Cancel interview={selected_interview}  handleCancel={handleCancel} />
-                </PopUpContainer>
-            )}
+
+            <PopUpContainer
+                isOpen={confirmModal.isOpen}
+                onOpenChange={confirmModal.onOpenChange}
+            >
+                <Confirm
+                    method={methodConfirm}
+                    data={selected_interview}
+                    handleConfirm={handleConfirm}
+                />
+            </PopUpContainer>
+
+            <PopUpContainer
+                isOpen={editModal.isOpen}
+                onOpenChange={editModal.onOpenChange}
+            >
+                <Edit
+                    method={methodEdit}
+                    interview={selected_interview}
+                    handleEdit={handleEdit}
+                />
+            </PopUpContainer>
+
+            <PopUpContainer isOpen={cancelModal.isOpen} onOpenChange={cancelModal.onOpenChange}>
+                <Cancel
+                    interview={selected_interview}
+                    handleCancel={handleCancel}
+                />
+            </PopUpContainer>
         </>
     );
 }

@@ -1,12 +1,19 @@
-import { CheckCheck, Eye, FileQuestion } from "lucide-react";
+import { CheckCheck, Ellipsis, EllipsisVertical, Eye, FileQuestion, Info } from "lucide-react";
 import React, { useEffect, useRef } from "react";
 import { isArrayNotNull, today_string } from "../../../functions/Functions";
 import { pdf } from "@react-pdf/renderer";
 import AttesationPDF from "../../../components/Files/AttesationPDF";
 import { differenceInMonths } from "date-fns";
 import n2words from "n2words";
+import {
+    Dropdown,
+    DropdownTrigger,
+    DropdownMenu,
+    DropdownItem,
+    Button,
+} from "@nextui-org/react";
 
-function Table({ data, onValidate, onView }) {
+function Table({ data, onValidate, onInfo }) {
     const tableContainerRef = useRef(null);
 
     const generate = async (data) => {
@@ -65,7 +72,7 @@ function Table({ data, onValidate, onView }) {
                                     <th>Stagiaire</th>
                                     <th>Division D'acceuil</th>
                                     <th>Status</th>
-                                    <th className="rounded-tr-[12px] rounded-br-[12px]"></th>
+                                    <th className="rounded-tr-[12px] rounded-br-[12px] w-28"></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -98,49 +105,64 @@ function Table({ data, onValidate, onView }) {
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <div className="flex flex-row items-center justify-center text-white">
-                                                        <button
-                                                            className={`
-                                                                ${
-                                                                    !isDisabled &&
-                                                                    " text-gray-600 mr-2 px-3 py-1 hover:text-gray-500"
-                                                                }
-                                                                ${
-                                                                    isDisabled &&
-                                                                    " text-gray-400 mr-2 px-3 py-1 "
-                                                                }
-                                                            `}
-                                                            onClick={() =>
-                                                                handleView(item)
-                                                            }
-                                                            disabled={
-                                                                isDisabled
-                                                            }
+                                                    <div className="flex flex-row items-center justify-center">
+                                                        <button className="mr-6 hover:text-gray-500" 
+                                                            onClick={()=>{
+                                                                onInfo(item)
+                                                            }}
                                                         >
-                                                            <Eye size={22} />
+                                                            <Info size={20} />
                                                         </button>
-                                                        <button
-                                                            className={`
-                                                                ${
-                                                                    !isDisabled &&
-                                                                    " text-blue-600 mr-2 px-3 py-1 hover:text-blue-800"
-                                                                }
-                                                                ${
-                                                                    isDisabled &&
-                                                                    " text-blue-300 mr-2 px-3 py-1 "
-                                                                }
-                                                            `}
-                                                            onClick={() =>
-                                                                onValidate(item)
-                                                            }
-                                                            disabled={
-                                                                isDisabled
-                                                            }
-                                                        >
-                                                            <CheckCheck
-                                                                size={22}
-                                                            />
-                                                        </button>
+                                                        <Dropdown>
+                                                            <DropdownTrigger>
+                                                                <button className="p-1 hover:bg-gray-200 rounded-lg">
+                                                                    <EllipsisVertical size={20} />
+                                                                </button>
+                                                            </DropdownTrigger>
+                                                            <DropdownMenu
+                                                                itemClasses={{
+                                                                    base: [
+                                                                        "text-gray-500 , hover:!bg-gray-200 hover:!text-gray-700",
+                                                                    ],
+                                                                    title: "text-base",
+                                                                }}
+                                                                aria-label="Example with disabled actions"
+                                                                disabledKeys={isDisabled ?[
+                                                                    "view",
+                                                                    "validate",
+                                                                ] : []}
+                                                            >
+                                                                <DropdownItem
+                                                                    key="view"
+                                                                    startContent={
+                                                                        <Eye
+                                                                            size={
+                                                                                19
+                                                                            }
+                                                                        />
+                                                                    }
+                                                                    className=""
+                                                                    onPress={()=>{handleView(item)}}
+                                                                >
+                                                                    Voir
+                                                                    l'apercu
+                                                                </DropdownItem>
+                                                                <DropdownItem
+                                                                    key="validate"
+                                                                    startContent={
+                                                                        <CheckCheck
+                                                                            size={
+                                                                                19
+                                                                            }
+                                                                        />
+                                                                    }
+                                                                    className="text-blue-500 hover:!bg-blue-100 hover:!text-blue-600"
+                                                                    onPress={()=>{onValidate(item)}}
+                                                                >
+                                                                    Affirmer
+                                                                </DropdownItem>
+                                                            </DropdownMenu>
+                                                        </Dropdown>
                                                     </div>
                                                 </td>
                                             </tr>

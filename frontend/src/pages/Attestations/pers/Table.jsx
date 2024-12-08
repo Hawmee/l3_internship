@@ -1,6 +1,9 @@
 import {
     CheckCheck,
     CopyPlus,
+    Ellipsis,
+    EllipsisVertical,
+    Eye,
     File,
     FileQuestion,
     FileText,
@@ -15,6 +18,13 @@ import {
 } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { isArrayNotNull } from "../../../functions/Functions";
+import {
+    Dropdown,
+    DropdownTrigger,
+    DropdownMenu,
+    DropdownItem,
+    Button,
+} from "@nextui-org/react";
 
 function Table({ data, onRow, onInform, onAttestation, onCollected }) {
     const tableContainerRef = useRef(null);
@@ -46,7 +56,7 @@ function Table({ data, onRow, onInform, onAttestation, onCollected }) {
                                     <th> Stagiaire </th>
                                     <th> Division d'acceuil</th>
                                     <th> Attestation </th>
-                                    <th className="rounded-tr-[12px] rounded-br-[12px]"></th>
+                                    <th className="rounded-tr-[12px] rounded-br-[12px] w-24"></th>
                                 </tr>
                             </thead>
 
@@ -73,8 +83,7 @@ function Table({ data, onRow, onInform, onAttestation, onCollected }) {
                                             <tr
                                                 key={item.id}
                                                 className={`h-1 cursor-pointer ${
-                                                    isSelect &&
-                                                    "bg-gray-200"
+                                                    isSelect && "bg-gray-200"
                                                 }`}
                                                 onClick={() => {
                                                     setSelected(item);
@@ -113,66 +122,105 @@ function Table({ data, onRow, onInform, onAttestation, onCollected }) {
                                                     </div>
                                                 </td>
                                                 <td className="rounded-r-[12px]">
-                                                    <div className="flex flex-row items-center justify-start text-white">
-                                                        <button
-                                                            className="text-gray-500 mr-2 px-3 py-1 hover:text-gray-700"
-                                                            disabled={
-                                                                disabledAttestation
-                                                            }
-                                                            onClick={() => {
-                                                                onAttestation(
-                                                                    item
-                                                                );
-                                                            }}
-                                                        >
-                                                            <Printer
-                                                                size={22}
-                                                            />
-                                                        </button>
-                                                        <button
-                                                            className={`
-                                                                ${
-                                                                    !disabledMail &&
-                                                                    "text-blue-500 mr-2 px-3 py-1 hover:text-blue-700"
-                                                                }
-                                                                ${
+                                                    <div className="flex flex-row items-center justify-start ">
+                                                        <Dropdown>
+                                                            <DropdownTrigger>
+                                                                <button
+                                                                    className="bg-gray-100 rounded-lg p-1 hover:bg-gray-200"
+                                                                    onClick={() => {
+                                                                        setSelected(
+                                                                            item
+                                                                        );
+                                                                        onRow(
+                                                                            item
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    <EllipsisVertical
+                                                                        size={
+                                                                            20
+                                                                        }
+                                                                    />
+                                                                </button>
+                                                            </DropdownTrigger>
+                                                            <DropdownMenu
+                                                                itemClasses={{
+                                                                    base: [
+                                                                        "text-gray-500 , hover:!bg-gray-200 hover:!text-gray-700",
+                                                                    ],
+                                                                    title: "text-base",
+                                                                }}
+                                                                aria-label="Example with disabled actions"
+                                                                disabledKeys={[
+                                                                    disabledAttestation &&
+                                                                        "print",
                                                                     disabledMail &&
-                                                                    "text-blue-300 mr-2 px-3 py-1 "
-                                                                }     
-                                                            `}
-                                                            onClick={() => {
-                                                                onInform(item);
-                                                            }}
-                                                            disabled={
-                                                                disabledMail
-                                                            }
-                                                        >
-                                                            <Mail size={22} />
-                                                        </button>
-                                                        <button
-                                                            className={`
-                                                                ${
-                                                                    !isDisabledFournie &&
-                                                                    "text-blue-500 mr-6 px-3 py-1 hover:text-blue-700"
-                                                                }
-                                                                ${
+                                                                        "mail",
                                                                     isDisabledFournie &&
-                                                                    "text-blue-300 mr-6 px-3 py-1 "
-                                                                }     
-                                                            `}
-                                                            onClick={() => {
-                                                                onCollected(
-                                                                    item
-                                                                );
-                                                            }}
-                                                            disabled={
-                                                                isDisabledFournie
-                                                            }
-                                                        >
-                                                            <CheckCheck
-                                                                size={22}
-                                                            />
-                                                        </button>
+                                                                        "deliver",
+                                                                ]}
+                                                                className="!px-2"
+                                                                bottomContent
+                                                            >
+                                                                <DropdownItem
+                                                                    key="print"
+                                                                    startContent={
+                                                                        <Printer
+                                                                            size={
+                                                                                19
+                                                                            }
+                                                                        />
+                                                                    }
+                                                                    className=""
+                                                                    onPress={() => {
+                                                                        onAttestation(
+                                                                            item
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    Generer
+                                                                    Attestation
+                                                                </DropdownItem>
+                                                                <DropdownItem
+                                                                    key="mail"
+                                                                    startContent={
+                                                                        <Mail
+                                                                            size={
+                                                                                19
+                                                                            }
+                                                                        />
+                                                                    }
+                                                                    className=""
+                                                                    onPress={() => {
+                                                                        onInform(
+                                                                            item
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    Informere le
+                                                                    Stagiaire
+                                                                </DropdownItem>
+                                                                <DropdownItem
+                                                                    key="deliver"
+                                                                    startContent={
+                                                                        <CheckCheck
+                                                                            size={
+                                                                                19
+                                                                            }
+                                                                        />
+                                                                    }
+                                                                    className="text-blue-500 hover:!bg-blue-100 hover:!text-blue-600"
+                                                                    onPress={() => {
+                                                                        onCollected(
+                                                                            item
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    Attestation
+                                                                    Fournie
+                                                                </DropdownItem>
+                                                            </DropdownMenu>
+                                                        </Dropdown>
                                                     </div>
                                                 </td>
                                             </tr>

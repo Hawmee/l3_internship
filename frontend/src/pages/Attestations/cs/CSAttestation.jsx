@@ -6,36 +6,48 @@ import { Search } from "lucide-react";
 import Print from "./forms/Print";
 import PopUpContainer from "../../../components/containers/PopUpContainer";
 import Validate from "./forms/Validate";
+import { useDisclosure } from "@nextui-org/react";
+import DrawerContainer from "../../../components/containers/DrawerContainer";
+import Details from "./drawer/Details";
 
 function CSAttestation({ data }) {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedStatus, setSelectedStatus] = useState("all");
     const [filteredData, setFilteredData] = useState([]);
-    const [print, setPrint] = useState(false);
     const [selected, setSelected] = useState(null);
-    const [view, setView] = useState(false);
     const [validate, setValidate] = useState(false);
 
-    const hanldePrint = (item) => {
-        setPrint(!print);
-        if (item) {
-            setSelected(item);
-        }
-    };
+    const printModal = useDisclosure();
+    const validateModal = useDisclosure();
+    const info = useDisclosure()
 
-    const handleView = (item) => {
-        setView(!view);
+    const hanldePrint = (item) => {
         if (item) {
             setSelected(item);
+            printModal.onOpen();
+        } else {
+            printModal.onClose();
         }
     };
 
     const handleValidate = (item) => {
-        setValidate(!validate);
         if (item) {
             setSelected(item);
+            validateModal.onOpen();
+        } else {
+            validateModal.onClose();
         }
     };
+
+    const handleInfo = (item) =>{
+        info.onOpen()
+        if(item){
+            setSelected(item)
+            console.log(item)
+        }else{
+            info.onClose()
+        }
+    }
 
     useEffect(() => {
         if (!data) {
@@ -57,12 +69,23 @@ function CSAttestation({ data }) {
             const nameMatch =
                 stage.stagiaire?.nom?.toLowerCase().includes(searchLower) ||
                 stage.stagiaire?.prenom?.toLowerCase().includes(searchLower);
-            const numero = item.numero?.toLowerCase().includes(searchLower)
-            const allNameMatch = (stage.stagiaire.nom +" "+ stage.stagiaire.prenom).toLowerCase().includes(searchLower)
+            const numero = item.numero?.toLowerCase().includes(searchLower);
+            const allNameMatch = (
+                stage.stagiaire.nom +
+                " " +
+                stage.stagiaire.prenom
+            )
+                .toLowerCase()
+                .includes(searchLower);
             const themeMatch = stage.theme?.toLowerCase().includes(searchLower);
-            const division = stage.untie?.nom?.toLowerCase().includes(searchLower)
+            const division = stage.untie?.nom
+                ?.toLowerCase()
+                .includes(searchLower);
 
-            return statusMatch && (nameMatch || allNameMatch || themeMatch || division || numero);
+            return (
+                statusMatch &&
+                (nameMatch || allNameMatch || themeMatch || division || numero)
+            );
         });
 
         console.log(data);
@@ -124,22 +147,35 @@ function CSAttestation({ data }) {
                     <Table
                         data={filteredData}
                         onPrint={hanldePrint}
-                        // onView={handleView}
+                        onInfo={handleInfo}
                         onValidate={handleValidate}
                     />
                 </div>
             </MainContainer>
-            {print && (
-                <PopUpContainer>
-                    <Print onPrint={hanldePrint} data={selected} />
-                </PopUpContainer>
-            )}
 
-            {validate && (
-                <PopUpContainer>
-                    <Validate data={selected} onValidate={handleValidate} />
-                </PopUpContainer>
-            )}
+            <PopUpContainer
+                isOpen={printModal.isOpen}
+                onOpenChange={printModal.onOpenChange}
+            >
+                <Print onPrint={hanldePrint} data={selected} />
+            </PopUpContainer>
+
+            <PopUpContainer
+                isOpen={validateModal.isOpen}
+                onOpenChange={validateModal.onOpenChange}
+            >
+                <Validate data={selected} onValidate={handleValidate} />
+            </PopUpContainer>
+            <DrawerContainer
+                isOpen={info.isOpen}
+                onOpenChange={info.onOpenChange}
+                onClose={info.onClose}
+            >
+                <Details 
+                    attestation={selected}
+                    fournir={handleValidate}
+                />
+            </DrawerContainer>
         </>
     );
 }

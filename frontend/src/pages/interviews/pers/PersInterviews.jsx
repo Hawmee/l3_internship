@@ -10,33 +10,37 @@ import { isArray } from "../../../functions/Functions";
 import IsInformed from "./forms/IsInformed";
 import Mail from "./forms/Mail";
 import Table from "./Table";
+import { useDisclosure } from "@nextui-org/react";
 
 function PersInterviews({ interviews }) {
     const url = useSelector((state) => state.backendUrl.value);
     const isNewInterviews =
         isArray(interviews) &&
-        interviews.some(
-            (interview) => interview.isNew == true
-        );
+        interviews.some((interview) => interview.isNew == true);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedStatus, setSelectedStatus] = useState("all");
     const [filteredData, setFilteredData] = useState([]);
-    const [mail, setMail] = useState(false);
-    const [inform, setInform] = useState(false);
     const [selected, setSelected] = useState(null);
     const methodMail = useForm();
 
+    const mailModal = useDisclosure();
+    const informModal = useDisclosure();
+
     const handleMail = (item) => {
-        setMail(!mail);
         if (item) {
             setSelected(item);
+            mailModal.onOpen();
+        } else {
+            mailModal.onClose();
         }
     };
 
     const handleInform = (item) => {
-        setInform(!inform);
         if (item) {
             setSelected(item);
+            informModal.onOpen();
+        } else {
+            informModal.onClose();
         }
     };
 
@@ -91,22 +95,20 @@ function PersInterviews({ interviews }) {
             return statusMatch && (nameMatch || allNameMatch || division);
         });
 
-
         setFilteredData(filtered);
     }, [interviews, selectedStatus, searchTerm]);
 
-
-    useEffect(()=>{
-        if(interviews){
-            const interv = interviews
-            const non_informe = interv.some(item=>!item.isInforme)
-            if(non_informe){
-                setSelectedStatus('!informe')
-            }else{
-                setSelectedStatus('informe')
+    useEffect(() => {
+        if (interviews) {
+            const interv = interviews;
+            const non_informe = interv.some((item) => !item.isInforme);
+            if (non_informe) {
+                setSelectedStatus("!informe");
+            } else {
+                setSelectedStatus("informe");
             }
         }
-    } , [interviews])
+    }, [interviews]);
 
     return (
         <>
@@ -153,20 +155,23 @@ function PersInterviews({ interviews }) {
                     />
                 </div>
             </MainContainer>
-            {mail && (
-                <PopUpContainer popup={mail} closePopUp={setMail}>
-                    <Mail
-                        handleMail={handleMail}
-                        method={methodMail}
-                        data={selected}
-                    />
-                </PopUpContainer>
-            )}
-            {inform && (
-                <PopUpContainer popup={inform} closePopUp={setInform}>
-                    <IsInformed handleInform={handleInform} data={selected} />
-                </PopUpContainer>
-            )}
+            <PopUpContainer
+                isOpen={mailModal.isOpen}
+                onOpenChange={mailModal.onOpenChange}
+            >
+                <Mail
+                    handleMail={handleMail}
+                    method={methodMail}
+                    data={selected}
+                />
+            </PopUpContainer>
+
+            <PopUpContainer
+                isOpen={informModal.isOpen}
+                onOpenChange={informModal.onOpenChange}
+            >
+                <IsInformed handleInform={handleInform} data={selected} />
+            </PopUpContainer>
         </>
     );
 }

@@ -8,6 +8,7 @@ import axios from 'axios'
 import { toast } from 'react-toastify'
 import { filterObjdiff, isArrayNotNull } from '../../../functions/Functions'
 import Validate from './forms/Validate'
+import { useDisclosure } from '@nextui-org/react'
 
 function CSAccounts() {
 
@@ -17,14 +18,17 @@ function CSAccounts() {
     const url = useSelector((state)=> state.backendUrl.value)
 
 
-    const [validate , setValidate] = useState(false)
     const [selected_user , setSelected_user] = useState(null)  
+
+    const validate= useDisclosure()
 
 
     const handleValidate = (account)=>{
-      setValidate(!validate)
       if(account){
         setSelected_user(account)
+        validate.onOpen()
+      }else{
+        validate.onClose()
       }
     }
 
@@ -33,7 +37,7 @@ function CSAccounts() {
         const validated = await axios.patch(`${url}/user/${selected_user.id}` , selected_user)
         if(validated){
           toast.success(`Utilisateur ${selected_user.matricule} validé !` , toastConfig )
-          setValidate(!validate)
+          validate.onClose()
         }
       } catch (error) {
           toast.error("Erreur au niveau du serveur" , toastConfig)
@@ -52,13 +56,9 @@ function CSAccounts() {
         </MainContainer>
 
 
-        {validate && <PopUpContainer popup={validate} closePopUp={setValidate} >
+        <PopUpContainer isOpen={validate.isOpen} onOpenChange={validate.onOpenChange} >
             <Validate onValidate={handleValidate} submit={onValidate}/>
-        </PopUpContainer>}
-
-        {/* <div className='bg-blue-400 w-[100vw] absolute right-0 top-0'>
-          huhu
-        </div> */}
+        </PopUpContainer>
     </>
   )
 }

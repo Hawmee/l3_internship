@@ -18,38 +18,41 @@ import stageReducer from "./features/stage.js";
 import stagiaireReducer from "./features/stagiaire.js";
 import tacheReducer from "./features/tache.js";
 import unitReducer from "./features/unit.js";
-import selectedReducer from "./features/selected.js"
-import demandeReducer from './features/demande.js'
+import selectedReducer from "./features/selected.js";
+import demandeReducer from "./features/demande.js";
 import "./global.css";
 import router from "./routes/router.jsx";
-import './components/styles/Table.css'
+import "./components/styles/Table.css";
+import { NextUIProvider } from "@nextui-org/react";
+// import '@fontsource/figtree'
 
 const store = configureStore({
     reducer: {
-        selected:selectedReducer,
+        selected: selectedReducer,
         token: tokenReducer,
         currentUser: currentUserReducer,
         backendUrl: backendUrlReducer,
         toastConfig: toastConfigReducer,
         account: accounReducer,
         attestation: attestationReducer,
-        demande: demandeReducer ,
+        demande: demandeReducer,
         entretient: entretientReducer,
         perf: perfReducer,
         stage: stageReducer,
         stagiaire: stagiaireReducer,
         tache: tacheReducer,
         unit: unitReducer,
-
     },
 });
 
 createRoot(document.getElementById("root")).render(
     <StrictMode>
-        <Provider store={store}>
-            <App>
-                <RouterProvider router={router} />
-            </App>
-        </Provider>
+        <NextUIProvider>
+            <Provider store={store}>
+                <App>
+                    <RouterProvider router={router} />
+                </App>
+            </Provider>
+        </NextUIProvider>
     </StrictMode>
 );

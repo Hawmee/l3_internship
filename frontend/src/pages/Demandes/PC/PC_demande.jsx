@@ -10,13 +10,13 @@ import { Search } from "lucide-react";
 import { demande } from "../../../services/demande";
 import PopUpContainer from "../../../components/containers/PopUpContainer";
 import NewStagiaire from "./forms/NewStagiaire";
+import { useDisclosure } from "@nextui-org/react";
 
 function PC_demande({ data }) {
     const current_user = useSelector((state) => state.currentUser.value);
     const [add, setAdd] = useState(false);
     const [edit, setEdit] = useState(false);
     const [del, setDel] = useState(false);
-    const [stagiaire , setStagiaire] = useState(false)
     const [selected, setSelected] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedStatus, setSelectedStatus] = useState("all");
@@ -40,10 +40,14 @@ function PC_demande({ data }) {
         }
     };
 
+    const stagiaire = useDisclosure()
+
     const handleStagiaire = (item)=>{
-        setStagiaire(!stagiaire)
         if(item){
             setSelected(item)
+            stagiaire.onOpen()
+        }else{
+            stagiaire.onClose()
         }
     }
 
@@ -146,11 +150,12 @@ function PC_demande({ data }) {
                 </div>
             </MainContainer>
 
-            {stagiaire && (
-                <PopUpContainer>
+                <PopUpContainer
+                    isOpen={stagiaire.isOpen}
+                    onOpenChange={stagiaire.onOpenChange}
+                >
                     <NewStagiaire data={ selected } onStagiaire={handleStagiaire}/>
                 </PopUpContainer>
-            ) }
         </>
     );
 }

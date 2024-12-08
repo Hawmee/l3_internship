@@ -105,7 +105,7 @@ function Table({ data, onInterview, onRow, row }) {
                                                     <div className="flex flex-row  justify-center text-white">
                                                         <button
                                                             className={
-                                                                "flex flex-row bg-blue-500 px-4 py-1 rounded-xl hover:bg-blue-600 disabled:bg-blue-300 "
+                                                                "flex flex-row bg-blue-500 px-4 py-1 rounded-xl hover:bg-blue-600 disabled:bg-gray-300 "
                                                             }
                                                             onClick={() => {
                                                                 onInterview(

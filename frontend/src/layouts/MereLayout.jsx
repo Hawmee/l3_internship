@@ -19,7 +19,7 @@ export default function MereLayout({ children }) {
                                 <AlignJustify size={20} />
                             </button>
                         </div>
-                        <div className="font-extrabold text-lg text-blue-400 hover:text-blue-300 transition-colors duration-200 ease-in-out cursor-pointer ml-2">
+                        <div className="font-bold text-lg text-blue-400 hover:text-blue-500 transition-colors duration-200 ease-in-out cursor-pointer ml-2">
                             SRB Intern Management
                         </div>
                     </div>

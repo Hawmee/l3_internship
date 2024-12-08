@@ -38,6 +38,13 @@ export const formatDate = (date)=>{
     return localDate
 }
 
+export const formatDateISO = (date)=>{
+    const dateString = parseISO(date)
+    const timezone = -3;
+    const localDate = addHours(dateString,timezone)
+    return parseISO(localDate)
+}
+
 export const date_time = (date)=>{
     const formated_date = formatDate(date)
     const date_hour = format(formated_date , "dd/MM/yyyy , HH:mm")

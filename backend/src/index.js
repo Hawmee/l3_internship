@@ -13,7 +13,7 @@ import { Server } from "socket.io";
 dotenv.config()
 
 const parameter = {
-    origin : `${process.env.FRONT_END_URl}` ,
+    origin : process.env.FRONT_END_URl? process.env.FRONT_END_URl.split(',') : [] ,
     methods : ['GET' , 'POST' , 'PUT' , 'DELETE' , 'PATCH'],
     credentials : true
 }

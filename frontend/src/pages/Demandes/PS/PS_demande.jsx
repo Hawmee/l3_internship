@@ -4,19 +4,24 @@ import { useSelector } from "react-redux";
 import MainContainer from "../../../components/containers/MainContainer";
 import PopUpContainer from "../../../components/containers/PopUpContainer";
 import SearchContainer from "../../../components/containers/SearchContainer";
-import { filterObjSame, isArray, isArrayNotNull } from "../../../functions/Functions";
+import {
+    filterObjSame,
+    isArray,
+    isArrayNotNull,
+} from "../../../functions/Functions";
 import Add from "./forms/Add";
 import Table from "./Table";
 import Edit from "./forms/Edit";
 import Delete from "./forms/Delete";
 import { Search } from "lucide-react";
+import { useDisclosure } from "@nextui-org/react";
 
 function PS_demande({ data }) {
     const current_user = useSelector((state) => state.currentUser.value);
     // const unite_id = current_user.unite.id;
     // const methodAdd = useForm();
     // const methodEdit = useForm();
-    const [add, setAdd] = useState(false);
+    // const [add, setAdd] = useState(false);
     const [edit, setEdit] = useState(false);
     const [del, setDel] = useState(false);
     const [selected, setSelected] = useState(null);
@@ -24,8 +29,14 @@ function PS_demande({ data }) {
     const [selectedStatus, setSelectedStatus] = useState("all");
     const [filteredData, setFilteredData] = useState([]);
 
+    const add = useDisclosure();
+
     const handleAdd = () => {
-        setAdd(!add);
+        if (!add.isOpen) {
+            add.onOpen();
+        } else {
+            add.onClose();
+        }
     };
 
     const handleEdit = (item) => {
@@ -41,7 +52,6 @@ function PS_demande({ data }) {
             setSelected(item);
         }
     };
-
 
     // useEffect(() => {
     //     if (!offre_units) {
@@ -118,23 +128,19 @@ function PS_demande({ data }) {
                 </div>
             </MainContainer>
 
-            {add && (
-                <PopUpContainer>
-                    <Add
-                      onAdd={handleAdd}
-                    />
-                </PopUpContainer>
-            )}
+            <PopUpContainer
+                isOpen={add.isOpen}
+                onOpenChange={add.onOpenChange}
+            >
+                <Add onAdd={handleAdd} />
+            </PopUpContainer>
             {edit && (
-                <PopUpContainer >
-                    <Edit
-                        data={selected}
-                        onEdit={handleEdit}
-                    />
+                <PopUpContainer>
+                    <Edit data={selected} onEdit={handleEdit} />
                 </PopUpContainer>
             )}
             {del && (
-                <PopUpContainer >
+                <PopUpContainer>
                     <Delete data={selected} onDelete={handleDelete} />
                 </PopUpContainer>
             )}

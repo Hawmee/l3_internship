@@ -10,10 +10,13 @@ import PopUpContainer from "../../../components/containers/PopUpContainer";
 import Generate from "./forms/Generate";
 import Inform from "./forms/Inform";
 import Collected from "./forms/Collected";
+import { useDisclosure } from "@nextui-org/react";
 
 function PersAttestations({ data }) {
-    const validatedStage = isArrayNotNull(data) ? data.filter(item=> item.attestation) : null;
-    console.log(validatedStage)
+    const validatedStage = isArrayNotNull(data)
+        ? data.filter((item) => item.attestation)
+        : null;
+    console.log(validatedStage);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedStatus, setSelectedStatus] = useState("all");
     const [filteredData, setFilteredData] = useState([]);
@@ -24,24 +27,34 @@ function PersAttestations({ data }) {
     const [inform, setInform] = useState(false);
     const [collected, setCollected] = useState(false);
 
+    const attestationDisclosure = useDisclosure();
+    const mailModal = useDisclosure();
+    const collectModal = useDisclosure();
+
     const handleAttestation = (item) => {
-        setAttestation(!attestation);
         if (item) {
             setSelected(item);
+            attestationDisclosure.onOpen();
+        } else {
+            attestationDisclosure.onClose();
         }
     };
 
     const handleInform = (item) => {
-        setInform(!inform);
         if (item) {
             setSelected(item);
+            mailModal.onOpen();
+        } else {
+            mailModal.onClose();
         }
     };
 
     const handleCollected = (item) => {
-        setCollected(!collected);
         if (item) {
             setSelected(item);
+            collectModal.onOpen();
+        } else {
+            collectModal.onClose();
         }
     };
 
@@ -192,24 +205,30 @@ function PersAttestations({ data }) {
                     </div>
                 </div>
             </MainContainer>
-            {attestation && (
-                <PopUpContainer>
-                    <Generate
-                        data={selected}
-                        handleAttestation={handleAttestation}
-                    />
-                </PopUpContainer>
-            )}
-            {inform && (
-                <PopUpContainer>
-                    <Inform onInform={handleInform} data={selected} />
-                </PopUpContainer>
-            )}
-            {collected && (
-                <PopUpContainer>
-                    <Collected data={selected} onCollected={handleCollected} />
-                </PopUpContainer>
-            )}
+
+            <PopUpContainer
+                isOpen={attestationDisclosure.isOpen}
+                onOpenChange={attestationDisclosure.onOpenChange}
+            >
+                <Generate
+                    data={selected}
+                    handleAttestation={handleAttestation}
+                />
+            </PopUpContainer>
+
+            <PopUpContainer
+                isOpen={mailModal.isOpen}
+                onOpenChange={mailModal.onOpenChange}
+            >
+                <Inform onInform={handleInform} data={selected} />
+            </PopUpContainer>
+
+            <PopUpContainer
+                isOpen={collectModal.isOpen}
+                onOpenChange={collectModal.onOpenChange}
+            >
+                <Collected data={selected} onCollected={handleCollected} />
+            </PopUpContainer>
         </>
     );
 }

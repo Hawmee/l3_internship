@@ -7,18 +7,23 @@ import { useDispatch, useSelector } from "react-redux";
 import { setCurrentUser } from "../features/currentUser";
 import PopUpContainer from "./containers/PopUpContainer.jsx";
 import { isArrayNotNull } from "../functions/Functions.js";
+import { useDisclosure } from "@nextui-org/react";
 
 // eslint-disable-next-line react/prop-types
 export default function Sidebar({ children }) {
-
     const current_user = useSelector((state) => state.currentUser.value);
-    const accounts = useSelector((state)=> state.account.value)
-    const user = isArrayNotNull(accounts) ? current_user&& (accounts.find((item)=> Number(item.id) == Number(current_user.id)) ): current_user
+    const accounts = useSelector((state) => state.account.value);
+    const user = isArrayNotNull(accounts)
+        ? current_user &&
+          accounts.find((item) => Number(item.id) == Number(current_user.id))
+        : current_user;
     const toastConfig = useSelector((state) => state.toastConfig.value);
     const url = useSelector((state) => state.backendUrl.value);
 
     const dispatch = useDispatch();
     const [confirmation, setConfirmation] = useState(false);
+
+    const logoutModal = useDisclosure();
 
     const handleLogout = () => {
         setConfirmation(!confirmation);
@@ -38,7 +43,7 @@ export default function Sidebar({ children }) {
         }
     };
 
-    console.log(user)
+    console.log(user);
 
     return (
         <>
@@ -76,7 +81,7 @@ export default function Sidebar({ children }) {
                             </div>
                             <button
                                 className="text-red-400 hover:text-red-500"
-                                onClick={handleLogout}
+                                onClick={logoutModal.onOpen}
                             >
                                 <div>
                                     <LogOut size={28} />
@@ -86,41 +91,39 @@ export default function Sidebar({ children }) {
                     </div>
                 </nav>
             </aside>
-            {confirmation && (
-                <PopUpContainer
-                    popup={confirmation}
-                    closePopUp={setConfirmation}
-                >
-                    <div className={"text-[20px] mb-2"}>Deconnexion</div>
-                    <div className={"text-[18px] w-[18vw] mb-3 "}>
-                        Voulez vous vous deconnecter ?
-                    </div>
-                    <div className={"flex flex-row justify-end"}>
-                        <button
-                            className={
-                                "bg-gray-500 rounded-[8px] text-white hover:bg-gray-600 py-1 px-2 mr-2"
-                            }
-                            onClick={handleLogout}
-                        >
-                            Annuler
-                        </button>
-                        <button
-                            className={
-                                "bg-blue-500 rounded-[8px] text-white hover:bg-blue-600 py-1 px-2"
-                            }
-                            onClick={logout}
-                        >
-                            Se deconnecter
-                        </button>
-                    </div>
-                </PopUpContainer>
-            )}
+            <PopUpContainer
+                isOpen={logoutModal.isOpen}
+                onOpenChange={logoutModal.onOpenChange}
+            >
+                <div className={"text-[20px] mb-2"}>Deconnexion</div>
+                <div className={"text-[18px] w-[18vw] mb-3 "}>
+                    Voulez vous vous deconnecter ?
+                </div>
+                <div className={"flex flex-row justify-end"}>
+                    <button
+                        className={
+                            "bg-gray-500 rounded-[8px] text-white hover:bg-gray-600 py-1 px-2 mr-2"
+                        }
+                        onClick={logoutModal.onClose}
+                    >
+                        Annuler
+                    </button>
+                    <button
+                        className={
+                            "bg-blue-500 rounded-[8px] text-white hover:bg-blue-600 py-1 px-2"
+                        }
+                        onClick={logout}
+                    >
+                        Se deconnecter
+                    </button>
+                </div>
+            </PopUpContainer>
         </>
     );
 }
 
 // eslint-disable-next-line react/prop-types
-export function SideBarLinks({ icon, text, href, alert ,alertRed }) {
+export function SideBarLinks({ icon, text, href, alert, alertRed }) {
     return (
         <li>
             <NavLink

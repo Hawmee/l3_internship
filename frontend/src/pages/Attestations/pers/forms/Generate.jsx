@@ -16,8 +16,8 @@ function Generate({ data, handleAttestation }) {
     const stagiaire = data.stagiaire;
     const attestation = data.attestation
     const id = data.id
-    const date = format(new Date(), "dddd-MM");
-    const numero = `${date}${stagiaire.id}`
+    const date = format(new Date(), "ddMM");
+    const numero = `${date}${String(stagiaire.id).padStart(4 , "0")}`
     const duree = differenceInMonths(stage.date_fin , stage.date_debut)
 
     const generate = async ()=>{

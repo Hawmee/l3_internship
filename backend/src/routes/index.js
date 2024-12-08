@@ -1,15 +1,15 @@
 import express from "express";
-import userRouter from './userRouter.js'
-import authRouter from './Auth/authRouter.js'
-import attestationRouter from './attestationRouter.js'
-import entretientRouter from './entretientRouter.js'
-import perfRouter from './performanceRouter.js'
-import stagesRouter from './stagesRouter.js'
-import stagiaireRouter from './stagiaires.Router.js'
-import tacheRouter from './tachesRouter.js'
-import unitRouter from './unitRouter.js'
-import mailRouter from './mailRouter.js'
-import demandeRouter from './demandeRouter.js'
+import authRouter from './Auth/authRouter.js';
+import attestationRouter from './attestationRouter.js';
+import demandeRouter from './demandeRouter.js';
+import entretientRouter from './entretientRouter.js';
+import mailRouter from './mailRouter.js';
+import perfRouter from './performanceRouter.js';
+import stagesRouter from './stagesRouter.js';
+import stagiaireRouter from './stagiaires.Router.js';
+import tacheRouter from './tachesRouter.js';
+import unitRouter from './unitRouter.js';
+import userRouter from './userRouter.js';
 
 
 const router = express.Router()
