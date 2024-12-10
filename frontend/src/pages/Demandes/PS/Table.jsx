@@ -1,11 +1,12 @@
 import { differenceInMonths, format } from "date-fns";
-import { CopyPlus, FileQuestion, PenSquare, Trash2 } from "lucide-react";
+import { CheckCheck, CopyPlus, EllipsisVertical, FileQuestion, Mail, PenSquare, Printer, Trash2 } from "lucide-react";
 import React, { useEffect, useRef } from "react";
 import {
     date_d_m_y,
     isArray,
     isArrayNotNull,
 } from "../../../functions/Functions";
+import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react";
 
 function Table({ data, onAdd, onEdit, onDelete }) {
     const tableContainerRef = useRef(null);
@@ -42,7 +43,7 @@ function Table({ data, onAdd, onEdit, onDelete }) {
                                     <th> CV du postulant </th>
                                     <th> LM du postulant </th>
                                     <th> Date de Depot </th>
-                                    <th className="rounded-tr-[12px] rounded-br-[12px]">
+                                    <th className="rounded-r-[12px] w-24">
                                         {" "}
                                     </th>
                                 </tr>
@@ -82,25 +83,77 @@ function Table({ data, onAdd, onEdit, onDelete }) {
                                                     )}
                                                 </td>
                                                 <td>
-                                                    <div className="flex flex-row items-center justify-start text-white">
-                                                        <button
-                                                            className="text-red-500 mr-2 px-3 py-1 hover:text-red-400"
-                                                            onClick={() => {
-                                                                onDelete(item);
-                                                            }}
-                                                        >
-                                                            <Trash2 size={22} />
-                                                        </button>
-                                                        <button
-                                                            className="text-blue-500 mr-2 px-3 py-1 hover:text-blue-600"
-                                                            onClick={() => {
-                                                                onEdit(item);
-                                                            }}
-                                                        >
-                                                            <PenSquare
-                                                                size={22}
-                                                            />
-                                                        </button>
+                                                <div className="z-1">
+                                                        <Dropdown>
+                                                            <DropdownTrigger>
+                                                                <button
+                                                                    className="bg-gray-100 rounded-lg p-1 hover:bg-gray-200"
+                                                                    onClick={() => {
+                                                                        setSelected(
+                                                                            item
+                                                                        );
+                                                                        onRow(
+                                                                            item
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    <EllipsisVertical
+                                                                        size={
+                                                                            20
+                                                                        }
+                                                                    />
+                                                                </button>
+                                                            </DropdownTrigger>
+                                                            <DropdownMenu
+                                                                itemClasses={{
+                                                                    base: [
+                                                                        "text-gray-500 , hover:!bg-gray-200 hover:!text-gray-700",
+                                                                    ],
+                                                                    title: "text-base",
+                                                                }}
+                                                                aria-label="Example with disabled actions"
+                                                                disabledKeys={[]}
+                                                                className="!px-2"
+                                                                bottomContent
+                                                            >
+                                                                <DropdownItem
+                                                                    key="modif"
+                                                                    startContent={
+                                                                        <PenSquare
+                                                                            size={
+                                                                                19
+                                                                            }
+                                                                        />
+                                                                    }
+                                                                    className=""
+                                                                    onPress={() => {
+                                                                        onEdit(
+                                                                            item
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    Modifier la demande
+                                                                </DropdownItem>
+                                                                <DropdownItem
+                                                                    key="Supprimer"
+                                                                    startContent={
+                                                                        <Trash2
+                                                                            size={
+                                                                                19
+                                                                            }
+                                                                        />
+                                                                    }
+                                                                    className="text-red-500 hover:!bg-red-100 hover:!text-red-600"
+                                                                    onPress={() => {
+                                                                        onDelete(
+                                                                            item
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    Supprimer la demande
+                                                                </DropdownItem>
+                                                            </DropdownMenu>
+                                                        </Dropdown>
                                                     </div>
                                                 </td>
                                             </tr>

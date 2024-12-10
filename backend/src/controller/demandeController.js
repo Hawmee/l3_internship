@@ -23,7 +23,7 @@ export const create = async (req, res) => {
 
         const uploadPromises = expectedFiles.map(async (expectedFile) => {
             const file = files[expectedFile] ? files[expectedFile][0] : null;
-
+ 
             if (file) {
                 const uniqueFilename = `${Date.now()}--${file.originalname}`;
                 try {
@@ -230,7 +230,6 @@ export const deleteDemande = async (req, res) => {
                 );
             }
         }
-
         await prisma.demande.delete({
             where: { id: Number(id) },
         });

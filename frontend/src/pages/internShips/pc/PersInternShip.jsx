@@ -14,11 +14,12 @@ import DefTheme from "./forms/DefTheme";
 import Book from "./forms/Book";
 import Mail from "./forms/Mail";
 import Print from "./forms/Print";
+import { useDisclosure } from "@nextui-org/react";
 
 function PersInternShip({ data }) {
     const [selected, setSelected] = useState(null);
     const [row, setRow] = useState(null);
-    const [affirm, setAffirm] = useState(false);
+    const affirm = useDisclosure()
     const [def_theme, setDef_theme] = useState(false);
     const [book , setBook] = useState(false)
     const [mail, setMail] = useState(false)
@@ -26,9 +27,11 @@ function PersInternShip({ data }) {
 
 
     const handleAffirm = (item) => {
-        setAffirm(!affirm);
         if (item) {
             setSelected(item);
+            affirm.onOpen()
+        }else{
+            affirm.onClose()
         }
     };
 
@@ -79,7 +82,7 @@ function PersInternShip({ data }) {
             <MainContainer>
                 <SearchContainer>
                     <div className="flex flex-row w-full h-full items-center justify-between pb-2 mt-6 border-b-[2px] mb-4">
-                        <div className="min-w-56 flex flex-row justify-center items-end h-full">
+                        <div className=" flex flex-row justify-center items-end h-full">
                             <select
                                 name=""
                                 id=""
@@ -88,7 +91,7 @@ function PersInternShip({ data }) {
                                 // onChange={(e) => setNavigation(e.target.value)}
                             >
                                 <option value="Demande">
-                                    Demande d'entretient
+                                    Tous
                                 </option>
                                 <option value="Entretient">Entretient</option>
                             </select>
@@ -163,11 +166,12 @@ function PersInternShip({ data }) {
                 </div>
             </MainContainer>
 
-            {affirm && (
-                <PopUpContainer>
+                <PopUpContainer
+                    isOpen={affirm.isOpen}
+                    onOpenChange={affirm.onOpenChange}
+                >
                     <Affirm data={selected} onAffirm={handleAffirm} />
                 </PopUpContainer>
-            )}
 
             {def_theme && (
                 <PopUpContainer>

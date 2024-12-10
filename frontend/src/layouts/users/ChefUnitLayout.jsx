@@ -1,6 +1,7 @@
 import {
     BookUser,
     ClipboardList,
+    GraduationCap,
     Handshake,
     NotebookText,
 } from "lucide-react";
@@ -115,8 +116,8 @@ function ChefUnitLayout() {
         <MereLayout>
             <SidebarContents>
                 <SideBarLinks
-                    icon={<BookUser size={22} />}
-                    text="Stagiaires"
+                    icon={<GraduationCap size={22} />}
+                    text="Stages"
                     href="/chefUnits/"
                     alert={isNewStages}
                 />

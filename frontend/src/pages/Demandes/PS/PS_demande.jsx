@@ -22,14 +22,14 @@ function PS_demande({ data }) {
     // const methodAdd = useForm();
     // const methodEdit = useForm();
     // const [add, setAdd] = useState(false);
-    const [edit, setEdit] = useState(false);
-    const [del, setDel] = useState(false);
     const [selected, setSelected] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedStatus, setSelectedStatus] = useState("all");
     const [filteredData, setFilteredData] = useState([]);
 
     const add = useDisclosure();
+    const edit = useDisclosure();
+    const del = useDisclosure();
 
     const handleAdd = () => {
         if (!add.isOpen) {
@@ -40,16 +40,20 @@ function PS_demande({ data }) {
     };
 
     const handleEdit = (item) => {
-        setEdit(!edit);
         if (item) {
             setSelected(item);
+            edit.onOpen();
+        } else {
+            edit.onClose();
         }
     };
 
     const handleDelete = (item) => {
-        setDel(!del);
         if (item) {
             setSelected(item);
+            del.onOpen();
+        } else {
+            del.onClose();
         }
     };
 
@@ -104,7 +108,7 @@ function PS_demande({ data }) {
                             <div className="flex flex-row  text-gray-600 py-2 rounded-[12px] bg-gray-200 px-2">
                                 <input
                                     type="text"
-                                    placeholder="Rechercher(stagiaire , date , ...)"
+                                    placeholder="Rechercher un element"
                                     className="w-64 bg-transparent outline-none placeholder:text-gray-500 px-1"
                                     onChange={(e) => {
                                         setSearchTerm(e.target.value);
@@ -128,22 +132,16 @@ function PS_demande({ data }) {
                 </div>
             </MainContainer>
 
-            <PopUpContainer
-                isOpen={add.isOpen}
-                onOpenChange={add.onOpenChange}
-            >
+            <PopUpContainer isOpen={add.isOpen} onOpenChange={add.onOpenChange}>
                 <Add onAdd={handleAdd} />
             </PopUpContainer>
-            {edit && (
-                <PopUpContainer>
-                    <Edit data={selected} onEdit={handleEdit} />
-                </PopUpContainer>
-            )}
-            {del && (
-                <PopUpContainer>
-                    <Delete data={selected} onDelete={handleDelete} />
-                </PopUpContainer>
-            )}
+
+            <PopUpContainer isOpen={edit.isOpen} onOpenChange={edit.onOpenChange}>
+                <Edit data={selected} onEdit={handleEdit} />
+            </PopUpContainer>
+            <PopUpContainer isOpen={del.isOpen} onOpenChange={del.onOpenChange}>
+                <Delete data={selected} onDelete={handleDelete} />
+            </PopUpContainer>
         </>
     );
 }

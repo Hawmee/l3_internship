@@ -137,17 +137,6 @@ function TableEntretient({ data, onConfirm, onEdit, onCancel }) {
                                                     <div className="z-1">
                                                         <Dropdown>
                                                             <DropdownTrigger>
-                                                                {/* <Button
-                                                                    variant="light"
-                                                                    isIconOnly
-                                                                    className="z-0 relative"
-                                                                >
-                                                                    <EllipsisVertical
-                                                                        size={
-                                                                            22
-                                                                        }
-                                                                    />
-                                                                </Button> */}
                                                                 <button className="bg-gray-100 p-1 rounded-lg hover:bg-gray-300">
                                                                     <EllipsisVertical size={20}/>
                                                                 </button>

@@ -136,16 +136,6 @@ export const validateEntretient = async (req, res) => {
 
         if(entretient){
             const stage_data = req.body
-            const stageDate = format(stage_data.date_debut , "yyyy-MM-dd" )
-            const today = format(new Date() , "yyyy-MM-dd")
-            // let observation ;
-
-            // if( isAfter(stageDate , today)){
-            //     observation = stage_observations.a_venir
-            // } else if(isEqual(stageDate , today)){
-            //     observation = stage_observations.en_cours
-            // }
-
             const stage = await prisma.stages.create({
                 data:{
                     observation: stage_observations.non_affirme ,
